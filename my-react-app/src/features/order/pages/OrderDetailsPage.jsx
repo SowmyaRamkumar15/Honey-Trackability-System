@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import MainLayout from '../../../layouts/MainLayout'
+import CustomerLayout from '../../../layouts/CustomerLayout'
 import orderApi from '../api/orderApi'
 import OrderTracking from '../components/OrderTracking'
 import Alert from '../../../components/feedback/Alert'
@@ -48,7 +48,7 @@ const OrderItemReviewPanel = ({ item }) => {
     }
   }
 
-  if (loading) return <div className="skeleton" style={{ height: '50px', marginTop: '0.75rem' }} />
+  if (loading) return <div className="skeleton h-12 mt-3" />
 
   return (
     <div className="order-item-review mt-3">
@@ -62,10 +62,10 @@ const OrderItemReviewPanel = ({ item }) => {
         <div className="order-item-review__existing">
           <div className="flex items-center gap-2 mb-2">
             <RatingStars value={existingReview.rating} size="sm" />
-            <span className="text-secondary" style={{ fontSize: '0.8rem' }}>Your review</span>
+            <span className="text-secondary text-xs">Your review</span>
           </div>
           {existingReview.comment && (
-            <p className="text-secondary" style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+            <p className="text-secondary text-sm mb-2">
               "{existingReview.comment}"
             </p>
           )}
@@ -155,22 +155,22 @@ const OrderDetailsPage = () => {
 
   if (loading) {
     return (
-      <MainLayout>
+      <CustomerLayout>
         <div className="container section text-center">Loading order details...</div>
-      </MainLayout>
+      </CustomerLayout>
     )
   }
 
   if (error || !order) {
     return (
-      <MainLayout>
+      <CustomerLayout>
         <div className="container section">
           <Alert type="danger" message={error || 'Order not found'} />
           <Link to="/orders" className="btn btn--secondary mt-4">
             ← Back to My Orders
           </Link>
         </div>
-      </MainLayout>
+      </CustomerLayout>
     )
   }
 
@@ -189,9 +189,9 @@ const OrderDetailsPage = () => {
   const isDelivered = orderStatus === 'DELIVERED'
 
   return (
-    <MainLayout>
+    <CustomerLayout>
       <div className="order-details-page section">
-        <div className="container" style={{ maxWidth: '850px' }}>
+        <div className="container max-w-4xl mx-auto">
           <nav className="breadcrumb mb-6">
             <Link to="/">Home</Link> / <Link to="/orders">My Orders</Link> /{' '}
             <span className="text-secondary">{orderNumber}</span>
@@ -307,14 +307,14 @@ const OrderDetailsPage = () => {
                 </p>
                 <p className="flex justify-between py-1">
                   <span className="text-secondary">Method:</span>
-                  <span>Simulated UPI / Mock Gateway</span>
+                  <span>Sandbox UPI Gateway</span>
                 </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </MainLayout>
+    </CustomerLayout>
   )
 }
 

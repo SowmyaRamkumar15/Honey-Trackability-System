@@ -10,6 +10,7 @@ export const AdminSidebar = () => {
     { to: '/admin/beekeepers', icon: '🧑‍🌾', label: t('admin.navBeekeepers', 'Beekeepers') },
     { to: '/admin/hives', icon: '🐝', label: t('admin.navHives', 'Hives & IoT') },
     { to: '/admin/batches', icon: '🍯', label: t('admin.navBatches', 'Batches') },
+    { to: '/admin/orders', icon: '📦', label: t('admin.navOrders', 'Orders') },
     { to: '/admin/lab', icon: '🔬', label: t('admin.navLabTests', 'Lab Tests') },
     { to: '/admin/verification-risk', icon: '🛡️', label: t('admin.navVerificationRisk', 'Verification Risk') },
     { to: '/admin/analytics', icon: '📈', label: t('admin.navAnalytics', 'Analytics') },

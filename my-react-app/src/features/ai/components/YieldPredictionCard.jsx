@@ -40,7 +40,7 @@ export const YieldPredictionCard = ({
       <div className="flex justify-between items-start mb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span style={{ fontSize: '1.25rem' }}>🤖</span>
+            <span className="text-xl">🤖</span>
             <h3 className="font-brand font-bold text-lg text-primary">
               {t('nav.yieldPrediction', 'AI Yield Prediction')}
             </h3>
@@ -74,16 +74,7 @@ export const YieldPredictionCard = ({
       )}
 
       {/* Core Prediction Grid */}
-      <div
-        className="grid gap-4 mb-4"
-        style={{
-          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-          background: 'rgba(10, 14, 26, 0.5)',
-          padding: '0.875rem',
-          borderRadius: '0.875rem',
-          border: '1px solid rgba(245, 166, 35, 0.12)',
-        }}
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 bg-slate-900/50 p-3.5 rounded-xl border border-amber-500/15">
         <div>
           <p className="text-xs text-muted font-medium">{t('yield.expectedHarvest', 'Expected Harvest')}</p>
           <p className="font-brand font-bold text-lg text-primary">

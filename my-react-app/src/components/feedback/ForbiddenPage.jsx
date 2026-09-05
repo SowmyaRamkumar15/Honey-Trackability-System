@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { ROLE_ROUTES, ROLE_LABELS } from '../../constants/roles'
 import Button from '../ui/Button'
 import Card from '../ui/Card'
+import AppShell from '../layout/AppShell'
 
 export const ForbiddenPage = () => {
   const { role, isAuthenticated } = useSelector((state) => state.auth)
@@ -11,8 +12,8 @@ export const ForbiddenPage = () => {
   const dashboardRoute = isAuthenticated && role ? ROLE_ROUTES[role] || '/' : '/login'
   const userRoleLabel = isAuthenticated && role ? ROLE_LABELS[role] || role : 'Guest'
 
-  return (
-    <div className="min-h-[70vh] flex items-center justify-center p-6 bg-slate-50/50">
+  const content = (
+    <div className="min-h-[70vh] flex items-center justify-center p-6">
       <Card className="max-w-md w-full text-center p-8 space-y-6 bg-white border border-slate-200 shadow-sm rounded-xl">
         <div className="w-16 h-16 rounded-full bg-slate-100 border border-slate-200 text-slate-800 flex items-center justify-center text-3xl mx-auto">
           🛡️
@@ -41,6 +42,16 @@ export const ForbiddenPage = () => {
       </Card>
     </div>
   )
+
+  if (isAuthenticated && role) {
+    return (
+      <AppShell stripLabel="Access Denied" stripVariant="default">
+        {content}
+      </AppShell>
+    )
+  }
+
+  return content
 }
 
 export default ForbiddenPage

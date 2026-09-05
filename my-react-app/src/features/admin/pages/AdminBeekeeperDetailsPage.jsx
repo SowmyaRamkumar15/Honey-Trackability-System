@@ -68,7 +68,7 @@ export const AdminBeekeeperDetailsPage = () => {
 
   return (
     <AdminLayout>
-      <div className="container section" style={{ maxWidth: '850px' }}>
+      <div className="container section w-full">
         <nav className="breadcrumb mb-6">
           <Link to="/admin/dashboard">Admin</Link> / <Link to="/admin/beekeepers">Beekeepers</Link> /{' '}
           <span className="text-secondary">{beekeeper.name}</span>
@@ -126,7 +126,7 @@ export const AdminBeekeeperDetailsPage = () => {
         </div>
 
         {/* Apiary & Production Audit Grid */}
-        <div className="grid grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           <div className="card">
             <h3 className="card__title mb-3">🐝 Apiary & Hives</h3>
             <p className="text-2xl font-bold text-gold">{beekeeper.hiveCount}</p>

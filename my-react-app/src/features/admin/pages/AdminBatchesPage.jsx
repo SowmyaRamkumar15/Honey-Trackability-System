@@ -62,7 +62,7 @@ export const AdminBatchesPage = () => {
         {/* Filter Card */}
         <div className="card mb-6">
           <form onSubmit={handleSearch} className="flex flex-wrap gap-4 items-center">
-            <div className="flex-1 min-w-[240px]">
+            <div className="flex-1 min-w-0 sm:min-w-60 w-full sm:w-auto">
               <input
                 type="text"
                 className="form-input"
@@ -72,7 +72,7 @@ export const AdminBatchesPage = () => {
               />
             </div>
 
-            <div className="w-52">
+            <div className="w-full sm:w-52">
               <select
                 className="form-input"
                 value={statusFilter}
@@ -89,13 +89,13 @@ export const AdminBatchesPage = () => {
               </select>
             </div>
 
-            <button type="submit" className="btn btn--primary btn--sm">
+            <button type="submit" className="btn btn--primary btn--sm w-full sm:w-auto">
               {t('common.submit', 'Search')}
             </button>
             {(searchQuery || statusFilter) && (
               <button
                 type="button"
-                className="btn btn--ghost btn--sm"
+                className="btn btn--ghost btn--sm w-full sm:w-auto"
                 onClick={() => {
                   setSearchQuery('')
                   setStatusFilter('')
@@ -126,7 +126,7 @@ export const AdminBatchesPage = () => {
                 >
                   ← {t('common.back', 'Prev')}
                 </button>
-                <span className="text-secondary" style={{ alignSelf: 'center' }}>
+                <span className="text-secondary self-center text-sm">
                   {t('common.page', 'Page')} {page + 1} / {totalPages}
                 </span>
                 <button

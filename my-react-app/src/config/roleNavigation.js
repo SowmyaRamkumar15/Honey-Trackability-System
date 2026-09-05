@@ -31,6 +31,7 @@ export const ROLE_NAVIGATION = {
       items: [
         { label: 'My Products', route: '/my-products', icon: '🏷️' },
         { label: 'Fulfillment Orders', route: '/beekeeper/orders', icon: '📦' },
+        { label: 'Earnings & Revenue', route: '/beekeeper/earnings', icon: '💰' },
       ],
     },
     {
@@ -84,6 +85,7 @@ export const ROLE_NAVIGATION = {
       group: 'Testing Queue',
       items: [
         { label: 'Pending Batch Tests', route: '/lab/tests/pending', icon: '🧪' },
+        { label: 'Test History & Certs', route: '/lab/history', icon: '📜' },
       ],
     },
     {
@@ -109,6 +111,7 @@ export const ROLE_NAVIGATION = {
         { label: 'Batches & Quality', route: '/admin/batches', icon: '🍯' },
         { label: 'Hives', route: '/admin/hives', icon: '🐝' },
         { label: 'Lab Audits', route: '/admin/lab', icon: '🔬' },
+        { label: 'Customer Orders', route: '/admin/orders', icon: '📦' },
       ],
     },
     {
@@ -138,6 +141,7 @@ export const ROLE_NAVIGATION = {
       group: 'Monitoring & Audit',
       items: [
         { label: 'Registered Beekeepers', route: '/admin/beekeepers', icon: '👨‍🌾' },
+        { label: 'Customer Orders', route: '/admin/orders', icon: '📦' },
         { label: 'Batch Records', route: '/admin/batches', icon: '🍯' },
         { label: 'Hive Locations', route: '/admin/hives', icon: '📍' },
         { label: 'Lab Compliance', route: '/admin/lab', icon: '🧪' },

@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import MainLayout from '../../../layouts/MainLayout'
+import CustomerLayout from '../../../layouts/CustomerLayout'
 import useCart from '../../cart/hooks/useCart'
 import { resetCartState } from '../../cart/cartSlice'
 import orderApi from '../api/orderApi'
+import customerApi from '../../customer/api/customerApi'
 import CheckoutForm from '../components/CheckoutForm'
 import Alert from '../../../components/feedback/Alert'
 
@@ -16,6 +17,25 @@ const CheckoutPage = () => {
   const [placingOrder, setPlacingOrder] = useState(false)
   const [orderError, setOrderError] = useState(null)
   const [confirmedOrder, setConfirmedOrder] = useState(null)
+  const [initialAddress, setInitialAddress] = useState(null)
+
+  useEffect(() => {
+    customerApi.getProfile()
+      .then((res) => {
+        const p = res.data?.data
+        if (p && p.fullName) {
+          setInitialAddress({
+            name: p.fullName || '',
+            line1: p.address || '',
+            line2: '',
+            city: p.city || '',
+            state: p.state || '',
+            postalCode: p.pincode || '',
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const handleCheckout = async (checkoutData) => {
     setPlacingOrder(true)
@@ -36,8 +56,8 @@ const CheckoutPage = () => {
   // Success Confirmation Screen
   if (confirmedOrder) {
     return (
-      <MainLayout>
-        <div className="container section" style={{ maxWidth: '680px' }}>
+      <CustomerLayout>
+        <div className="container section max-w-2xl mx-auto">
           <div className="card text-center p-8">
             <div className="empty-state__icon text-success">🎉</div>
             <span className="badge badge--success badge--lg mb-3">✅ Payment & Order Confirmed</span>
@@ -75,15 +95,15 @@ const CheckoutPage = () => {
             </div>
           </div>
         </div>
-      </MainLayout>
+      </CustomerLayout>
     )
   }
 
   // If cart is empty and no confirmed order, redirect to cart
   if (!items || items.length === 0) {
     return (
-      <MainLayout>
-        <div className="container section" style={{ maxWidth: '600px' }}>
+      <CustomerLayout>
+        <div className="container section max-w-xl mx-auto">
           <div className="card text-center p-8">
             <h2>Your cart is empty</h2>
             <p className="text-secondary mt-2">Please add honey products to your cart before proceeding to checkout.</p>
@@ -94,12 +114,12 @@ const CheckoutPage = () => {
             </div>
           </div>
         </div>
-      </MainLayout>
+      </CustomerLayout>
     )
   }
 
   return (
-    <MainLayout>
+    <CustomerLayout>
       <div className="checkout-page section">
         <div className="container">
           <nav className="breadcrumb mb-6">
@@ -119,6 +139,7 @@ const CheckoutPage = () => {
                 onSubmit={handleCheckout}
                 loading={placingOrder}
                 error={orderError}
+                initialAddress={initialAddress}
               />
             </div>
 
@@ -156,7 +177,7 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </CustomerLayout>
   )
 }
 

@@ -146,7 +146,7 @@ export const LoginPage = ({ initialRole }) => {
 
         {/* Quick test credentials */}
         <div className="quick-fills">
-          <p className="quick-fills__label">{t('auth.quickFill', 'Quick Fill Demo Accounts:')}</p>
+          <p className="quick-fills__label">{t('auth.quickFill', 'Role Sign-in Presets:')}</p>
           <div className="quick-fills__grid">
             <button
               type="button"

@@ -7,33 +7,47 @@ export const AppShell = ({ children, stripLabel, stripVariant = 'default' }) => 
   const { isAuthenticated, role } = useSelector((state) => state.auth)
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const showSidebar = isAuthenticated && role
+  const showSidebar = isAuthenticated && Boolean(role)
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-['Inter']">
+    <div className="min-h-screen bg-slate-50/60 flex flex-col font-['Inter']">
       {/* Top Navbar */}
       <Navbar onMobileToggle={() => setMobileOpen(!mobileOpen)} />
-
-      {/* Optional Strip Header */}
-      {stripLabel && (
-        <div className={`layout__strip strip--${stripVariant}`}>
-          <div className="layout__strip-inner max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3">
-            <div className="layout__strip-bar w-1 h-5 rounded-full bg-primary" />
-            <span className="layout__strip-label text-xs font-bold uppercase tracking-wider text-primary-dark">
-              {stripLabel}
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Main Body Shell: Sidebar + Main Content */}
       <div className="flex-1 flex w-full max-w-[1440px] mx-auto">
         {showSidebar && (
           <RoleSidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
         )}
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
-          {children}
-        </main>
+        <div className="flex-1 min-w-0 flex flex-col">
+          {/* Subtle Portal Context Header / Strip */}
+          {stripLabel && (
+            <div className="py-3 px-5 sm:px-8 lg:px-10 flex items-center justify-between border-b border-slate-200/60 bg-white/80 backdrop-blur-sm">
+              <div className="flex items-center gap-3">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse shadow-[0_0_6px_rgba(37,99,235,0.4)]" />
+                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-600">
+                  {stripLabel}
+                </span>
+              </div>
+              {showSidebar && (
+                <button
+                  type="button"
+                  id="appshell-mobile-sidebar-toggle"
+                  onClick={() => setMobileOpen(true)}
+                  className="md:hidden flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-xs transition-all duration-200"
+                  aria-label="Open portal navigation"
+                >
+                  <span className="text-sm">☰</span>
+                  <span>Menu</span>
+                </button>
+              )}
+            </div>
+          )}
+
+          <main className="flex-1 min-w-0 p-5 sm:p-8 lg:p-10 max-w-7xl w-full">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   )

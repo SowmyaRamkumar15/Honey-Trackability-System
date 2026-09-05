@@ -11,7 +11,7 @@ export const HiveCard = ({ hive, onDeactivate, onActivate, deactivating = false 
       {/* Header */}
       <div className="hive-card__header">
         <div className="hive-card__identity">
-          <span style={{ fontSize: '1.5rem' }}>🐝</span>
+          <span className="text-2xl">🐝</span>
           <div>
             <p className="hive-card__code">{hive.hiveCode}</p>
             <p className="hive-card__name">{hive.clusterName}</p>
@@ -36,24 +36,24 @@ export const HiveCard = ({ hive, onDeactivate, onActivate, deactivating = false 
         ) : (
           <div className="hive-card__meta-row">
             <span>📍</span>
-            <span style={{ fontStyle: 'italic' }}>Location not set</span>
+            <span className="italic">Location not set</span>
           </div>
         )}
       </div>
 
       {/* Actions */}
       <div className="hive-card__actions">
-        <Link to={`/beekeeper/hives/${hive.id}/health`} style={{ flex: 1 }}>
+        <Link to={`/beekeeper/hives/${hive.id}/health`} className="flex-1">
           <button className="btn btn--success btn--xs btn--full">
             <span>📡</span> Health
           </button>
         </Link>
-        <Link to={`/beekeeper/hives/${hive.id}`} style={{ flex: 1 }}>
+        <Link to={`/beekeeper/hives/${hive.id}`} className="flex-1">
           <button className="btn btn--secondary btn--xs btn--full">
             View
           </button>
         </Link>
-        <Link to={`/beekeeper/hives/${hive.id}`} state={{ edit: true }} style={{ flex: 1 }}>
+        <Link to={`/beekeeper/hives/${hive.id}`} state={{ edit: true }} className="flex-1">
           <button className="btn btn--secondary btn--xs btn--full">
             Edit
           </button>
@@ -65,8 +65,7 @@ export const HiveCard = ({ hive, onDeactivate, onActivate, deactivating = false 
               : onActivate && onActivate(hive.id)
             }
             disabled={deactivating}
-            className={`btn btn--xs btn--full ${isActive ? 'btn--danger' : 'btn--success'}`}
-            style={{ flex: 1 }}
+            className={`btn btn--xs btn--full flex-1 ${isActive ? 'btn--danger' : 'btn--success'}`}
           >
             {isActive ? 'Deactivate' : 'Activate'}
           </button>

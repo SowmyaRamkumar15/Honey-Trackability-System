@@ -30,9 +30,12 @@ export const HiveHealthOverviewPage = () => {
                 <span>📡</span> {t('iot.dashboardTitle', 'IoT Hive Health Monitoring')}
               </h1>
               <VoiceButton textToSpeak={voiceInstructions} size="sm" />
+              <span className="badge badge--warning text-[11px] font-mono">
+                📡 Simulated Sensor Telemetry
+              </span>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              {t('dashboard.iotSub', 'Real-time telemetry and explainable health analysis for all your registered apiary hives.')}
+              {t('dashboard.iotSub', 'Real-time telemetry and explainable health analysis for all your registered apiary hives.')} (Simulation Engine)
             </p>
           </div>
           <div className="flex items-center gap-3">

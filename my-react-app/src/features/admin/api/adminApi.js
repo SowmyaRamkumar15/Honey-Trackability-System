@@ -25,6 +25,9 @@ const adminApi = {
   getDisputeDetails: (id) => apiClient.get(`/admin/disputes/${id}`),
   updateDisputeStatus: (id, data) => apiClient.patch(`/admin/disputes/${id}/status`, data),
 
+  // Order Governance & Monitoring
+  getOrders: (params) => apiClient.get('/admin/orders', { params }).catch(() => apiClient.get('/orders', { params })),
+
   // Analytics Suite
   getPurityAnalytics: () => apiClient.get('/admin/analytics/purity'),
   getRegionalAnalytics: () => apiClient.get('/admin/analytics/regions'),

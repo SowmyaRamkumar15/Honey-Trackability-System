@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import MainLayout from '../../../layouts/MainLayout'
+import CustomerLayout from '../../../layouts/CustomerLayout'
 import useOrders from '../hooks/useOrders'
 import OrderCard from '../components/OrderCard'
 import Alert from '../../../components/feedback/Alert'
@@ -9,9 +9,9 @@ const OrdersPage = () => {
   const { orders, loading, error, cancellingId, cancelOrder } = useOrders()
 
   return (
-    <MainLayout>
+    <CustomerLayout>
       <div className="orders-page section">
-        <div className="container" style={{ maxWidth: '900px' }}>
+        <div className="container max-w-4xl mx-auto">
           <div className="page-header mb-6">
             <div>
               <h1 className="page-header__title">📦 My Honey Orders</h1>
@@ -55,7 +55,7 @@ const OrdersPage = () => {
           )}
         </div>
       </div>
-    </MainLayout>
+    </CustomerLayout>
   )
 }
 

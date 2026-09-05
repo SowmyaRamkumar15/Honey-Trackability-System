@@ -74,8 +74,7 @@ const ReviewForm = ({ orderItemId, existingReview, onSuccess, onCancel, productN
         </label>
         <textarea
           id="review-comment"
-          className="form-input mt-1"
-          style={{ resize: 'vertical', minHeight: '100px' }}
+          className="form-input mt-1 resize-y min-h-24"
           placeholder="Share your experience with this honey — taste, aroma, packaging, purity…"
           value={comment}
           onChange={(e) => setComment(e.target.value)}

@@ -172,7 +172,7 @@
     "otpPlaceholder": "123456",
     "switchToPassword": "🛡️ Admin / Lab? Login with Password",
     "switchToOtp": "📲 Beekeeper / Customer? Login with OTP",
-    "quickFill": "Quick Fill Demo Accounts:"
+    "quickFill": "Role Sign-in Presets:"
   },
   "onboarding": {
     "title": "Beekeeper Onboarding",

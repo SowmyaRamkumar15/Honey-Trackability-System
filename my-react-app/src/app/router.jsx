@@ -34,6 +34,7 @@ import CreateBatchPage from '../features/batch/pages/CreateBatchPage'
 import BatchDetailsPage from '../features/batch/pages/BatchDetailsPage'
 import HiveHealthOverviewPage from '../features/iot/pages/HiveHealthOverviewPage'
 import HiveHealthDetailsPage from '../features/iot/pages/HiveHealthDetailsPage'
+import BeekeeperEarningsPage from '../features/beekeeper/pages/BeekeeperEarningsPage'
 
 // Customer & Lab & Admin Pages
 import CustomerDashboard from '../features/customer/pages/CustomerDashboard'
@@ -42,6 +43,7 @@ import CustomerDisputesPage from '../features/customer/pages/CustomerDisputesPag
 import LabDashboardPage from '../features/lab/pages/LabDashboardPage'
 import PendingTestsPage from '../features/lab/pages/PendingTestsPage'
 import LabTestDetailsPage from '../features/lab/pages/LabTestDetailsPage'
+import LabTestHistoryPage from '../features/lab/pages/LabTestHistoryPage'
 import PublicVerificationPage from '../features/verification/pages/PublicVerificationPage'
 
 // Admin & KVIC Officer Suite (Phase 15)
@@ -55,6 +57,7 @@ import AdminHivesPage from '../features/admin/pages/AdminHivesPage'
 import AdminAnalyticsPage from '../features/admin/pages/AdminAnalyticsPage'
 import AdminVerificationRiskPage from '../features/admin/pages/AdminVerificationRiskPage'
 import AdminDisputesPage from '../features/admin/pages/AdminDisputesPage'
+import AdminOrdersPage from '../features/admin/pages/AdminOrdersPage'
 
 // Notifications Page (Phase 18)
 import NotificationsPage from '../features/notification/pages/NotificationsPage'
@@ -102,6 +105,7 @@ export const AppRouter = () => {
         <Route path="/beekeeper/dashboard" element={<BeekeeperDashboard />} />
         <Route path="/beekeeper/onboarding" element={<BeekeeperOnboardingPage />} />
         <Route path="/beekeeper/profile" element={<BeekeeperProfilePage />} />
+        <Route path="/beekeeper/settings" element={<BeekeeperProfilePage />} />
         <Route path="/hives" element={<HiveListPage />} />
         <Route path="/beekeeper/hives" element={<HiveListPage />} />
         <Route path="/hives/:id" element={<HiveDetailsPage />} />
@@ -112,6 +116,7 @@ export const AppRouter = () => {
         <Route path="/beekeeper/batches/new" element={<CreateBatchPage />} />
         <Route path="/batches/:batchId" element={<BatchDetailsPage />} />
         <Route path="/beekeeper/batches/:batchId" element={<BatchDetailsPage />} />
+        <Route path="/beekeeper/batches/:batchId/lab-result" element={<BatchDetailsPage />} />
         <Route path="/hives/health" element={<HiveHealthOverviewPage />} />
         <Route path="/beekeeper/hive-health" element={<HiveHealthOverviewPage />} />
         <Route path="/beekeeper/hives/health" element={<HiveHealthOverviewPage />} />
@@ -122,25 +127,44 @@ export const AppRouter = () => {
         <Route path="/my-products/new" element={<CreateProductPage />} />
         <Route path="/beekeeper/products/new" element={<CreateProductPage />} />
         <Route path="/beekeeper/orders" element={<BeekeeperOrdersPage />} />
+        <Route path="/beekeeper/earnings" element={<BeekeeperEarningsPage />} />
+        <Route path="/beekeeper/notifications" element={<NotificationsPage />} />
       </Route>
 
       {/* Customer routes */}
       <Route element={<ProtectedRoute allowedRoles={[ROLES.CUSTOMER]} />}>
         <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+        <Route path="/customer/home" element={<MarketplacePage />} />
+        <Route path="/customer/marketplace" element={<MarketplacePage />} />
+        <Route path="/customer/products/:id" element={<ProductDetailsPage />} />
         <Route path="/customer/profile" element={<CustomerProfilePage />} />
         <Route path="/customer/disputes" element={<CustomerDisputesPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/customer/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/customer/checkout" element={<CheckoutPage />} />
         <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/customer/orders" element={<OrdersPage />} />
         <Route path="/orders/:orderNumber" element={<OrderDetailsPage />} />
+        <Route path="/customer/orders/:orderNumber" element={<OrderDetailsPage />} />
         <Route path="/my-reviews" element={<MyReviewsPage />} />
+        <Route path="/customer/reviews" element={<MyReviewsPage />} />
+        <Route path="/customer/verification-history" element={<OrdersPage />} />
+        <Route path="/customer/notifications" element={<NotificationsPage />} />
       </Route>
 
       {/* Lab routes */}
       <Route element={<ProtectedRoute allowedRoles={[ROLES.LAB]} />}>
         <Route path="/lab/dashboard" element={<LabDashboardPage />} />
+        <Route path="/lab/profile" element={<LabDashboardPage />} />
+        <Route path="/lab/tests" element={<PendingTestsPage />} />
         <Route path="/lab/tests/pending" element={<PendingTestsPage />} />
         <Route path="/lab/tests/:batchId" element={<LabTestDetailsPage />} />
+        <Route path="/lab/tests/:batchId/result" element={<LabTestDetailsPage />} />
+        <Route path="/lab/certificates" element={<LabTestHistoryPage />} />
+        <Route path="/lab/history" element={<LabTestHistoryPage />} />
+        <Route path="/lab/notifications" element={<NotificationsPage />} />
+        <Route path="/lab/settings" element={<LabDashboardPage />} />
       </Route>
 
       {/* Admin / KVIC routes (Phase 15) */}
@@ -151,10 +175,14 @@ export const AppRouter = () => {
         <Route path="/admin/batches" element={<AdminBatchesPage />} />
         <Route path="/admin/batches/:batchId" element={<AdminBatchDetailsPage />} />
         <Route path="/admin/lab" element={<AdminLabPage />} />
+        <Route path="/admin/lab-tests" element={<AdminLabPage />} />
         <Route path="/admin/hives" element={<AdminHivesPage />} />
+        <Route path="/admin/orders" element={<AdminOrdersPage />} />
         <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
         <Route path="/admin/verification-risk" element={<AdminVerificationRiskPage />} />
         <Route path="/admin/disputes" element={<AdminDisputesPage />} />
+        <Route path="/admin/notifications" element={<NotificationsPage />} />
+        <Route path="/admin/settings" element={<AdminDashboardPage />} />
       </Route>
 
       {/* Fallback */}

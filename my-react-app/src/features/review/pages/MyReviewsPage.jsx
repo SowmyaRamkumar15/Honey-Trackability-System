@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import MainLayout from '../../../layouts/MainLayout'
+import CustomerLayout from '../../../layouts/CustomerLayout'
 import reviewApi from '../api/reviewApi'
 import ReviewCard from '../components/ReviewCard'
 import ReviewForm from '../components/ReviewForm'
@@ -54,7 +54,7 @@ const MyReviewsPage = () => {
   }
 
   return (
-    <MainLayout>
+    <CustomerLayout>
       <div className="container section">
         <div className="dashboard__header mb-6">
           <div>
@@ -66,7 +66,7 @@ const MyReviewsPage = () => {
         {loading && (
           <div className="flex flex-col gap-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="skeleton skeleton--card" style={{ height: '120px' }} />
+              <div key={i} className="skeleton skeleton--card h-28" />
             ))}
           </div>
         )}
@@ -87,7 +87,7 @@ const MyReviewsPage = () => {
 
         {!loading && reviews.length === 0 && (
           <div className="card text-center py-10">
-            <div style={{ fontSize: '3rem' }}>⭐</div>
+            <div className="text-5xl">⭐</div>
             <h3 className="mt-3">No reviews yet</h3>
             <p className="text-secondary mt-2">
               Purchase honey and leave a review after delivery to help build trust in the marketplace.
@@ -129,7 +129,7 @@ const MyReviewsPage = () => {
             >
               ← Prev
             </button>
-            <span className="text-secondary" style={{ alignSelf: 'center' }}>
+            <span className="text-secondary self-center text-sm">
               Page {page + 1} of {totalPages}
             </span>
             <button
@@ -142,7 +142,7 @@ const MyReviewsPage = () => {
           </div>
         )}
       </div>
-    </MainLayout>
+    </CustomerLayout>
   )
 }
 

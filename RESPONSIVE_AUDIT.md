@@ -65,7 +65,7 @@ HoneyChain enforces fluid responsiveness across four target device viewports:
 | `src/features/order/pages/CheckoutPage.jsx` | `maxWidth: '680px'`, `maxWidth: '600px'` | `max-w-2xl mx-auto`, `max-w-xl mx-auto` |
 | `src/features/order/pages/OrdersPage.jsx` | `maxWidth: '900px'` | `max-w-4xl mx-auto` |
 | `src/features/order/pages/OrderDetailsPage.jsx` | `height: '50px'`, `fontSize: '0.8rem'`, `maxWidth: '850px'` | `h-12`, `text-xs`, `max-w-4xl mx-auto` |
-| `src/features/marketplace/pages/CreateProductPage.jsx` | `maxWidth: '800px'` | `max-w-4xl mx-auto` |
+| `src/features/marketplace/pages/CreateProductPage.jsx` | `maxWidth: '800px'` | `w-full` |
 | `src/features/admin/pages/AdminDisputesPage.jsx` | `alignSelf: 'center'` | `self-center` |
 | `src/features/admin/pages/AdminBeekeeperDetailsPage.jsx` | `maxWidth: '850px'` | `w-full` |
 | `src/features/admin/pages/AdminBatchDetailsPage.jsx` | `maxWidth: '900px'` | `w-full` |

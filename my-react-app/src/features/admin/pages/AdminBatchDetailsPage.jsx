@@ -44,7 +44,7 @@ export const AdminBatchDetailsPage = () => {
 
   return (
     <AdminLayout>
-      <div className="container section" style={{ maxWidth: '900px' }}>
+      <div className="container section w-full">
         <nav className="breadcrumb mb-6">
           <Link to="/admin/dashboard">Admin</Link> / <Link to="/admin/batches">Batches</Link> /{' '}
           <span className="text-secondary">{batchId}</span>
@@ -71,7 +71,7 @@ export const AdminBatchDetailsPage = () => {
         </div>
 
         {/* 4 Pillars of HoneyChain Audit */}
-        <div className="grid grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {/* 1. Apiary & Beekeeper */}
           <div className="card">
             <h3 className="card__title mb-3">🧑‍🌾 Apiary & Beekeeper</h3>

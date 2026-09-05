@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 
-const CheckoutForm = ({ totalAmount, onSubmit, loading, error }) => {
+const CheckoutForm = ({ totalAmount, onSubmit, loading, error, initialAddress = null }) => {
   const [fulfillmentType, setFulfillmentType] = useState('DELIVERY')
   const [address, setAddress] = useState({
-    name: 'Demo Customer',
-    line1: '12 Main Heritage Street',
-    line2: 'Near Old Bus Stand',
-    city: 'Coimbatore',
-    state: 'Tamil Nadu',
-    postalCode: '641001',
+    name: initialAddress?.name || '',
+    line1: initialAddress?.line1 || '',
+    line2: initialAddress?.line2 || '',
+    city: initialAddress?.city || '',
+    state: initialAddress?.state || '',
+    postalCode: initialAddress?.postalCode || '',
   })
   const [paymentMode, setPaymentMode] = useState('mock')
 
@@ -80,6 +80,7 @@ const CheckoutForm = ({ totalAmount, onSubmit, loading, error }) => {
                 name="name"
                 type="text"
                 className="form-input"
+                placeholder="e.g. Priyan Sharma"
                 value={address.name}
                 onChange={handleAddressChange}
                 required
@@ -95,6 +96,7 @@ const CheckoutForm = ({ totalAmount, onSubmit, loading, error }) => {
                 name="line1"
                 type="text"
                 className="form-input"
+                placeholder="House / Flat No., Street Name"
                 value={address.line1}
                 onChange={handleAddressChange}
                 required
@@ -110,6 +112,7 @@ const CheckoutForm = ({ totalAmount, onSubmit, loading, error }) => {
                 name="line2"
                 type="text"
                 className="form-input"
+                placeholder="Near landmark, locality"
                 value={address.line2}
                 onChange={handleAddressChange}
               />
@@ -124,6 +127,7 @@ const CheckoutForm = ({ totalAmount, onSubmit, loading, error }) => {
                 name="city"
                 type="text"
                 className="form-input"
+                placeholder="City"
                 value={address.city}
                 onChange={handleAddressChange}
                 required
@@ -139,6 +143,7 @@ const CheckoutForm = ({ totalAmount, onSubmit, loading, error }) => {
                 name="state"
                 type="text"
                 className="form-input"
+                placeholder="State"
                 value={address.state}
                 onChange={handleAddressChange}
                 required
@@ -154,6 +159,7 @@ const CheckoutForm = ({ totalAmount, onSubmit, loading, error }) => {
                 name="postalCode"
                 type="text"
                 className="form-input"
+                placeholder="6-digit PIN code"
                 value={address.postalCode}
                 onChange={handleAddressChange}
                 required
@@ -171,9 +177,9 @@ const CheckoutForm = ({ totalAmount, onSubmit, loading, error }) => {
         <div className="alert alert--info mb-4">
           <span className="alert__icon">ℹ️</span>
           <div className="alert__body">
-            <h4 className="alert__title">Demo Prototype Payment Flow</h4>
+            <h4 className="alert__title">Sandbox Payment Gateway</h4>
             <p className="alert__message">
-              This is a demonstration sandbox payment environment. No real bank charges or credit cards are processed.
+              This is a secure sandbox payment gateway environment. Transactions are simulated for development and evaluation.
             </p>
           </div>
         </div>

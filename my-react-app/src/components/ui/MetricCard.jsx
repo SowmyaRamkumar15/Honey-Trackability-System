@@ -7,7 +7,7 @@ import React from 'react'
 export const MetricCard = ({ icon, label, value, subtext, trend, className = '' }) => {
   return (
     <div
-      className={`bg-white rounded-xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md hover:border-blue-400/80 transition-all duration-200 flex flex-col justify-between h-full min-h-[135px] text-left group ${className}`}
+      className={`bg-white rounded-xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md hover:border-blue-400/80 transition-all duration-200 flex flex-col justify-between h-full min-h-32 text-left group ${className}`}
     >
       <div>
         <div className="flex items-center justify-between gap-3 mb-2.5">

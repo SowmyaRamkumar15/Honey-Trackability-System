@@ -6,7 +6,7 @@ import { useLanguage } from '../../i18n/LanguageContext'
 import LanguageSelector from './LanguageSelector'
 import NotificationBell from '../../features/notification/components/NotificationBell'
 
-export const Navbar = ({ transparent = false }) => {
+export const Navbar = ({ transparent = false, onMobileToggle }) => {
   const { isAuthenticated, role } = useSelector((state) => state.auth)
   const { itemCount } = useSelector((state) => state.cart || { itemCount: 0 })
   const { t } = useLanguage()
@@ -22,7 +22,7 @@ export const Navbar = ({ transparent = false }) => {
 
   return (
     <nav id="main-navbar" className={`navbar${transparent ? ' navbar--transparent' : ''}`}>
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
         {/* Brand Logo */}
         <div className="flex items-center gap-6">
           <Link to="/" id="nav-logo" className="navbar__logo shrink-0" onClick={() => setMobileOpen(false)}>
@@ -135,7 +135,13 @@ export const Navbar = ({ transparent = false }) => {
           <button
             type="button"
             id="nav-mobile-toggle"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={() => {
+              if (onMobileToggle) {
+                onMobileToggle()
+              } else {
+                setMobileOpen(!mobileOpen)
+              }
+            }}
             className="md:hidden btn btn--ghost btn--sm p-2 text-slate-700"
             aria-label="Toggle Navigation Menu"
           >

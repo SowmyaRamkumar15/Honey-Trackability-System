@@ -54,11 +54,11 @@ export const HiveHealthDetailsPage = () => {
 
   return (
     <BeekeeperLayout>
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="w-full space-y-6">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-slate-500">
-          <Link to="/beekeeper/hive-health" className="hover:text-blue-600 transition-colors font-medium">
-            Hive Health
+          <Link to="/beekeeper/hives" className="hover:text-blue-600 transition-colors font-medium">
+            My Hives
           </Link>
           <span>/</span>
           <span className="text-slate-800 font-mono font-semibold">{health?.hiveCode || `Hive #${hiveId}`}</span>
@@ -71,17 +71,17 @@ export const HiveHealthDetailsPage = () => {
             <LoadingSpinner text="Reading IoT sensor stream and calculating health state..." />
           </div>
         ) : !health ? (
-          <Card className="p-12 text-center">
+          <Card className="p-12 text-center max-w-xl mx-auto">
             <p className="text-3xl mb-2">🐝</p>
             <p className="text-slate-900 font-bold">Hive Telemetry Not Available</p>
-            <Link to="/beekeeper/hive-health">
+            <Link to="/beekeeper/hives">
               <Button variant="secondary" size="sm" className="mt-4">
-                ← Back to Hive Health
+                ← Back to Hives
               </Button>
             </Link>
           </Card>
         ) : (
-          <>
+          <div className="space-y-6">
             {/* Main Health Status Overview Card */}
             <Card
               className={`p-6 space-y-4 border ${health.status === 'ALERT'
@@ -93,15 +93,16 @@ export const HiveHealthDetailsPage = () => {
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center text-3xl">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center text-3xl shadow-sm">
                     🐝
                   </div>
                   <div>
                     <h1 className="text-2xl font-black text-slate-900 font-['Outfit'] tracking-tight">
                       {health.hiveCode || `Hive #${hiveId}`}
                     </h1>
-                    <p className="text-xs text-slate-500">
-                      {health.clusterName ? `Cluster: ${health.clusterName}` : 'Registered Apiary'}
+                    <p className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                      <span>{health.clusterName ? `Cluster: ${health.clusterName}` : 'Registered Apiary'}</span>
+                      <span className="badge badge--warning text-[10px] font-mono">Simulated IoT Stream</span>
                     </p>
                   </div>
                 </div>
@@ -133,15 +134,7 @@ export const HiveHealthDetailsPage = () => {
               </div>
             </Card>
 
-            {/* AI Yield Prediction Section (Phase 11) */}
-            <YieldPredictionCard
-              prediction={prediction}
-              loading={predictionLoading}
-              refreshing={predictionRefreshing}
-              onRefresh={refreshPrediction}
-            />
-
-            {/* Current Sensor Telemetry Readout */}
+            {/* Live Sensor Telemetry Readout */}
             <div className="space-y-3">
               <h2 className="text-lg font-bold text-slate-900 font-['Outfit'] flex items-center gap-2">
                 <span>📊</span> Live Sensor Telemetry
@@ -154,19 +147,34 @@ export const HiveHealthDetailsPage = () => {
               />
             </div>
 
-            {/* Historical Sensor Chart */}
-            <Card className="p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-slate-900 font-['Outfit'] flex items-center gap-2">
-                  <span>📈</span> Sensor Trends & Historical Telemetry
-                </h2>
-                <span className="text-xs text-slate-500 font-mono">
-                  {history.length} data points
-                </span>
+            {/* Multi-Column Section: Historical Chart & AI Prediction */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Historical Sensor Chart */}
+              <div className="lg:col-span-7 xl:col-span-8">
+                <Card className="p-6 space-y-4 bg-white border border-slate-200/90 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-bold text-slate-900 font-['Outfit'] flex items-center gap-2">
+                      <span>📈</span> Sensor Trends & Historical Telemetry
+                    </h2>
+                    <span className="text-xs text-slate-500 font-mono">
+                      {history.length} data points
+                    </span>
+                  </div>
+                  <SensorHistoryChart readings={history} />
+                </Card>
               </div>
-              <SensorHistoryChart readings={history} />
-            </Card>
-          </>
+
+              {/* AI Yield Prediction Section (Phase 11) */}
+              <div className="lg:col-span-5 xl:col-span-4">
+                <YieldPredictionCard
+                  prediction={prediction}
+                  loading={predictionLoading}
+                  refreshing={predictionRefreshing}
+                  onRefresh={refreshPrediction}
+                />
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </BeekeeperLayout>

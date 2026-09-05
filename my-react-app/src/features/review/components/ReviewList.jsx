@@ -12,7 +12,7 @@ const ReviewSummary = ({ averageRating = 0, totalReviews = 0 }) => {
   if (totalReviews === 0) {
     return (
       <div className="review-summary review-summary--empty">
-        <p className="text-secondary" style={{ fontSize: '0.95rem' }}>
+        <p className="text-secondary text-sm">
           No reviews yet. Be the first to review this product!
         </p>
       </div>
@@ -22,11 +22,11 @@ const ReviewSummary = ({ averageRating = 0, totalReviews = 0 }) => {
   return (
     <div className="review-summary flex items-center gap-5">
       <div className="review-summary__score text-center">
-        <div className="review-summary__avg" style={{ fontSize: '3rem', fontWeight: 900, color: '#D97706', lineHeight: 1 }}>
+        <div className="review-summary__avg text-5xl font-black text-amber-500 leading-none">
           {Number(averageRating).toFixed(1)}
         </div>
         <RatingStars value={Math.round(averageRating)} size="md" />
-        <div className="text-secondary mt-1" style={{ fontSize: '0.85rem' }}>
+        <div className="text-secondary mt-1 text-xs">
           {totalReviews} review{totalReviews !== 1 ? 's' : ''}
         </div>
       </div>
@@ -67,7 +67,7 @@ const ReviewList = ({
       {loading && (
         <div className="review-list__loading mt-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="skeleton skeleton--card mb-3" style={{ height: '100px' }} />
+            <div key={i} className="skeleton skeleton--card mb-3 h-24" />
           ))}
         </div>
       )}
@@ -100,7 +100,7 @@ const ReviewList = ({
           >
             ← Prev
           </button>
-          <span className="text-secondary" style={{ alignSelf: 'center', fontSize: '0.9rem' }}>
+          <span className="text-secondary self-center text-sm">
             Page {page + 1} of {totalPages}
           </span>
           <button

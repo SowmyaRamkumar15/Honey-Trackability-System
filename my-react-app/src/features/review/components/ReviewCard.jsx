@@ -28,7 +28,7 @@ const ReviewCard = ({ review, isOwn = false, onEdit, onDelete }) => {
           </div>
           <div>
             <p className="review-card__name font-semibold">{review.displayName || 'Verified Buyer'}</p>
-            <p className="review-card__date text-secondary" style={{ fontSize: '0.8rem' }}>
+            <p className="review-card__date text-secondary text-xs">
               {formattedDate}
             </p>
           </div>
@@ -41,7 +41,7 @@ const ReviewCard = ({ review, isOwn = false, onEdit, onDelete }) => {
       )}
 
       {review.productName && (
-        <p className="review-card__product mt-2 text-secondary" style={{ fontSize: '0.8rem' }}>
+        <p className="review-card__product mt-2 text-secondary text-xs">
           Product: {review.productName}
         </p>
       )}

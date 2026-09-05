@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import MainLayout from '../../../layouts/MainLayout'
+import CustomerLayout from '../../../layouts/CustomerLayout'
 import useCart from '../hooks/useCart'
 import CartItem from '../components/CartItem'
 import CartSummary from '../components/CartSummary'
@@ -22,7 +22,7 @@ const CartPage = () => {
   const isEmpty = !items || items.length === 0
 
   return (
-    <MainLayout>
+    <CustomerLayout>
       <div className="cart-page section">
         <div className="container">
           <nav className="breadcrumb mb-6">
@@ -90,7 +90,7 @@ const CartPage = () => {
           )}
         </div>
       </div>
-    </MainLayout>
+    </CustomerLayout>
   )
 }
 

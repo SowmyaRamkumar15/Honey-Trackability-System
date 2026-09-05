@@ -25,7 +25,7 @@ export const CertificateViewer = ({ url, onClose }) => {
           </button>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col items-center justify-center min-h-[220px]">
+        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col items-center justify-center min-h-56">
           {isPdf ? (
             <div className="text-center space-y-3">
               <span className="text-5xl block">📑</span>

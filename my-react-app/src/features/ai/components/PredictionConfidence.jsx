@@ -13,30 +13,17 @@ export const PredictionConfidence = ({ confidence = 50 }) => {
       </div>
 
       {/* Progress Bar */}
-      <div
-        style={{
-          width: '100%',
-          height: '6px',
-          backgroundColor: '#E2E8F0',
-          borderRadius: '999px',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
         <div
+          className={`h-full transition-all duration-400 ${isLow ? 'bg-blue-700' : 'bg-amber-500'}`}
           style={{
             width: `${Math.min(100, Math.max(0, confidence))}%`,
-            height: '100%',
-            backgroundColor: isLow ? '#1D4ED8' : '#D97706',
-            transition: 'width 0.4s ease',
           }}
         />
       </div>
 
       {isLow && (
-        <div
-          className="alert alert--warning mt-1"
-          style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem', marginBottom: 0 }}
-        >
+        <div className="alert alert--warning mt-1 py-1.5 px-2.5 text-xs mb-0">
           ⚠️ Low Confidence: More harvest history is needed for a more reliable estimate.
         </div>
       )}

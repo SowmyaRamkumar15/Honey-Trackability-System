@@ -182,7 +182,7 @@ export const OtpLoginPage = () => {
 
         {/* Quick Fills */}
         <div className="quick-fills">
-          <p className="quick-fills__label">{t('auth.quickFill', 'Quick Fill Demo Numbers:')}</p>
+          <p className="quick-fills__label">{t('auth.quickFill', 'Role Sign-in Presets:')}</p>
           <div className="quick-fills__grid">
             <button
               type="button"

@@ -122,7 +122,7 @@ export const AdminDisputesPage = () => {
                 >
                   ← {t('common.back', 'Prev')}
                 </button>
-                <span className="text-secondary" style={{ alignSelf: 'center' }}>
+                <span className="text-secondary self-center">
                   {t('common.page', 'Page')} {page + 1} / {totalPages}
                 </span>
                 <button

@@ -93,7 +93,7 @@ const ProductDetailsPage = () => {
       <MainLayout>
         <div className="container section">
           <div className="card product-details-skeleton">
-            <div className="skeleton skeleton--image" style={{ height: '400px' }}></div>
+            <div className="skeleton skeleton--image h-80 sm:h-96"></div>
             <div className="skeleton skeleton--title mt-4"></div>
             <div className="skeleton skeleton--text"></div>
           </div>

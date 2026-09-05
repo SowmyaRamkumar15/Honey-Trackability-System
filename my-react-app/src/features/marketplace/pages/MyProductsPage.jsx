@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import MainLayout from '../../../layouts/MainLayout'
+import BeekeeperLayout from '../../../layouts/BeekeeperLayout'
 import productApi from '../api/productApi'
 import PurityBadge from '../components/PurityBadge'
 import VerifiedBadge from '../components/VerifiedBadge'
@@ -49,7 +49,7 @@ const MyProductsPage = () => {
   }
 
   return (
-    <MainLayout>
+    <BeekeeperLayout>
       <div className="beekeeper-products-page section">
         <div className="container">
           <div className="page-header mb-6">
@@ -144,7 +144,7 @@ const MyProductsPage = () => {
           )}
         </div>
       </div>
-    </MainLayout>
+    </BeekeeperLayout>
   )
 }
 

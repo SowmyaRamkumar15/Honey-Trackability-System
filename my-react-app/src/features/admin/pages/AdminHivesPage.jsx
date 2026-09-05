@@ -74,7 +74,7 @@ export const AdminHivesPage = () => {
         {/* Filter Card */}
         <div className="card mb-6">
           <form onSubmit={handleSearch} className="flex flex-wrap gap-4 items-center">
-            <div className="flex-1 min-w-[240px]">
+            <div className="flex-1 min-w-0 sm:min-w-60 w-full sm:w-auto">
               <input
                 type="text"
                 className="form-input"
@@ -84,7 +84,7 @@ export const AdminHivesPage = () => {
               />
             </div>
 
-            <div className="w-48">
+            <div className="w-full sm:w-48">
               <select
                 className="form-input"
                 value={statusFilter}
@@ -97,7 +97,7 @@ export const AdminHivesPage = () => {
               </select>
             </div>
 
-            <button type="submit" className="btn btn--primary btn--sm">
+            <button type="submit" className="btn btn--primary btn--sm w-full sm:w-auto">
               {t('common.submit', 'Search')}
             </button>
           </form>

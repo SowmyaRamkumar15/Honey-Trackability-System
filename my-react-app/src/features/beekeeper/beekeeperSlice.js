@@ -8,6 +8,9 @@ export const fetchBeekeeperProfile = createAsyncThunk(
       const response = await beekeeperApi.getProfile()
       return response.data.data
     } catch (err) {
+      if (err.response?.status === 404) {
+        return rejectWithValue({ isNotFound: true, message: 'Profile not found' })
+      }
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch beekeeper profile')
     }
   }
@@ -55,6 +58,7 @@ const beekeeperSlice = createSlice({
     profile: null,
     status: null,
     loading: false,
+    fetched: false,
     error: null,
   },
   reducers: {
@@ -65,6 +69,7 @@ const beekeeperSlice = createSlice({
       state.profile = null
       state.status = null
       state.loading = false
+      state.fetched = false
       state.error = null
     },
   },
@@ -78,17 +83,27 @@ const beekeeperSlice = createSlice({
       .addCase(fetchBeekeeperProfile.fulfilled, (state, action) => {
         state.loading = false
         state.profile = action.payload
+        state.fetched = true
+        state.error = null
       })
       .addCase(fetchBeekeeperProfile.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload
+        state.fetched = true
+        if (action.payload?.isNotFound) {
+          state.profile = null
+          state.error = null
+        } else {
+          state.error =
+            typeof action.payload === 'string'
+              ? action.payload
+              : action.payload?.message || 'Failed to fetch profile'
+        }
       })
 
     // Fetch Status
-    builder
-      .addCase(fetchProfileStatus.fulfilled, (state, action) => {
-        state.status = action.payload
-      })
+    builder.addCase(fetchProfileStatus.fulfilled, (state, action) => {
+      state.status = action.payload
+    })
 
     // Create Profile
     builder
@@ -99,6 +114,7 @@ const beekeeperSlice = createSlice({
       .addCase(createProfile.fulfilled, (state, action) => {
         state.loading = false
         state.profile = action.payload
+        state.fetched = true
         state.status = { completed: true, verificationStatus: action.payload.verificationStatus }
       })
       .addCase(createProfile.rejected, (state, action) => {
@@ -115,6 +131,7 @@ const beekeeperSlice = createSlice({
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false
         state.profile = action.payload
+        state.fetched = true
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = false

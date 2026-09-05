@@ -92,7 +92,7 @@ export const CreateBatchPage = () => {
 
   return (
     <BeekeeperLayout>
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="w-full space-y-6">
         {/* Header & Network Indicator */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <nav className="flex items-center gap-2 text-xs text-slate-500">
@@ -125,7 +125,7 @@ export const CreateBatchPage = () => {
         {createdResult ? (
           createdResult.offline ? (
             /* 🟡 OFFLINE SUCCESS CARD */
-            <Card className="p-8 text-center space-y-6 border border-amber-200 bg-amber-50 shadow-sm">
+            <Card className="p-8 text-center space-y-6 border border-amber-200 bg-amber-50 shadow-sm max-w-2xl mx-auto">
               <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-800 text-3xl flex items-center justify-center mx-auto border border-amber-200">
                 💾
               </div>
@@ -181,7 +181,7 @@ export const CreateBatchPage = () => {
             </Card>
           ) : (
             /* 🟢 ONLINE SUCCESS CARD */
-            <Card className="p-8 text-center space-y-6 border border-blue-200 bg-blue-50/60 shadow-sm">
+            <Card className="p-8 text-center space-y-6 border border-blue-200 bg-blue-50/60 shadow-sm max-w-2xl mx-auto">
               <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-700 text-3xl flex items-center justify-center mx-auto border border-blue-200">
                 ✓
               </div>
@@ -234,7 +234,7 @@ export const CreateBatchPage = () => {
         ) : loadingHives ? (
           <LoadingSpinner text={t('loading.loading', 'Loading your active hives...')} />
         ) : hives.length === 0 ? (
-          <Card className="text-center py-12 space-y-4">
+          <Card className="text-center py-12 space-y-4 max-w-xl mx-auto">
             <div className="text-5xl">🐝</div>
             <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">{t('hive.noHives', 'No Hives Registered')}</h2>
             <p className="text-slate-500 text-sm max-w-sm mx-auto">
@@ -245,20 +245,51 @@ export const CreateBatchPage = () => {
             </Link>
           </Card>
         ) : (
-          <Card className="p-6">
-            {!isOnline && (
-              <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center justify-between font-medium">
-                <span>🔴 <strong>Offline Mode:</strong> Form submissions will be saved locally and synced automatically when internet returns.</span>
-              </div>
-            )}
-            <BatchForm
-              hives={hives}
-              onSubmit={handleCreate}
-              loading={loading || submitting}
-              onCancel={() => navigate('/beekeeper/batches')}
-              submitLabel={isOnline ? t('batch.submitBatch', 'Create Harvest Batch →') : t('batch.submitBatch', 'Save Batch Offline 💾')}
-            />
-          </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Main Form Column */}
+            <div className="lg:col-span-8">
+              <Card className="p-6 bg-white border border-slate-200/90 shadow-sm">
+                {!isOnline && (
+                  <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center justify-between font-medium">
+                    <span>🔴 <strong>Offline Mode:</strong> Form submissions will be saved locally and synced automatically when internet returns.</span>
+                  </div>
+                )}
+                <BatchForm
+                  hives={hives}
+                  onSubmit={handleCreate}
+                  loading={loading || submitting}
+                  onCancel={() => navigate('/beekeeper/batches')}
+                  submitLabel={isOnline ? t('batch.submitBatch', 'Create Harvest Batch →') : t('batch.submitBatch', 'Save Batch Offline 💾')}
+                />
+              </Card>
+            </div>
+
+            {/* Sidebar Guidance & Standards Column */}
+            <div className="lg:col-span-4 space-y-6">
+              <Card className="p-5 border border-amber-200/70 bg-gradient-to-br from-amber-50/50 to-white space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">📋</span>
+                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Harvest Protocol Guidelines</h3>
+                </div>
+                <ul className="text-xs text-slate-600 space-y-2 list-disc list-inside leading-relaxed">
+                  <li>Ensure honeycomb frames are at least 75% capped for optimal moisture content.</li>
+                  <li>Record accurate harvest weights directly from apiary scales.</li>
+                  <li>After creation, your batch will generate a unique cryptographic ID on HoneyChain.</li>
+                  <li>Submit the batch for Laboratory Purity Testing to receive KVIC authenticity certification.</li>
+                </ul>
+              </Card>
+
+              <Card className="p-5 border border-blue-200/70 bg-gradient-to-br from-blue-50/40 to-white space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">🛡️</span>
+                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Blockchain Verification</h3>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Every batch log is signed and stamped on-chain. Customers will scan your QR code to verify floral origin and apiary coordinates.
+                </p>
+              </Card>
+            </div>
+          </div>
         )}
       </div>
     </BeekeeperLayout>
