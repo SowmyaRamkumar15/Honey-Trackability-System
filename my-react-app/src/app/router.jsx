@@ -62,6 +62,7 @@ import AdminOrdersPage from '../features/admin/pages/AdminOrdersPage'
 // Notifications Page (Phase 18)
 import NotificationsPage from '../features/notification/pages/NotificationsPage'
 import ForbiddenPage from '../components/feedback/ForbiddenPage'
+import BlockchainViewer from '../components/BlockChainViewer'
 
 const ProtectedRoute = ({ allowedRoles }) => {
   const { isAuthenticated, role } = useSelector((state) => state.auth)
@@ -129,6 +130,7 @@ export const AppRouter = () => {
         <Route path="/beekeeper/orders" element={<BeekeeperOrdersPage />} />
         <Route path="/beekeeper/earnings" element={<BeekeeperEarningsPage />} />
         <Route path="/beekeeper/notifications" element={<NotificationsPage />} />
+        <Route path="/viewBlockchain" element={<BlockchainViewer />}></Route>
       </Route>
 
       {/* Customer routes */}

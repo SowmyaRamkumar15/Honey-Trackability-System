@@ -66,6 +66,9 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
                 <Link to="/hives/health" className="hc-navbar__link">
                   {t('nav.hiveHealth', 'Hive Health')}
                 </Link>
+                <Link to={"/viewBlockchain"} className="hc-navbar__link">
+                   {t('nav.viewBlockchain', 'Block Chain')}
+                </Link>
               </>
             )}
 
