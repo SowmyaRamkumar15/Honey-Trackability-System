@@ -7,29 +7,29 @@ export const OfflineBatchIndicator = () => {
   const { pendingCount, isSyncing, syncNow } = useBatchSync()
 
   return (
-    <div className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs">
+    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: '6px 14px', borderRadius: 'var(--radius-full)', backgroundColor: 'var(--bg-muted)', border: '1px solid var(--border)', fontSize: 'var(--text-xs)' }}>
       {/* Network Status Badge */}
       {isOnline ? (
-        <span className="flex items-center gap-1 text-blue-700 font-semibold">
-          <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping inline-block" />
-          🟢 Online
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--success)', fontWeight: 'var(--font-semibold)' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--success)', display: 'inline-block' }} />
+          Online
         </span>
       ) : (
-        <span className="flex items-center gap-1 text-slate-600 font-semibold">
-          <span className="w-2 h-2 rounded-full bg-slate-400 inline-block" />
-          🔴 Offline
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--danger)', fontWeight: 'var(--font-semibold)' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--danger)', display: 'inline-block' }} />
+          Offline
         </span>
       )}
 
       {/* Sync Queue Counter & Manual Sync Trigger */}
       {pendingCount > 0 && (
-        <div className="flex items-center gap-2 pl-2 border-l border-slate-300">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', paddingLeft: 'var(--space-2)', borderLeft: '1px solid var(--border)' }}>
           {isSyncing ? (
-            <span className="text-blue-600 font-medium flex items-center gap-1">
+            <span style={{ color: 'var(--info)', fontWeight: 'var(--font-medium)', display: 'flex', alignItems: 'center', gap: '4px' }}>
               🔄 Syncing ({pendingCount})...
             </span>
           ) : (
-            <span className="text-amber-700 font-medium">
+            <span style={{ color: 'var(--warning)', fontWeight: 'var(--font-medium)' }}>
               🔴 {pendingCount} pending draft{pendingCount > 1 ? 's' : ''}
             </span>
           )}
@@ -37,7 +37,7 @@ export const OfflineBatchIndicator = () => {
           {isOnline && !isSyncing && (
             <button
               type="button"
-              className="px-2 py-0.5 rounded bg-blue-600 text-white font-semibold text-xs hover:bg-blue-700 transition-colors"
+              style={{ padding: '2px 8px', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)', fontWeight: 'var(--font-bold)', fontSize: '0.6875rem', border: 'none', cursor: 'pointer' }}
               onClick={syncNow}
             >
               Sync Now ⚡

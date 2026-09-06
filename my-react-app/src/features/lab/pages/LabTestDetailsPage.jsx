@@ -1,145 +1,225 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import LabLayout from '../../../layouts/LabLayout'
 import LabTestForm from '../components/LabTestForm'
 import LabResultBadge from '../components/LabResultBadge'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
+import Badge from '../../../components/ui/Badge'
 import Alert from '../../../components/feedback/Alert'
 import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
+import PageHeader from '../../../components/layout/PageHeader'
 import { useLabTests } from '../hooks/useLabTests'
 import batchApi from '../../batch/api/batchApi'
 import labApi from '../api/labApi'
+import adminApi from '../../admin/api/adminApi'
+import '../styles/lab.css'
 
 export const LabTestDetailsPage = () => {
   const { batchId } = useParams()
-  const { submitLabTest, loading, error, clearError } = useLabTests()
+  const navigate = useNavigate()
+  const { pendingBatches, fetchPendingTests, submitLabTest, loading, error, clearError } = useLabTests()
 
   const [batch, setBatch] = useState(null)
   const [existingTest, setExistingTest] = useState(null)
   const [loadingDetails, setLoadingDetails] = useState(true)
+  const [loadError, setLoadError] = useState(null)
   const [submissionSuccess, setSubmissionSuccess] = useState(null)
 
-  useEffect(() => {
-    const loadBatchAndTest = async () => {
-      try {
-        setLoadingDetails(true)
-        // Fetch batch details
-        const batchRes = await batchApi.getBatch(batchId)
-        setBatch(batchRes.data.data)
+  const loadBatchAndTest = async () => {
+    try {
+      setLoadingDetails(true)
+      setLoadError(null)
 
-        // Attempt to fetch existing test if already tested
-        try {
-          const testRes = await labApi.getLabTest(batchId)
-          setExistingTest(testRes.data.data)
-        } catch (e) {
-          // No test exists yet
-          setExistingTest(null)
+      let foundBatch = null
+      let foundTest = null
+
+      // 1. Attempt to fetch existing test record
+      try {
+        const testRes = await labApi.getLabTest(batchId)
+        if (testRes?.data?.data) {
+          foundTest = testRes.data.data
+          if (foundTest.batch) {
+            foundBatch = foundTest.batch
+          }
         }
-      } catch (err) {
-        // Handled in UI
-      } finally {
-        setLoadingDetails(false)
+      } catch (e) {
+        // No existing test record yet
       }
+
+      // 2. Fallback resolution: fetch batch details from batch/admin/pending API
+      if (!foundBatch) {
+        try {
+          const batchRes = await batchApi.getBatch(batchId)
+          if (batchRes?.data?.data) {
+            foundBatch = batchRes.data.data
+          }
+        } catch (e1) {
+          try {
+            const adminRes = await adminApi.getBatchDetails(batchId)
+            if (adminRes?.data?.data) {
+              foundBatch = adminRes.data.data
+            }
+          } catch (e2) {
+            try {
+              const pendingRes = await labApi.getPendingTests()
+              const list = pendingRes?.data?.data || []
+              const match = list.find((b) => b.batchId === batchId || String(b.id) === String(batchId))
+              if (match) {
+                foundBatch = match
+              }
+            } catch (e3) {
+              const localMatch = pendingBatches?.find(
+                (b) => b.batchId === batchId || String(b.id) === String(batchId)
+              )
+              if (localMatch) {
+                foundBatch = localMatch
+              }
+            }
+          }
+        }
+      }
+
+      if (foundBatch) {
+        setBatch(foundBatch)
+        setExistingTest(foundTest)
+      } else {
+        setBatch(null)
+        setLoadError('Batch not found.')
+      }
+    } catch (err) {
+      setLoadError('Unable to load this batch.')
+    } finally {
+      setLoadingDetails(false)
     }
+  }
+
+  useEffect(() => {
     loadBatchAndTest()
   }, [batchId])
 
   const handleSubmitTest = async (formData) => {
-    const result = await submitLabTest(batchId, formData)
-    if (!result.error) {
-      setExistingTest(result.payload)
-      setSubmissionSuccess(result.payload)
+    const actionResult = await submitLabTest(batchId, formData)
+    if (!actionResult.error) {
+      const payload = actionResult.payload
+      setExistingTest(payload)
+      setSubmissionSuccess(payload)
+      // Refresh pending tests queue so submitted batch disappears from queue
+      fetchPendingTests()
     }
   }
 
   return (
     <LabLayout>
-      <div className="w-full space-y-6">
+      <div className="hc-lab-page">
+        {/* Page Header */}
+        <PageHeader
+          title={`🔬 Lab Inspection — ${batchId}`}
+          subtitle="Record analytical purity parameters and submit laboratory results to the backend database."
+        />
+
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-slate-500">
-          <Link to="/lab/dashboard" className="hover:text-blue-600 transition-colors font-medium">
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+          <Link to="/lab/dashboard" style={{ color: 'inherit', textDecoration: 'none' }}>
             Lab Dashboard
           </Link>
           <span>/</span>
-          <Link to="/lab/tests/pending" className="hover:text-blue-600 transition-colors font-medium">
+          <Link to="/lab/tests/pending" style={{ color: 'inherit', textDecoration: 'none' }}>
             Pending Tests
           </Link>
           <span>/</span>
-          <span className="text-slate-800 font-mono font-semibold">{batchId}</span>
+          <span style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{batchId}</span>
         </nav>
 
-        {error && <Alert type="error" message={error} onClose={clearError} />}
+        {error && <Alert type="danger" title="Submission Error" onClose={clearError}>{error}</Alert>}
+
+        {submissionSuccess && (
+          <Alert type="success" title="Laboratory Result Saved Successfully">
+            Result <strong>{submissionSuccess.result || 'RECORDED'}</strong> ({submissionSuccess.purityScore || 0}% purity) has been saved to database for batch <span style={{ fontFamily: 'var(--font-mono)' }}>{batchId}</span>.
+            <div style={{ marginTop: 'var(--space-3)', display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="primary" size="sm" onClick={() => navigate('/lab/tests/pending')}>
+                ← Return to Pending Queue
+              </Button>
+            </div>
+          </Alert>
+        )}
 
         {loadingDetails ? (
-          <LoadingSpinner text="Loading batch details for laboratory analysis..." />
-        ) : !batch ? (
-          <Card className="text-center py-16 max-w-xl mx-auto">
-            <div className="text-5xl mb-4">🧪</div>
-            <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">Batch Not Found</h2>
-            <p className="text-slate-500 text-sm mt-2">
-              Could not find honey batch with ID <span className="font-mono">{batchId}</span>.
+          <LoadingSpinner message="Loading batch details from laboratory backend..." />
+        ) : loadError === 'Unable to load this batch.' ? (
+          <Card padding style={{ maxWidth: '540px', margin: 'var(--space-8) auto', textAlign: 'center' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: 'var(--space-2)' }}>⚠️</div>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--text-lg)', margin: 0 }}>Unable to load this batch.</h2>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', margin: 'var(--space-3) 0' }}>
+              The server encountered an error while fetching batch details for <span style={{ fontFamily: 'var(--font-mono)' }}>{batchId}</span>.
             </p>
-            <Link to="/lab/tests/pending">
-              <Button variant="secondary" className="mt-4">
+            <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'center' }}>
+              <Button variant="primary" size="sm" onClick={loadBatchAndTest}>
+                🔄 Try Again
+              </Button>
+              <Link to="/lab/tests/pending" style={{ textDecoration: 'none' }}>
+                <Button variant="secondary" size="sm">
+                  ← Back to Pending Tests
+                </Button>
+              </Link>
+            </div>
+          </Card>
+        ) : !batch ? (
+          <Card padding style={{ maxWidth: '540px', margin: 'var(--space-8) auto', textAlign: 'center' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: 'var(--space-2)' }}>🧪</div>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--text-lg)', margin: 0 }}>Batch not found.</h2>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', margin: 'var(--space-2) 0' }}>
+              Could not find honey batch with ID <span style={{ fontFamily: 'var(--font-mono)' }}>{batchId}</span>.
+            </p>
+            <Link to="/lab/tests/pending" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" size="sm">
                 ← Back to Pending Tests
               </Button>
             </Link>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="hc-lab-details-layout">
             {/* Main Column */}
-            <div className="lg:col-span-8 space-y-6">
-              {/* Batch Info Header */}
-              <Card className="p-6 bg-white border border-slate-200/90 shadow-sm">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    {batch.photoUrl ? (
-                      <img
-                        src={batch.photoUrl}
-                        alt={batch.batchId}
-                        className="w-16 h-16 rounded-2xl object-cover border border-amber-200 shadow-md"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-3xl border border-blue-200">
-                        🍯
-                      </div>
-                    )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+              {/* Read-Only Batch Info Header */}
+              <Card padding>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                    <div style={{ width: '52px', height: '52px', borderRadius: 'var(--radius-xl)', background: 'var(--primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', border: '1.5px solid var(--primary-light)', flexShrink: 0 }}>
+                      🍯
+                    </div>
                     <div>
-                      <p className="text-amber-800 font-mono font-black text-xl tracking-wide">
-                        {batch.batchId}
+                      <p style={{ margin: 0, fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 'var(--text-lg)', color: 'var(--primary-dark)' }}>
+                        {batch.batchId || batchId}
                       </p>
-                      <p className="text-slate-900 font-semibold text-sm mt-0.5">
-                        Hive: {batch.hiveCode || 'Active Hive'}{' '}
-                        {batch.clusterName ? `· ${batch.clusterName}` : ''}
+                      <p style={{ margin: '2px 0 0', fontWeight: 600, fontSize: 'var(--text-xs)', color: 'var(--text-primary)' }}>
+                        Beekeeper: <strong style={{ color: 'var(--text-primary)' }}>{batch.beekeeperName || 'Registered Apiary'}</strong> ({batch.village || 'Region'})
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-200 text-blue-700">
-                      Status: {batch.status}
-                    </span>
-                  </div>
+                  <Badge variant={batch.status === 'PURE' ? 'success' : batch.status === 'FAILED' ? 'danger' : 'warning'} size="md">
+                    Status: {batch.status || 'PENDING'}
+                  </Badge>
                 </div>
 
                 {/* Batch Summary Info */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-slate-100 text-xs">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 'var(--space-3)', marginTop: 'var(--space-4)', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--border)', fontSize: 'var(--text-xs)' }}>
                   <div>
-                    <p className="text-slate-500 font-medium">Quantity</p>
-                    <p className="text-slate-900 font-mono font-bold mt-0.5">{batch.quantityKg} KG</p>
+                    <p style={{ margin: 0, color: 'var(--text-muted)', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}>Quantity</p>
+                    <p style={{ margin: '2px 0 0', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>{batch.quantityKg ? `${batch.quantityKg} KG` : '—'}</p>
                   </div>
                   <div>
-                    <p className="text-slate-500 font-medium">Harvest Date</p>
-                    <p className="text-slate-900 mt-0.5">{batch.harvestDate}</p>
+                    <p style={{ margin: 0, color: 'var(--text-muted)', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}>Source Hive</p>
+                    <p style={{ margin: '2px 0 0', color: 'var(--text-primary)', fontWeight: 600 }}>{batch.hiveCode || 'Active Hive'}</p>
                   </div>
                   <div>
-                    <p className="text-slate-500 font-medium">Cluster</p>
-                    <p className="text-slate-900 mt-0.5">{batch.clusterName || 'Apiary'}</p>
+                    <p style={{ margin: 0, color: 'var(--text-muted)', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}>Harvest Date</p>
+                    <p style={{ margin: '2px 0 0', color: 'var(--text-primary)', fontWeight: 600 }}>{batch.harvestDate || '—'}</p>
                   </div>
                   <div>
-                    <p className="text-slate-500 font-medium">Registered On</p>
-                    <p className="text-slate-900 mt-0.5">{batch.createdAt ? new Date(batch.createdAt).toLocaleDateString('en-IN') : '—'}</p>
+                    <p style={{ margin: 0, color: 'var(--text-muted)', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}>Floral Origin</p>
+                    <p style={{ margin: '2px 0 0', color: 'var(--text-primary)', fontWeight: 600 }}>{batch.floralSource || 'Multifloral'}</p>
                   </div>
                 </div>
               </Card>
@@ -147,126 +227,96 @@ export const LabTestDetailsPage = () => {
               {/* Test Form or Completed Test Display */}
               {existingTest ? (
                 /* Already Tested Result Card */
-                <Card className="p-6 border border-blue-200 bg-blue-50/40 space-y-6 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">🧪</span>
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">
-                          Laboratory Analysis Completed
-                        </h2>
-                        <p className="text-xs text-slate-500">
-                          Tested on {existingTest.testedAt ? new Date(existingTest.testedAt).toLocaleString('en-IN') : '—'}
-                        </p>
-                      </div>
+                <Card padding>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 'var(--space-4)', borderBottom: '1px solid var(--border)', marginBottom: 'var(--space-4)' }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 'var(--text-base)', color: 'var(--text-primary)' }}>
+                        🧪 Laboratory Analysis Completed
+                      </h3>
+                      <p style={{ margin: '2px 0 0', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                        Tested on {existingTest.testedAt ? new Date(existingTest.testedAt).toLocaleString('en-IN') : 'Recently'}
+                      </p>
                     </div>
                     <LabResultBadge result={existingTest.result} size="lg" />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl bg-white border border-blue-200 shadow-sm">
-                      <p className="text-xs text-slate-500 mb-1 font-medium">Purity Score</p>
-                      <p className="text-3xl font-black text-blue-600 font-mono">
-                        {existingTest.purityScore}%
-                      </p>
-                    </div>
-                    <div className="p-4 rounded-xl bg-white border border-blue-200 shadow-sm">
-                      <p className="text-xs text-slate-500 mb-1 font-medium">Certification Result</p>
-                      <div className="mt-1">
-                        <LabResultBadge result={existingTest.result} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-3)' }}>
+                      <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-xl)', background: 'var(--primary-soft)', border: '1px solid var(--primary-light)', textAlign: 'center' }}>
+                        <p style={{ margin: 0, fontSize: '11px', color: 'var(--primary-dark)', fontWeight: 800, textTransform: 'uppercase' }}>Purity Score</p>
+                        <p style={{ margin: '4px 0 0', fontSize: 'var(--text-3xl)', fontWeight: 900, color: 'var(--primary-dark)', fontFamily: 'var(--font-mono)' }}>
+                          {existingTest.purityScore}%
+                        </p>
+                      </div>
+                      <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-xl)', background: 'var(--surface)', border: '1px solid var(--border)', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase' }}>Certification Status</p>
+                        <div style={{ marginTop: '6px' }}>
+                          <LabResultBadge result={existingTest.result} />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {existingTest.remarks && (
-                    <div className="p-4 rounded-xl bg-white border border-slate-200 text-xs space-y-1 shadow-sm">
-                      <p className="text-slate-500 font-medium">Laboratory Remarks:</p>
-                      <p className="text-slate-800 leading-relaxed">{existingTest.remarks}</p>
-                    </div>
-                  )}
-
-                  {existingTest.certificateUrl && (
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-200 shadow-sm">
-                      <div className="flex items-center gap-2 text-xs text-slate-900">
-                        <span>📄</span>
-                        <span className="font-semibold">Official Certificate Document</span>
+                    {existingTest.remarks && (
+                      <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-xl)', background: 'var(--bg-muted)', border: '1px solid var(--border)', fontSize: 'var(--text-xs)' }}>
+                        <span style={{ color: 'var(--text-muted)', fontWeight: 700 }}>Laboratory Remarks: </span>
+                        <span style={{ color: 'var(--text-primary)', lineHeight: 1.5 }}>{existingTest.remarks}</span>
                       </div>
-                      <a
-                        href={existingTest.certificateUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:text-blue-800 font-bold underline"
-                      >
-                        View Certificate ↗
-                      </a>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Immutable Blockchain Proof */}
-                  {existingTest.blockchainRecord && (
-                    <div className="p-4 rounded-xl bg-white border border-amber-200 text-xs space-y-2 shadow-sm">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-amber-800 flex items-center gap-1.5">
-                          <span>🔗</span> Blockchain Proof ({existingTest.blockchainRecord.network})
-                        </span>
-                        <span className="font-mono text-slate-500">
-                          Block #{existingTest.blockchainRecord.blockNumber}
-                        </span>
-                      </div>
-                      <div className="font-mono text-[10px] space-y-1 text-slate-600 break-all">
-                        <p>Data Hash: <span className="text-slate-900 font-bold">{existingTest.blockchainRecord.dataHash}</span></p>
-                        <p>Tx Hash: <span className="text-slate-900 font-bold">{existingTest.blockchainRecord.transactionHash}</span></p>
-                      </div>
+                    <div style={{ paddingTop: 'var(--space-2)' }}>
+                      <Link to="/lab/tests/pending" style={{ textDecoration: 'none' }}>
+                        <Button variant="secondary" size="sm" style={{ width: '100%' }}>
+                          ← Back to Pending Tests
+                        </Button>
+                      </Link>
                     </div>
-                  )}
-
-                  <div className="pt-2">
-                    <Link to="/lab/tests/pending">
-                      <Button variant="secondary" className="w-full font-semibold">
-                        ← Back to Pending Tests
-                      </Button>
-                    </Link>
                   </div>
                 </Card>
               ) : (
                 /* Active Lab Form */
-                <Card className="p-6 bg-white border border-slate-200 shadow-sm">
-                  <h2 className="text-xl font-bold text-slate-900 font-['Outfit'] mb-4 flex items-center gap-2">
-                    <span>🧪</span> Enter Laboratory Purity Analysis
-                  </h2>
+                <Card padding>
+                  <h3 style={{ margin: '0 0 var(--space-4) 0', fontFamily: 'var(--font-heading)', fontSize: 'var(--text-base)', color: 'var(--text-primary)' }}>
+                    🧪 Laboratory Purity Analysis Form
+                  </h3>
                   <LabTestForm
                     onSubmit={handleSubmitTest}
                     loading={loading}
                     batchId={batchId}
+                    initialResult={batch?.status && ['PURE', 'UNDER_REVIEW', 'FAILED'].includes(batch.status) ? batch.status : null}
                   />
                 </Card>
               )}
             </div>
 
             {/* Side Column: Laboratory Standards Reference */}
-            <div className="lg:col-span-4 space-y-6">
-              <Card className="p-5 border border-blue-200/80 bg-gradient-to-br from-blue-50/50 to-white space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🔬</span>
-                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">FSSAI / KVIC Honey Standards</h3>
-                </div>
-                <ul className="text-xs text-slate-600 space-y-2 leading-relaxed">
-                  <li><strong>Moisture:</strong> Must not exceed 20.0% by mass.</li>
-                  <li><strong>Total Reducing Sugars:</strong> Minimum 65.0% by mass.</li>
-                  <li><strong>Sucrose:</strong> Maximum 5.0% by mass.</li>
-                  <li><strong>Hydroxymethylfurfural (HMF):</strong> Maximum 80 mg/kg.</li>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+              <div className="hc-lab-standards-box">
+                <h3 className="hc-lab-standards-title">
+                  <span>🔬</span> FSSAI Honey Purity Standards
+                </h3>
+                <ul className="hc-lab-standards-list">
+                  <li className="hc-lab-standards-item">
+                    <span>Moisture Content</span>
+                    <strong style={{ fontFamily: 'var(--font-mono)' }}>≤ 20.0%</strong>
+                  </li>
+                  <li className="hc-lab-standards-item">
+                    <span>Reducing Sugars</span>
+                    <strong style={{ fontFamily: 'var(--font-mono)' }}>≥ 65.0%</strong>
+                  </li>
+                  <li className="hc-lab-standards-item">
+                    <span>Sucrose By Mass</span>
+                    <strong style={{ fontFamily: 'var(--font-mono)' }}>≤ 5.0%</strong>
+                  </li>
+                  <li className="hc-lab-standards-item">
+                    <span>HMF (Hydroxymethylfurfural)</span>
+                    <strong style={{ fontFamily: 'var(--font-mono)' }}>≤ 80 mg/kg</strong>
+                  </li>
+                  <li className="hc-lab-standards-item">
+                    <span>C4 Sugar Ratio (NMR/Isotope)</span>
+                    <strong style={{ fontFamily: 'var(--font-mono)' }}>≤ 7.0%</strong>
+                  </li>
                 </ul>
-              </Card>
-
-              <Card className="p-5 border border-amber-200/80 bg-gradient-to-br from-amber-50/40 to-white space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🛡️</span>
-                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Blockchain Smart Contract</h3>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Upon submitting this test, the result and cryptographic purity hash will be immutably recorded on the ledger.
-                </p>
-              </Card>
+              </div>
             </div>
           </div>
         )}

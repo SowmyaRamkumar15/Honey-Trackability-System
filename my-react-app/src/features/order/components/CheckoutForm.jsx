@@ -1,4 +1,8 @@
 import React, { useState } from 'react'
+import Card from '../../../components/ui/Card'
+import Button from '../../../components/ui/Button'
+import Input from '../../../components/ui/Input'
+import '../styles/order.css'
 
 const CheckoutForm = ({ totalAmount, onSubmit, loading, error, initialAddress = null }) => {
   const [fulfillmentType, setFulfillmentType] = useState('DELIVERY')
@@ -27,202 +31,191 @@ const CheckoutForm = ({ totalAmount, onSubmit, loading, error, initialAddress = 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="checkout-form">
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
       {/* Fulfillment Type */}
-      <div className="card mb-6">
-        <h3 className="card__title">1. Fulfillment Method</h3>
-        <p className="card__subtitle mb-4">Choose how you wish to receive your authentic honey.</p>
-
-        <div className="fulfillment-options">
-          <label className={`fulfillment-option ${fulfillmentType === 'DELIVERY' ? 'active' : ''}`}>
+      <Card header={<h3>1. Fulfillment Method</h3>}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-3)' }}>
+          <label
+            style={{
+              padding: 'var(--space-4)',
+              borderRadius: 'var(--radius-lg)',
+              border: fulfillmentType === 'DELIVERY' ? '2px solid var(--primary)' : '1px solid var(--border)',
+              background: fulfillmentType === 'DELIVERY' ? 'var(--primary-soft)' : 'var(--surface)',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 'var(--space-3)',
+              cursor: 'pointer',
+              transition: 'all var(--transition-fast)',
+            }}
+          >
             <input
               type="radio"
               name="fulfillmentType"
               value="DELIVERY"
               checked={fulfillmentType === 'DELIVERY'}
               onChange={() => setFulfillmentType('DELIVERY')}
+              style={{ marginTop: '2px', accentColor: 'var(--primary)' }}
             />
-            <div className="fulfillment-option__content">
-              <strong>🚚 Standard Doorstep Delivery</strong>
-              <p className="text-secondary text-xs">Direct from beekeeper cluster to your home address</p>
+            <div>
+              <strong style={{ display: 'block', fontSize: 'var(--text-sm)', color: 'var(--text-primary)' }}>
+                🚚 Standard Doorstep Delivery
+              </strong>
+              <p style={{ margin: '2px 0 0', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                Direct from beekeeper cluster to your home address
+              </p>
             </div>
           </label>
 
-          <label className={`fulfillment-option ${fulfillmentType === 'LOCAL_PICKUP' ? 'active' : ''}`}>
+          <label
+            style={{
+              padding: 'var(--space-4)',
+              borderRadius: 'var(--radius-lg)',
+              border: fulfillmentType === 'LOCAL_PICKUP' ? '2px solid var(--primary)' : '1px solid var(--border)',
+              background: fulfillmentType === 'LOCAL_PICKUP' ? 'var(--primary-soft)' : 'var(--surface)',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 'var(--space-3)',
+              cursor: 'pointer',
+              transition: 'all var(--transition-fast)',
+            }}
+          >
             <input
               type="radio"
               name="fulfillmentType"
               value="LOCAL_PICKUP"
               checked={fulfillmentType === 'LOCAL_PICKUP'}
               onChange={() => setFulfillmentType('LOCAL_PICKUP')}
+              style={{ marginTop: '2px', accentColor: 'var(--primary)' }}
             />
-            <div className="fulfillment-option__content">
-              <strong>🏪 Local Apiary Pickup</strong>
-              <p className="text-secondary text-xs">Pick up directly from the beekeeper's registered farm/cluster</p>
+            <div>
+              <strong style={{ display: 'block', fontSize: 'var(--text-sm)', color: 'var(--text-primary)' }}>
+                🏪 Local Apiary Pickup
+              </strong>
+              <p style={{ margin: '2px 0 0', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                Pick up directly from the beekeeper's registered farm/cluster
+              </p>
             </div>
           </label>
         </div>
-      </div>
+      </Card>
 
       {/* Delivery Address (only for DELIVERY) */}
       {fulfillmentType === 'DELIVERY' && (
-        <div className="card mb-6">
-          <h3 className="card__title">2. Delivery Address</h3>
-          <p className="card__subtitle mb-4">Provide recipient details for shipment dispatch.</p>
+        <Card header={<h3>2. Delivery Address</h3>}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <Input
+              id="addr-name"
+              label="Recipient Full Name"
+              name="name"
+              required
+              placeholder="e.g. Priyan Sharma"
+              value={address.name}
+              onChange={handleAddressChange}
+            />
 
-          <div className="form-grid">
-            <div className="form-group form-group--full">
-              <label className="form-label" htmlFor="addr-name">
-                Recipient Full Name <span className="text-danger">*</span>
-              </label>
-              <input
-                id="addr-name"
-                name="name"
-                type="text"
-                className="form-input"
-                placeholder="e.g. Priyan Sharma"
-                value={address.name}
-                onChange={handleAddressChange}
-                required
-              />
-            </div>
+            <Input
+              id="addr-line1"
+              label="Street Address / Line 1"
+              name="line1"
+              required
+              placeholder="House / Flat No., Street Name"
+              value={address.line1}
+              onChange={handleAddressChange}
+            />
 
-            <div className="form-group form-group--full">
-              <label className="form-label" htmlFor="addr-line1">
-                Street Address / Line 1 <span className="text-danger">*</span>
-              </label>
-              <input
-                id="addr-line1"
-                name="line1"
-                type="text"
-                className="form-input"
-                placeholder="House / Flat No., Street Name"
-                value={address.line1}
-                onChange={handleAddressChange}
-                required
-              />
-            </div>
+            <Input
+              id="addr-line2"
+              label="Address Line 2 (Optional)"
+              name="line2"
+              placeholder="Landmark, Area, Colony"
+              value={address.line2}
+              onChange={handleAddressChange}
+            />
 
-            <div className="form-group form-group--full">
-              <label className="form-label" htmlFor="addr-line2">
-                Apartment / Landmark / Line 2
-              </label>
-              <input
-                id="addr-line2"
-                name="line2"
-                type="text"
-                className="form-input"
-                placeholder="Near landmark, locality"
-                value={address.line2}
-                onChange={handleAddressChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="addr-city">
-                City <span className="text-danger">*</span>
-              </label>
-              <input
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 'var(--space-3)' }}>
+              <Input
                 id="addr-city"
+                label="City"
                 name="city"
-                type="text"
-                className="form-input"
-                placeholder="City"
+                required
+                placeholder="e.g. Pune"
                 value={address.city}
                 onChange={handleAddressChange}
-                required
               />
-            </div>
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="addr-state">
-                State <span className="text-danger">*</span>
-              </label>
-              <input
+              <Input
                 id="addr-state"
+                label="State"
                 name="state"
-                type="text"
-                className="form-input"
-                placeholder="State"
+                required
+                placeholder="e.g. Maharashtra"
                 value={address.state}
                 onChange={handleAddressChange}
-                required
               />
-            </div>
 
-            <div className="form-group form-group--full">
-              <label className="form-label" htmlFor="addr-postalCode">
-                Postal PIN Code <span className="text-danger">*</span>
-              </label>
-              <input
+              <Input
                 id="addr-postalCode"
+                label="Postal Code"
                 name="postalCode"
-                type="text"
-                className="form-input"
-                placeholder="6-digit PIN code"
+                required
+                placeholder="e.g. 411001"
                 value={address.postalCode}
                 onChange={handleAddressChange}
-                required
               />
             </div>
           </div>
-        </div>
+        </Card>
       )}
 
-      {/* Payment Section */}
-      <div className="card mb-6">
-        <h3 className="card__title">3. Payment Method</h3>
-        <p className="card__subtitle mb-4">Secure payment processing abstraction.</p>
-
-        <div className="alert alert--info mb-4">
-          <span className="alert__icon">ℹ️</span>
-          <div className="alert__body">
-            <h4 className="alert__title">Sandbox Payment Gateway</h4>
-            <p className="alert__message">
-              This is a secure sandbox payment gateway environment. Transactions are simulated for development and evaluation.
-            </p>
-          </div>
-        </div>
-
-        <div className="payment-options">
-          <label className={`payment-option ${paymentMode === 'mock' ? 'active' : ''}`}>
-            <input
-              type="radio"
-              name="paymentMode"
-              value="mock"
-              checked={paymentMode === 'mock'}
-              onChange={() => setPaymentMode('mock')}
-            />
-            <div className="payment-option__content">
-              <strong>💳 Simulated UPI / Card Payment (Success)</strong>
-              <p className="text-secondary text-xs">Simulates a successful 200 OK payment transaction</p>
+      {/* Payment Selection */}
+      <Card header={<h3>3. Payment Mode</h3>}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          <label
+            style={{
+              padding: 'var(--space-4)',
+              borderRadius: 'var(--radius-lg)',
+              border: '1px solid var(--primary-light)',
+              background: 'var(--primary-soft)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+              <input
+                type="radio"
+                name="paymentMode"
+                value="mock"
+                checked={paymentMode === 'mock'}
+                onChange={() => setPaymentMode('mock')}
+                style={{ accentColor: 'var(--primary)' }}
+              />
+              <div>
+                <strong style={{ fontSize: 'var(--text-sm)', color: 'var(--text-primary)', display: 'block' }}>
+                  ⚡ Instant Mock Payment (UPI / Cards / NetBanking)
+                </strong>
+                <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                  Auto-approves for instant simulated testing
+                </span>
+              </div>
             </div>
-          </label>
-
-          <label className={`payment-option ${paymentMode === 'fail' ? 'active' : ''}`}>
-            <input
-              type="radio"
-              name="paymentMode"
-              value="fail"
-              checked={paymentMode === 'fail'}
-              onChange={() => setPaymentMode('fail')}
-            />
-            <div className="payment-option__content">
-              <strong>⚠️ Test Payment Decline (Failure Simulation)</strong>
-              <p className="text-secondary text-xs">Simulates bank decline — tests transactional stock rollback</p>
-            </div>
+            <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--success)', background: 'rgba(22, 163, 74, 0.1)', padding: '2px 8px', borderRadius: 'var(--radius-sm)' }}>
+              Instant
+            </span>
           </label>
         </div>
-      </div>
+      </Card>
 
-      {/* Submit Button */}
-      <button
+      <Button
         type="submit"
-        className="btn btn--primary btn--full btn--lg"
+        variant="primary"
+        size="lg"
         disabled={loading}
+        style={{ width: '100%' }}
       >
-        {loading ? 'Processing Transaction...' : `Confirm & Pay ₹${Number(totalAmount).toFixed(2)}`}
-      </button>
+        {loading ? 'Processing Order...' : `Pay ₹${Number(totalAmount).toFixed(2)} & Confirm Order`}
+      </Button>
     </form>
   )
 }

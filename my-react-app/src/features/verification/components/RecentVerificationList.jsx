@@ -3,24 +3,24 @@ import React from 'react'
 export const RecentVerificationList = ({ events }) => {
   if (!events || events.length === 0) {
     return (
-      <p className="text-xs text-slate-500 italic">No prior verification scans recorded.</p>
+      <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontStyle: 'italic', margin: 0 }}>No prior verification scans recorded.</p>
     )
   }
 
   return (
-    <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', maxHeight: '192px', overflowY: 'auto', paddingRight: '4px' }}>
       {events.map((ev, idx) => (
         <div
           key={idx}
-          className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs shadow-sm"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-xl)', backgroundColor: 'var(--bg-muted)', border: '1px solid var(--border)', fontSize: 'var(--text-xs)', boxShadow: 'var(--shadow-xs)' }}
         >
-          <div className="flex items-center gap-2">
-            <span className="text-xs">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <span style={{ fontSize: 'var(--text-xs)' }}>
               {ev.result === 'VERIFIED' ? '✅' : ev.result === 'UNDER_REVIEW' ? '⚠️' : '❌'}
             </span>
-            <span className="text-slate-800 font-medium font-['Outfit']">{ev.result} Scan</span>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 'var(--font-semibold)' }}>{ev.result} Scan</span>
           </div>
-          <span className="text-[11px] text-slate-500 font-mono">
+          <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             {ev.scannedAt
               ? new Date(ev.scannedAt).toLocaleDateString('en-IN', {
                 day: '2-digit',

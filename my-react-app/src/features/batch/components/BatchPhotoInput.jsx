@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import Button from '../../../components/ui/Button'
+import '../styles/batch.css'
 
 export const BatchPhotoInput = ({ file, onFileChange, currentPhotoUrl = null }) => {
   const inputRef = useRef(null)
@@ -34,9 +35,9 @@ export const BatchPhotoInput = ({ file, onFileChange, currentPhotoUrl = null }) 
   const activeDisplay = previewUrl || currentPhotoUrl
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-slate-700">
-        Batch Harvest Photo <span className="text-slate-500 text-xs">(Optional)</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+      <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)' }}>
+        Batch Harvest Photo <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>(Optional)</span>
       </label>
 
       <input
@@ -45,22 +46,22 @@ export const BatchPhotoInput = ({ file, onFileChange, currentPhotoUrl = null }) 
         accept="image/jpeg,image/png,image/webp"
         capture="environment"
         onChange={handleSelect}
-        className="hidden"
+        style={{ display: 'none' }}
         id="batch-photo-input"
       />
 
       {activeDisplay ? (
-        <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 p-2 flex items-center gap-4">
+        <div className="hc-photo-preview-box">
           <img
             src={activeDisplay}
             alt="Batch harvest preview"
-            className="w-24 h-24 object-cover rounded-xl border border-slate-200"
+            className="hc-photo-preview-img"
           />
-          <div className="space-y-2">
-            <p className="text-slate-800 text-xs font-semibold">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ color: 'var(--text-primary)', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-semibold)', margin: 0 }}>
               {file ? file.name : 'Current Harvest Photo'}
             </p>
-            <div className="flex items-center gap-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
               <Button
                 type="button"
                 size="sm"
@@ -69,13 +70,14 @@ export const BatchPhotoInput = ({ file, onFileChange, currentPhotoUrl = null }) 
               >
                 🔄 Retake
               </Button>
-              <button
+              <Button
                 type="button"
+                size="sm"
+                variant="ghost"
                 onClick={handleRemove}
-                className="text-xs text-slate-600 hover:text-slate-900 py-1 px-2.5 rounded-lg border border-slate-300 hover:bg-slate-100 transition-colors"
               >
                 Remove
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -83,11 +85,11 @@ export const BatchPhotoInput = ({ file, onFileChange, currentPhotoUrl = null }) 
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="w-full p-6 rounded-2xl border-2 border-dashed border-slate-300 hover:border-blue-500 bg-slate-50 hover:bg-blue-50/50 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer group"
+          className="hc-photo-dropzone"
         >
-          <span className="text-3xl group-hover:scale-110 transition-transform">📷</span>
-          <span className="text-slate-800 text-sm font-semibold">Add Batch Photo</span>
-          <span className="text-xs text-slate-500">
+          <span style={{ fontSize: '2rem' }}>📷</span>
+          <span style={{ color: 'var(--text-primary)', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-semibold)' }}>Add Batch Photo</span>
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
             Take photo with camera or choose from gallery (Max 5MB)
           </span>
         </button>

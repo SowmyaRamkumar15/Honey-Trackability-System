@@ -14,6 +14,7 @@ import LanguageSelector from '../../../components/common/LanguageSelector'
 import VoiceButton from '../../../components/common/VoiceButton'
 import { useVerification } from '../hooks/useVerification'
 import { useLanguage } from '../../../i18n/LanguageContext'
+import '../styles/verification.css'
 
 export const PublicVerificationPage = () => {
   const { batchId } = useParams()
@@ -22,19 +23,19 @@ export const PublicVerificationPage = () => {
   const [activeCertificateUrl, setActiveCertificateUrl] = useState(null)
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between">
+    <div style={{ minHeight: '100vh', background: 'var(--background)', color: 'var(--text-primary)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-white border-b border-slate-200 py-3.5 px-4 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl">🍯</span>
-            <span className="font-bold text-lg text-blue-600 font-['Outfit'] tracking-tight">
+      <header style={{ position: 'sticky', top: 0, zIndex: 30, background: 'var(--surface)', borderBottom: '1px solid var(--border)', padding: 'var(--space-3) var(--space-4)', boxShadow: 'var(--shadow-xs)' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', textDecoration: 'none' }}>
+            <span style={{ fontSize: '1.5rem' }}>🍯</span>
+            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 'var(--text-lg)', color: 'var(--primary-dark)' }}>
               HoneyChain
             </span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
             <LanguageSelector />
-            <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-bold hidden sm:inline-block">
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: 'var(--radius-full)', background: 'var(--primary-soft)', border: '1px solid var(--primary-light)', color: 'var(--primary-dark)' }}>
               ● PUBLIC SCAN
             </span>
           </div>
@@ -42,41 +43,42 @@ export const PublicVerificationPage = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 flex-1">
+      <main style={{ maxWidth: '1100px', width: '100%', margin: '0 auto', padding: 'var(--space-6) var(--space-4)', flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
         {loading ? (
-          <div className="py-24 text-center space-y-4">
-            <LoadingSpinner text={t('loading.verifying', 'Verifying honey batch cryptography & laboratory records on HoneyChain...')} />
-            <p className="text-xs text-[#64748B]">Reconstructing canonical batch proof...</p>
+          <div style={{ padding: 'var(--space-10) 0', textAlign: 'center' }}>
+            <LoadingSpinner message={t('loading.verifying', 'Verifying honey batch cryptography & laboratory records on HoneyChain...')} />
           </div>
         ) : error ? (
-          <Card className="text-center py-16 space-y-4 border border-[#E2E8F0] bg-white max-w-xl mx-auto">
-            <div className="text-5xl">⚠️</div>
-            <h2 className="text-xl font-bold text-[#1E293B] font-['Inter']">{t('errors.generic', 'Verification Service Unavailable')}</h2>
-            <p className="text-xs text-[#64748B] max-w-sm mx-auto">{error}</p>
-            <Button variant="primary" size="sm" onClick={refetch} className="mt-2">
+          <Card style={{ maxWidth: '540px', margin: 'var(--space-8) auto', textAlign: 'center' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: 'var(--space-2)' }}>⚠️</div>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--text-lg)', margin: 0 }}>{t('errors.generic', 'Verification Service Unavailable')}</h2>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', margin: 'var(--space-2) 0' }}>{error}</p>
+            <Button variant="primary" size="sm" onClick={refetch}>
               ↻ {t('common.retry', 'Try Again')}
             </Button>
           </Card>
         ) : !verification ? (
-          <Card className="text-center py-16 space-y-4 bg-white border border-[#E2E8F0] max-w-xl mx-auto">
-            <div className="text-5xl">🔍</div>
-            <h2 className="text-xl font-bold text-[#1E293B] font-['Inter']">{t('errors.batchNotFound', 'Batch Not Found')}</h2>
-            <p className="text-xs text-[#64748B]">No record found for batch ID {batchId}.</p>
+          <Card style={{ maxWidth: '540px', margin: 'var(--space-8) auto', textAlign: 'center' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: 'var(--space-2)' }}>🔍</div>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--text-lg)', margin: 0 }}>{t('errors.batchNotFound', 'Batch Not Found')}</h2>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', margin: 'var(--space-2) 0' }}>No record found for batch ID {batchId}.</p>
           </Card>
         ) : (
           <>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-xs font-semibold text-[#D97706]">{t('verification.pageTitle', 'Public Honey Origin & Purity Verification')}</span>
-              <VoiceButton translationKey="verification.pageTitle" size="xs" />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--primary-dark)' }}>
+                {t('verification.pageTitle', 'Public Honey Origin & Purity Verification')}
+              </span>
+              <VoiceButton translationKey="verification.pageTitle" size="sm" />
             </div>
 
             {/* Header & Main Trust Status */}
             <VerificationHeader verification={verification} batchId={batchId} />
 
             {/* Responsive 2-Column Grid on Desktop */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="hc-verify-grid">
               {/* Left Column: Origin, Purity Analysis, Label */}
-              <div className="lg:col-span-7 space-y-6">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
                 {/* Beekeeper & Origin Info */}
                 <BeekeeperCard
                   beekeeper={verification.beekeeper}
@@ -94,17 +96,17 @@ export const PublicVerificationPage = () => {
                 />
 
                 {/* Printable Physical Honey Jar Authenticity Label */}
-                <Card className="print-hide p-6 border-[#E2E8F0] bg-white space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <Card className="print-hide">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                     <div>
-                      <h3 className="text-sm font-bold text-[#1E293B] font-['Outfit'] flex items-center gap-2">
-                        <span>🏷️</span> Official Physical Jar Authenticity Label
+                      <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 'var(--text-sm)', fontWeight: 700 }}>
+                        🏷️ Official Physical Jar Authenticity Label
                       </h3>
-                      <p className="text-xs text-[#64748B] mt-0.5">
+                      <p style={{ margin: '2px 0 0', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
                         Print-ready tamper-proof label for physical honey containers and retail packaging.
                       </p>
                     </div>
-                    <Button variant="secondary" size="sm" onClick={() => window.print()} className="shrink-0">
+                    <Button variant="secondary" size="sm" onClick={() => window.print()}>
                       🖨️ Print Label
                     </Button>
                   </div>
@@ -112,7 +114,7 @@ export const PublicVerificationPage = () => {
               </div>
 
               {/* Right Column: Blockchain, Timeline, Anti-Counterfeit */}
-              <div className="lg:col-span-5 space-y-6">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
                 {/* Blockchain Proof */}
                 <BlockchainCard blockchain={verification.blockchain} />
 
@@ -128,23 +130,23 @@ export const PublicVerificationPage = () => {
             </div>
 
             {/* Dedicated Print Only Label Node */}
-            <div className="hidden printable-qr-label">
-              <div className="text-xl font-bold font-['Outfit'] text-[#2563EB]">🍯 HoneyTrace</div>
-              <div className="text-[10px] text-[#64748B] uppercase tracking-wider font-bold mt-1">
+            <div className="printable-qr-label" style={{ display: 'none' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#D97706' }}>🍯 HoneyChain</div>
+              <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>
                 National Honey Traceability Protocol
               </div>
-              <div className="my-3 p-2 border border-[#E2E8F0] inline-block rounded">
-                <div className="text-3xl">📱</div>
-                <div className="text-[10px] font-mono font-bold mt-1">Scan to Verify Authenticity</div>
+              <div style={{ margin: '8px 0', padding: '6px', border: '1px solid #e2e8f0', display: 'inline-block', borderRadius: '4px' }}>
+                <div style={{ fontSize: '24px' }}>📱</div>
+                <div style={{ fontSize: '10px', fontFamily: 'monospace', fontWeight: 700 }}>Scan to Verify Authenticity</div>
               </div>
-              <div className="text-sm font-mono font-black text-[#1E293B]">{batchId}</div>
-              <div className="text-xs font-bold text-[#15803D] mt-1">
+              <div style={{ fontFamily: 'monospace', fontWeight: 800 }}>{batchId}</div>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: '#16a34a', marginTop: '4px' }}>
                 ✓ Certified Pure ({verification?.purity?.score || 98}%)
               </div>
-              <div className="text-[11px] text-[#64748B] mt-2">
-                Beekeeper: <strong className="text-[#1E293B]">{verification?.beekeeper?.fullName || 'Certified Apiary'}</strong>
+              <div style={{ fontSize: '11px', color: '#64748b', marginTop: '6px' }}>
+                Beekeeper: <strong>{verification?.beekeeper?.fullName || 'Certified Apiary'}</strong>
               </div>
-              <div className="text-[10px] text-[#64748B]">
+              <div style={{ fontSize: '10px', color: '#64748b' }}>
                 Origin: {verification?.beekeeper?.village || 'India'}
               </div>
             </div>
@@ -161,11 +163,11 @@ export const PublicVerificationPage = () => {
       </main>
 
       {/* Trust Footer */}
-      <footer className="border-t border-[#E2E8F0] bg-white py-6 px-4 text-center text-xs text-[#64748B] space-y-1">
-        <p className="text-[#64748B]">
-          Powered by <strong className="text-[#1E293B] font-['Inter']">HoneyChain Traceability Protocol</strong>
+      <footer style={{ borderTop: '1px solid var(--border)', background: 'var(--surface)', padding: 'var(--space-5) var(--space-4)', textAlign: 'center', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+        <p style={{ margin: 0 }}>
+          Powered by <strong style={{ color: 'var(--text-primary)' }}>HoneyChain Traceability Protocol</strong>
         </p>
-        <p className="text-[11px]">Direct-from-source honey verification with tamper-proof blockchain integrity.</p>
+        <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>Direct-from-source honey verification with tamper-proof blockchain integrity.</p>
       </footer>
     </div>
   )

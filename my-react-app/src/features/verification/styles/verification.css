@@ -1,0 +1,205 @@
+/* ── HoneyChain Public Verification Module Styles ───────────────── */
+
+.hc-verify-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hc-verify-hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.hc-verify-hero--genuine {
+  background: var(--primary-soft);
+  border-color: var(--primary-light);
+}
+
+.hc-verify-hero--failed {
+  background: rgba(220, 38, 38, 0.05);
+  border-color: rgba(220, 38, 38, 0.2);
+}
+
+.hc-verify-hero__icon {
+  font-size: 3.5rem;
+  line-height: 1;
+  margin-bottom: var(--space-2);
+}
+
+.hc-verify-hero__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.hc-verify-hero__subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  max-width: 480px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.hc-verify-batch-pill {
+  margin-top: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+  font-size: var(--text-xs);
+}
+
+.hc-verify-batch-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--primary-dark);
+  font-size: var(--text-sm);
+}
+
+.hc-verify-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .hc-verify-grid {
+    grid-template-columns: 7fr 5fr;
+  }
+}
+
+.hc-verify-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--background);
+  border: 1px solid var(--border);
+}
+
+.hc-verify-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.hc-verify-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+}
+
+.hc-verify-meta-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--background);
+  border: 1px solid var(--border);
+}
+
+.hc-verify-meta-item label {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 11px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.hc-verify-meta-item val {
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+/* Timeline */
+.hc-verify-timeline {
+  position: relative;
+  padding-left: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.hc-verify-timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border);
+}
+
+.hc-verify-timeline-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.hc-verify-timeline-dot {
+  position: absolute;
+  left: -24px;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--primary-dark);
+}
+
+.hc-verify-timeline-content {
+  flex: 1;
+  background: var(--background);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  font-size: var(--text-xs);
+}
+
+/* Print Only Label */
+@media print {
+  .print-hide,
+  header,
+  footer {
+    display: none !important;
+  }
+  .printable-qr-label {
+    display: block !important;
+  }
+}

@@ -7,6 +7,7 @@ import Button from '../../../components/ui/Button'
 import Alert from '../../../components/feedback/Alert'
 import LanguageSelector from '../../../components/common/LanguageSelector'
 import { ROLES, ROLE_ROUTES } from '../../../constants/roles'
+import '../styles/auth.css'
 
 export const OtpLoginPage = () => {
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -60,45 +61,54 @@ export const OtpLoginPage = () => {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-page__orb auth-page__orb--tl" />
-      <div className="auth-page__orb auth-page__orb--br" />
-
+    <div className="hc-auth-page">
       {/* Language Switcher */}
-      <div className="absolute top-4 right-6 z-50">
+      <div className="hc-auth-page__lang">
         <LanguageSelector />
       </div>
 
-      <div className="auth-card">
+      <div className="hc-auth-card">
         {/* Header */}
-        <div className="auth-header">
-          <Link to="/" className="inline-flex flex-col items-center gap-2">
-            <div className="auth-logo-icon">🍯</div>
-            <span className="text-gradient font-black text-xl font-brand">{t('common.appName', 'HoneyChain')}</span>
+        <div className="hc-auth-header">
+          <Link to="/" className="hc-auth-brand">
+            <div className="hc-auth-brand-logo">
+              🍯
+            </div>
+            <span className="hc-auth-brand-name">
+              HoneyChain
+            </span>
           </Link>
-          <h1 className="auth-header__title">{t('auth.otpLoginTitle', 'OTP Login')}</h1>
-          <p className="auth-header__sub">{t('auth.otpLoginSub', 'Instant passwordless access via SMS')}</p>
+          <h1 className="hc-auth-title">
+            {t('auth.otpLoginTitle', 'OTP Login')}
+          </h1>
+          <p className="hc-auth-subtitle">
+            {t('auth.otpLoginSub', 'Instant passwordless access via SMS')}
+          </p>
         </div>
 
-        {error && <Alert type="error" message={error} onClose={clearError} className="mb-4" />}
+        {error && <Alert type="error" message={error} onClose={clearError} style={{ marginBottom: '16px' }} />}
 
         {!otpSent ? (
           /* Step 1: Phone + Role */
-          <form id="send-otp-form" onSubmit={handleSendOtp} className="flex-col gap-4">
+          <form id="send-otp-form" onSubmit={handleSendOtp} className="hc-auth-form">
             <div>
-              <label className="form-label mb-2">{t('auth.selectRole', 'Select Your Role')}</label>
-              <div className="role-grid">
+              <label style={{ display: 'block', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-semibold)', marginBottom: '8px', color: 'var(--text-primary)' }}>
+                {t('auth.selectRole', 'Select Your Role')}
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 <button
                   type="button"
                   onClick={() => setSelectedRole(ROLES.BEEKEEPER)}
-                  className={`role-btn${selectedRole === ROLES.BEEKEEPER ? ' role-btn--active' : ''}`}
+                  className={`hc-btn ${selectedRole === ROLES.BEEKEEPER ? 'hc-btn--primary' : 'hc-btn--secondary'}`}
+                  style={{ width: '100%', padding: '10px' }}
                 >
                   🌿 {t('auth.beekeeperRole', 'Beekeeper')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedRole(ROLES.CUSTOMER)}
-                  className={`role-btn${selectedRole === ROLES.CUSTOMER ? ' role-btn--active' : ''}`}
+                  className={`hc-btn ${selectedRole === ROLES.CUSTOMER ? 'hc-btn--primary' : 'hc-btn--secondary'}`}
+                  style={{ width: '100%', padding: '10px' }}
                 >
                   🛒 {t('auth.customerRole', 'Customer')}
                 </button>
@@ -122,16 +132,16 @@ export const OtpLoginPage = () => {
               type="submit"
               variant="primary"
               loading={loading}
-              className="btn--full py-3 mt-2"
+              style={{ width: '100%', marginTop: '8px' }}
             >
               {t('auth.sendOtp', 'Send OTP →')}
             </Button>
           </form>
         ) : (
           /* Step 2: Verify OTP */
-          <form id="verify-otp-form" onSubmit={handleVerifyOtp} className="flex-col gap-4">
-            <div className="otp-sent-banner">
-              {t('auth.otpSentBanner', { phone: phoneNumber, code: '123456' })}
+          <form id="verify-otp-form" onSubmit={handleVerifyOtp} className="hc-auth-form">
+            <div style={{ padding: '12px', backgroundColor: 'var(--success-soft)', border: '1px solid var(--success-border)', color: 'var(--success)', borderRadius: 'var(--radius-xl)', fontSize: 'var(--text-sm)', textAlign: 'center' }}>
+              {t('auth.otpSentBanner', { phone: phoneNumber, code: '123456' }) || `OTP sent to ${phoneNumber} (Demo code: 123456)`}
             </div>
 
             <Input
@@ -142,8 +152,9 @@ export const OtpLoginPage = () => {
                 setOtp(e.target.value)
                 if (error) clearError()
               }}
-              placeholder={t('auth.otpPlaceholder', '123456')}
+              placeholder="123456"
               maxLength={6}
+              style={{ textAlign: 'center', letterSpacing: '0.2em', fontSize: '1.25rem', fontFamily: 'var(--font-mono)' }}
               required
             />
 
@@ -152,7 +163,7 @@ export const OtpLoginPage = () => {
               type="submit"
               variant="primary"
               loading={loading}
-              className="btn--full py-3"
+              style={{ width: '100%' }}
             >
               {t('auth.verifyOtp', 'Verify & Login')}
             </Button>
@@ -160,7 +171,7 @@ export const OtpLoginPage = () => {
             <button
               type="button"
               onClick={resetOtpState}
-              className="auth-link-btn"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'center', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-semibold)', color: 'var(--text-secondary)', padding: '4px' }}
             >
               {t('auth.changePhone', '← Change Phone Number')}
             </button>
@@ -168,35 +179,35 @@ export const OtpLoginPage = () => {
         )}
 
         {/* Switch to Password */}
-        <div className="auth-divider">
-          <div className="auth-divider__line" />
-          <span className="auth-divider__text">{t('common.or', 'OR')}</span>
-          <div className="auth-divider__line" />
+        <div className="hc-auth-footer">
+          <Link
+            to="/login"
+            id="switch-to-password-btn"
+            style={{ display: 'block', padding: '10px', backgroundColor: 'var(--bg-muted)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', color: 'var(--text-primary)' }}
+          >
+            {t('auth.switchToPassword', '🛡️ Admin / Lab? Login with Password')}
+          </Link>
         </div>
 
-        <Link to="/login" id="switch-to-password-btn">
-          <button className="auth-switch-btn">
-            {t('auth.switchToPassword', '🛡️ Admin / Lab? Login with Password')}
-          </button>
-        </Link>
-
         {/* Quick Fills */}
-        <div className="quick-fills">
-          <p className="quick-fills__label">{t('auth.quickFill', 'Role Sign-in Presets:')}</p>
-          <div className="quick-fills__grid">
+        <div className="hc-auth-quick-fill">
+          <div className="hc-auth-quick-fill-title">
+            <span>{t('auth.quickFill', 'Demo Quick-Access Presets:')}</span>
+          </div>
+          <div className="hc-auth-quick-fill-buttons">
             <button
               type="button"
               onClick={handleQuickBeekeeper}
-              className="quick-fill-chip"
+              className="hc-auth-quick-fill-btn"
             >
-              🌿 {t('auth.beekeeperRole', 'Beekeeper')} (9876543213)
+              🌿 {t('auth.beekeeperRole', 'Beekeeper')}
             </button>
             <button
               type="button"
               onClick={handleQuickCustomer}
-              className="quick-fill-chip"
+              className="hc-auth-quick-fill-btn"
             >
-              🛒 {t('auth.customerRole', 'Customer')} (9876543214)
+              🛒 {t('auth.customerRole', 'Customer')}
             </button>
           </div>
         </div>

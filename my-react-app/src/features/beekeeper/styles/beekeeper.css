@@ -1,0 +1,143 @@
+/* ── HoneyChain Beekeeper Module Styles ───────────────────────────── */
+.hc-bk-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.hc-bk-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .hc-bk-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hc-bk-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.hc-bk-quick-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .hc-bk-quick-actions {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.hc-bk-action-card {
+  padding: var(--space-6);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  text-decoration: none;
+  transition: all var(--transition-normal);
+}
+
+.hc-bk-action-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.hc-bk-action-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-xl);
+  background-color: var(--primary-soft);
+  border: 1px solid var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.hc-bk-action-title {
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+}
+
+.hc-bk-action-desc {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* Sections */
+.hc-bk-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.hc-bk-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hc-bk-section-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+}
+
+/* Forms in Beekeeper (Onboarding, Profile) */
+.hc-bk-form-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--border);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  max-width: 768px;
+  margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+  .hc-bk-form-card {
+    padding: var(--space-8);
+  }
+}
+
+.hc-bk-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .hc-bk-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.hc-bk-form-full {
+  grid-column: 1 / -1;
+}
+
+.hc-bk-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-light);
+}

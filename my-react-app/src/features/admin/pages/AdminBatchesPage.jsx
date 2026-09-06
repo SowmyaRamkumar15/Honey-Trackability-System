@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import AdminLayout from '../../../layouts/AdminLayout'
-import AdminSidebar from '../components/AdminSidebar'
 import BatchTable from '../components/BatchTable'
+import Button from '../../../components/ui/Button'
+import PageHeader from '../../../components/layout/PageHeader'
 import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
 import Alert from '../../../components/feedback/Alert'
 import adminApi from '../api/adminApi'
 import { useLanguage } from '../../../i18n/LanguageContext'
+import '../styles/admin.css'
 
 export const AdminBatchesPage = () => {
   const { t } = useLanguage()
@@ -49,96 +51,103 @@ export const AdminBatchesPage = () => {
 
   return (
     <AdminLayout>
-      <div className="container section">
-        <div className="dashboard__header mb-6">
-          <div>
-            <h1 className="dashboard__title">🍯 {t('admin.batchMonitoring', 'Honey Batch Monitoring')}</h1>
-            <p className="dashboard__subtitle">{t('admin.batchMonitoringSub', 'Monitor lab testing, blockchain certification, QR generation, and anti-counterfeit logs')}</p>
-          </div>
-        </div>
+      <div className="hc-admin-page">
+        <PageHeader
+          title={t('admin.batchMonitoring', 'Honey Batch Monitoring')}
+          subtitle={t('admin.batchMonitoringSub', 'Monitor lab testing, blockchain certification, QR generation, and anti-counterfeit logs')}
+        />
 
-        <AdminSidebar />
-
-        {/* Filter Card */}
-        <div className="card mb-6">
-          <form onSubmit={handleSearch} className="flex flex-wrap gap-4 items-center">
-            <div className="flex-1 min-w-0 sm:min-w-60 w-full sm:w-auto">
+        {/* Filter Toolbar */}
+        <div className="hc-admin-filter-bar">
+          <form onSubmit={handleSearch} className="hc-admin-filter-group">
+            <div className="hc-admin-search-wrap">
+              <span className="hc-admin-search-icon">🔍</span>
               <input
                 type="text"
-                className="form-input"
+                className="hc-admin-input"
                 placeholder={t('admin.searchBatchPlaceholder', 'Search by Batch ID (e.g. HC-2026-AB12CD34)...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
-            <div className="w-full sm:w-52">
-              <select
-                className="form-input"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-              >
-                <option value="">{t('admin.allStatuses', 'All Statuses')}</option>
-                <option value="PURE">{t('lab.pure', 'PURE')}</option>
-                <option value="UNDER_REVIEW">{t('lab.underReview', 'UNDER_REVIEW')}</option>
-                <option value="FAILED">{t('lab.failed', 'FAILED')}</option>
-                <option value="SENT_FOR_TESTING">{t('batch.statusSentForTesting', 'SENT_FOR_TESTING')}</option>
-                <option value="QR_GENERATED">{t('batch.statusQrGenerated', 'QR_GENERATED')}</option>
-                <option value="IN_STOCK">IN_STOCK</option>
-                <option value="SOLD">SOLD</option>
-              </select>
-            </div>
+            <select
+              className="hc-admin-select"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="">{t('admin.allStatuses', 'All Statuses')}</option>
+              <option value="PURE">{t('lab.pure', 'PURE')}</option>
+              <option value="UNDER_REVIEW">{t('lab.underReview', 'UNDER_REVIEW')}</option>
+              <option value="FAILED">{t('lab.failed', 'FAILED')}</option>
+              <option value="SENT_FOR_TESTING">{t('batch.statusSentForTesting', 'SENT_FOR_TESTING')}</option>
+              <option value="QR_GENERATED">{t('batch.statusQrGenerated', 'QR_GENERATED')}</option>
+              <option value="IN_STOCK">IN_STOCK</option>
+              <option value="SOLD">SOLD</option>
+            </select>
 
-            <button type="submit" className="btn btn--primary btn--sm w-full sm:w-auto">
-              {t('common.submit', 'Search')}
-            </button>
+            <Button type="submit" variant="primary" size="sm">
+              {t('common.submit', 'Filter')}
+            </Button>
+
             {(searchQuery || statusFilter) && (
-              <button
+              <Button
                 type="button"
-                className="btn btn--ghost btn--sm w-full sm:w-auto"
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                   setSearchQuery('')
                   setStatusFilter('')
+                  loadBatches(0)
                 }}
               >
-                {t('common.cancel', 'Reset')}
-              </button>
+                ✕ Reset
+              </Button>
             )}
           </form>
         </div>
 
-        {error && <Alert type="danger" message={error} />}
+        {error && <Alert type="danger" title="Error">{error}</Alert>}
 
         {loading ? (
-          <div className="py-12 text-center">
-            <LoadingSpinner text={t('loading.loading', 'Loading batches...')} />
-          </div>
+          <LoadingSpinner message={t('loading.batches', 'Loading honey batches...')} />
         ) : (
-          <>
+          <div className="hc-admin-table-container">
+            <div className="hc-admin-table-header">
+              <h3 className="hc-admin-table-title">
+                🍯 Tracked Honey Batches
+              </h3>
+              <span className="hc-admin-table-count">
+                {batches.length} batches logged
+              </span>
+            </div>
+
             <BatchTable batches={batches} />
 
             {totalPages > 1 && (
-              <div className="flex gap-2 justify-center mt-6">
-                <button
-                  className="btn btn--ghost btn--sm"
+              <div className="hc-admin-pagination">
+                <Button
+                  variant="secondary"
+                  size="sm"
                   disabled={page === 0}
                   onClick={() => loadBatches(page - 1)}
                 >
-                  ← {t('common.back', 'Prev')}
-                </button>
-                <span className="text-secondary self-center text-sm">
-                  {t('common.page', 'Page')} {page + 1} / {totalPages}
+                  ← {t('common.prev', 'Previous')}
+                </Button>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                  Page {page + 1} of {totalPages}
                 </span>
-                <button
-                  className="btn btn--ghost btn--sm"
+                <Button
+                  variant="secondary"
+                  size="sm"
                   disabled={page >= totalPages - 1}
                   onClick={() => loadBatches(page + 1)}
                 >
                   {t('common.next', 'Next')} →
-                </button>
+                </Button>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </AdminLayout>

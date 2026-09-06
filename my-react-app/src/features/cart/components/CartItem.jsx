@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import '../styles/cart.css'
 
 const CartItem = ({ item, onUpdateQuantity, onRemove, disabled }) => {
   if (!item) return null
@@ -19,64 +20,78 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, disabled }) => {
   }
 
   return (
-    <div className="cart-item-row">
-      <div className="cart-item__media">
+    <div className="hc-cart-item">
+      <div className="hc-cart-item__info">
         <img
           src={imageUrl || defaultImg}
           alt={productName}
-          className="cart-item__img"
+          className="hc-cart-item__img"
           onError={(e) => {
             e.target.src = defaultImg
           }}
         />
-      </div>
-
-      <div className="cart-item__details">
-        <h4 className="cart-item__title">
-          <Link to={`/marketplace/product/${productId}`}>{productName}</Link>
-        </h4>
-        <div className="cart-item__unit-price text-secondary text-sm">
-          ₹{Number(unitPrice).toFixed(2)} per kg
+        <div style={{ minWidth: 0 }}>
+          <h4 className="hc-cart-item__title">
+            <Link to={`/marketplace/product/${productId}`}>{productName}</Link>
+          </h4>
+          <p className="hc-cart-item__price">
+            ₹{Number(unitPrice).toFixed(2)} / kg
+          </p>
         </div>
       </div>
 
-      <div className="cart-item__quantity">
-        <div className="quantity-selector quantity-selector--sm">
+      <div className="hc-cart-item__ctrls">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="hc-prod-qty-ctrl">
+            <button
+              type="button"
+              className="hc-prod-qty-btn"
+              style={{ width: '28px', height: '28px', fontSize: 'var(--text-sm)' }}
+              onClick={() => handleStep(-0.5)}
+              disabled={disabled || Number(quantityKg) <= 0.5}
+            >
+              −
+            </button>
+            <span style={{ minWidth: '60px', textAlign: 'center', fontSize: 'var(--text-xs)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+              {Number(quantityKg).toFixed(1)} kg
+            </span>
+            <button
+              type="button"
+              className="hc-prod-qty-btn"
+              style={{ width: '28px', height: '28px', fontSize: 'var(--text-sm)' }}
+              onClick={() => handleStep(0.5)}
+              disabled={disabled || Number(quantityKg) >= maxStock}
+            >
+              +
+            </button>
+          </div>
+          <span style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>Max {maxStock} kg</span>
+        </div>
+
+        <div className="hc-cart-item__total">
+          ₹{Number(subtotal).toFixed(2)}
+        </div>
+
+        <div>
           <button
             type="button"
-            className="quantity-selector__btn"
-            onClick={() => handleStep(-0.5)}
-            disabled={disabled || Number(quantityKg) <= 0.5}
+            style={{
+              padding: 'var(--space-1) var(--space-2)',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: 'var(--radius-sm)',
+              cursor: 'pointer',
+              color: 'var(--text-muted)',
+              fontSize: '1rem',
+              transition: 'color var(--transition-fast)',
+            }}
+            onClick={() => onRemove(id)}
+            disabled={disabled}
+            title="Remove from cart"
           >
-            −
-          </button>
-          <span className="quantity-selector__val">{Number(quantityKg).toFixed(1)} kg</span>
-          <button
-            type="button"
-            className="quantity-selector__btn"
-            onClick={() => handleStep(0.5)}
-            disabled={disabled || Number(quantityKg) >= maxStock}
-          >
-            +
+            🗑️
           </button>
         </div>
-        <span className="text-xs text-muted mt-1 block">Max {maxStock} kg</span>
-      </div>
-
-      <div className="cart-item__subtotal">
-        <span className="cart-item__subtotal-val">₹{Number(subtotal).toFixed(2)}</span>
-      </div>
-
-      <div className="cart-item__action">
-        <button
-          type="button"
-          className="btn btn--ghost btn--xs text-danger"
-          onClick={() => onRemove(id)}
-          disabled={disabled}
-          title="Remove from cart"
-        >
-          🗑️
-        </button>
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import BeekeeperLayout from '../../../layouts/BeekeeperLayout'
-import Card from '../../../components/ui/Card'
+import PageHeader from '../../../components/layout/PageHeader'
 import Button from '../../../components/ui/Button'
 import Alert from '../../../components/feedback/Alert'
 import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
@@ -9,6 +9,7 @@ import ProfileForm from '../components/ProfileForm'
 import VoiceButton from '../../../components/common/VoiceButton'
 import { useBeekeeperProfile } from '../hooks/useBeekeeperProfile'
 import { useLanguage } from '../../../i18n/LanguageContext'
+import '../styles/beekeeper.css'
 
 export const BeekeeperProfilePage = () => {
   const { profile, loading, fetched, error, updateProfile, clearError } = useBeekeeperProfile(true)
@@ -29,23 +30,23 @@ export const BeekeeperProfilePage = () => {
     switch (status) {
       case 'APPROVED':
         return (
-          <span className="px-3 py-1 rounded-full text-xs font-bold border border-blue-200 bg-blue-50 text-blue-700 flex items-center gap-1.5 font-mono shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-            {t('profile.statusApproved', 'APPROVED')}
+          <span style={{ padding: '4px 12px', borderRadius: 'var(--radius-full)', fontSize: 'var(--text-xs)', fontWeight: 700, border: '1px solid var(--success-border)', backgroundColor: 'var(--success-soft)', color: 'var(--success)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--success)' }} />
+            {t('profile.statusApproved', 'KVIC APPROVED')}
           </span>
         )
       case 'REJECTED':
         return (
-          <span className="px-3 py-1 rounded-full text-xs font-bold border border-slate-300 bg-slate-100 text-slate-800 flex items-center gap-1.5 font-mono">
-            <span className="w-2 h-2 rounded-full bg-slate-600" />
+          <span style={{ padding: '4px 12px', borderRadius: 'var(--radius-full)', fontSize: 'var(--text-xs)', fontWeight: 700, border: '1px solid var(--danger-border)', backgroundColor: 'var(--danger-soft)', color: 'var(--danger)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--danger)' }} />
             {t('profile.statusRejected', 'REJECTED')}
           </span>
         )
       default:
         return (
-          <span className="px-3 py-1 rounded-full text-xs font-bold border border-amber-300 bg-amber-50 text-amber-900 flex items-center gap-1.5 font-mono shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            {t('profile.statusPending', 'PENDING')}
+          <span style={{ padding: '4px 12px', borderRadius: 'var(--radius-full)', fontSize: 'var(--text-xs)', fontWeight: 700, border: '1px solid var(--primary-light)', backgroundColor: 'var(--primary-soft)', color: 'var(--primary-dark)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--primary)' }} />
+            {t('profile.statusPending', 'VERIFICATION PENDING')}
           </span>
         )
     }
@@ -53,39 +54,27 @@ export const BeekeeperProfilePage = () => {
 
   return (
     <BeekeeperLayout>
-      <div className="w-full space-y-6">
-        {/* Header with action */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200">
-                📜 KVIC Certified Beekeeper
-              </span>
+      <div className="hc-bk-dashboard">
+        {/* Page Header */}
+        <PageHeader
+          title={t('profile.title', 'Profile & KVIC Credentials')}
+          subtitle={t('profile.sub', 'Manage your registered apiary details, KVIC verification credentials, and language preferences.')}
+          actions={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <VoiceButton translationKey="profile.sub" fallbackText="Manage your registered apiary details, KVIC verification, and language preferences." size="sm" />
+              {!isEditing && profile && (
+                <Button
+                  id="edit-profile-btn"
+                  variant="primary"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <span>✏️ Edit Profile</span>
+                </Button>
+              )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 font-['Outfit']">
-              {t('navigation.beekeepers', 'Beekeeper')}{' '}
-              <span className="text-blue-600 font-extrabold">{t('profile.title', 'Profile')}</span>
-            </h1>
-            <p className="text-slate-600 text-xs sm:text-sm mt-0.5">
-              {t('profile.sub', 'Manage your registered apiary details and language preferences')}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <VoiceButton translationKey="profile.sub" />
-            {!isEditing && profile && (
-              <Button
-                id="edit-profile-btn"
-                variant="primary"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2"
-              >
-                <span>✏️</span> {t('common.edit', 'Edit Profile')}
-              </Button>
-            )}
-          </div>
-        </div>
+          }
+        />
 
         {error && <Alert type="danger" message={error} onClose={clearError} />}
         {updateSuccess && (
@@ -94,141 +83,113 @@ export const BeekeeperProfilePage = () => {
 
         {/* Loading State */}
         {loading && !fetched ? (
-          <div className="py-16 text-center">
+          <div style={{ padding: '60px 0', textAlign: 'center' }}>
             <LoadingSpinner text={t('loading.loading', 'Loading your beekeeper profile...')} />
           </div>
         ) : !profile ? (
-          /* Profile Not Found -> Prompt Onboarding */
-          <Card className="text-center py-14 px-6 space-y-4 max-w-xl mx-auto">
-            <div className="w-16 h-16 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto text-3xl">
-              🌿
-            </div>
-            <div className="space-y-1">
-              <h2 className="text-2xl font-bold text-slate-900 font-['Outfit']">
-                {t('empty.noData', 'No Profile Found')}
-              </h2>
-              <p className="text-slate-600 max-w-md mx-auto text-xs sm:text-sm leading-relaxed">
-                {t(
-                  'onboarding.warningSub',
-                  'Please complete your KVIC beekeeper profile to enable harvest logging, IoT telemetry, and verified honey sales.'
-                )}
-              </p>
-            </div>
-            <div className="pt-2">
-              <Link to="/beekeeper/onboarding">
-                <Button variant="primary" size="lg" className="font-bold">
-                  {t('onboarding.completeSetup', 'Start Onboarding →')}
-                </Button>
-              </Link>
-            </div>
-          </Card>
+          <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'var(--surface)', borderRadius: 'var(--radius-2xl)', border: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>📜</div>
+            <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 800, marginBottom: '8px', fontFamily: 'var(--font-display)' }}>
+              No Profile Found
+            </h2>
+            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', maxWidth: '400px', margin: '0 auto 20px auto' }}>
+              Complete the KVIC Beekeeper Onboarding to register your apiary identity and start recording honey harvests.
+            </p>
+            <Link to="/beekeeper/onboarding">
+              <Button variant="primary">
+                {t('onboarding.completeSetup', 'Complete Setup →')}
+              </Button>
+            </Link>
+          </div>
         ) : isEditing ? (
-          /* Edit Mode */
-          <Card className="p-6 sm:p-8 max-w-3xl mx-auto">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-              <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">
-                {t('common.edit', 'Edit Profile Details')}
-              </h2>
-              <span className="text-xs text-slate-600 font-medium">KVIC ID is permanent</span>
-            </div>
+          <div className="hc-bk-form-card">
+            <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800, marginBottom: '20px', fontFamily: 'var(--font-display)' }}>
+              {t('profile.editHeading', 'Update Profile Details')}
+            </h2>
             <ProfileForm
-              initialValues={profile}
+              initialData={profile}
               onSubmit={handleUpdate}
-              loading={loading}
               onCancel={() => setIsEditing(false)}
+              loading={loading}
             />
-          </Card>
+          </div>
         ) : (
-          /* View Mode */
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Identity Card */}
-            <Card className="lg:col-span-4 flex flex-col items-center text-center p-6 space-y-4 bg-white border border-slate-200/90 shadow-sm">
-              <div className="relative">
-                {profile.photoUrl ? (
-                  <img
-                    src={profile.photoUrl}
-                    alt={profile.name}
-                    className="w-28 h-28 rounded-full object-cover border-4 border-amber-200 shadow-md"
-                  />
-                ) : (
-                  <div className="w-28 h-28 rounded-full bg-amber-100 border-4 border-amber-200 flex items-center justify-center text-5xl shadow-md">
-                    👨‍🌾
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+            {/* Left Card: Apiary & Identity */}
+            <div style={{ backgroundColor: 'var(--surface)', padding: '24px', borderRadius: 'var(--radius-2xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xs)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '16px', borderBottom: '1px solid var(--border-light)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div className="hc-bk-action-icon" style={{ fontSize: '1.5rem' }}>
+                    👤
                   </div>
-                )}
+                  <div>
+                    <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+                      {profile.name}
+                    </h3>
+                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                      {profile.phoneNumber}
+                    </p>
+                  </div>
+                </div>
+                {getStatusBadge(profile.verificationStatus)}
               </div>
 
-              <div className="space-y-0.5">
-                <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">{profile.name}</h2>
-                <p className="text-slate-600 text-sm font-medium">{profile.village || 'Registered Village'}</p>
-                <p className="text-slate-600 text-xs font-mono">{profile.phoneNumber}</p>
-              </div>
-
-              <div className="pt-1">{getStatusBadge(profile.verificationStatus)}</div>
-
-              <div className="w-full pt-4 border-t border-slate-100 text-xs text-slate-600 space-y-1 text-left">
-                <span className="block font-bold text-slate-800 uppercase text-[10px] tracking-wider">
-                  Quick Navigation
-                </span>
-                <div className="flex flex-col gap-1.5 pt-1">
-                  <Link
-                    to="/beekeeper/hives"
-                    className="text-blue-600 hover:underline flex items-center justify-between"
-                  >
-                    <span>🐝 My Hives & Colonies</span>
-                    <span>→</span>
-                  </Link>
-                  <Link
-                    to="/beekeeper/batches"
-                    className="text-blue-600 hover:underline flex items-center justify-between"
-                  >
-                    <span>🍯 Logged Harvest Batches</span>
-                    <span>→</span>
-                  </Link>
-                  <Link
-                    to="/beekeeper/earnings"
-                    className="text-blue-600 hover:underline flex items-center justify-between"
-                  >
-                    <span>💰 Earnings & Payouts</span>
-                    <span>→</span>
-                  </Link>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: 'var(--text-xs)' }}>
+                <div className="hc-hive-item-row">
+                  <span className="hc-hive-item-label">Apiary Name</span>
+                  <span className="hc-hive-item-value">{profile.apiaryName || '—'}</span>
+                </div>
+                <div className="hc-hive-item-row">
+                  <span className="hc-hive-item-label">State / Region</span>
+                  <span className="hc-hive-item-value">{profile.state || '—'}</span>
+                </div>
+                <div className="hc-hive-item-row">
+                  <span className="hc-hive-item-label">District</span>
+                  <span className="hc-hive-item-value">{profile.district || '—'}</span>
+                </div>
+                <div className="hc-hive-item-row">
+                  <span className="hc-hive-item-label">Primary Flora</span>
+                  <span className="hc-hive-item-value">{profile.flora || 'Multiflora'}</span>
+                </div>
+                <div className="hc-hive-item-row">
+                  <span className="hc-hive-item-label">Experience</span>
+                  <span className="hc-hive-item-value">{profile.experienceYears ? `${profile.experienceYears} Years` : '—'}</span>
                 </div>
               </div>
-            </Card>
+            </div>
 
-            {/* Details Card */}
-            <Card className="lg:col-span-8 p-6 sm:p-8 space-y-6 bg-white border border-slate-200/90 shadow-sm">
-              <h3 className="text-lg font-bold text-slate-900 font-['Outfit'] flex items-center gap-2 border-b border-slate-100 pb-3">
-                <span>📋</span> {t('profile.verificationStatus', 'Verification Status')} & Apiary Details
-              </h3>
+            {/* Right Card: KVIC & Blockchain Identity */}
+            <div style={{ backgroundColor: 'var(--surface)', padding: '24px', borderRadius: 'var(--radius-2xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xs)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ paddingBottom: '16px', borderBottom: '1px solid var(--border-light)' }}>
+                <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+                  📜 KVIC & National Registry
+                </h3>
+                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                  Official credentials issued by the Khadi & Village Industries Commission.
+                </p>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 shadow-xs">
-                  <p className="text-xs text-slate-600 font-medium">{t('onboarding.kvicId', 'KVIC Registration ID')}</p>
-                  <p className="text-lg font-bold text-amber-900 font-mono mt-1">{profile.kvicId}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: 'var(--text-xs)' }}>
+                <div className="hc-hive-item-row">
+                  <span className="hc-hive-item-label">KVIC Identification ID</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--primary-dark)', backgroundColor: 'var(--primary-soft)', padding: '2px 8px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--primary-light)' }}>
+                    {profile.kvicId || 'PENDING'}
+                  </span>
                 </div>
-
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 shadow-xs">
-                  <p className="text-xs text-slate-600 font-medium">{t('onboarding.language', 'Preferred Language')}</p>
-                  <p className="text-lg font-bold text-slate-900 mt-1">{profile.preferredLanguage || 'English'}</p>
+                <div className="hc-hive-item-row">
+                  <span className="hc-hive-item-label">Aadhaar (Last 4)</span>
+                  <span className="hc-hive-item-value font-mono">
+                    {profile.aadhaarLastFour ? `XXXX-XXXX-${profile.aadhaarLastFour}` : '—'}
+                  </span>
                 </div>
-
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 shadow-xs">
-                  <p className="text-xs text-slate-600 font-medium">Apiary Location Coordinates</p>
-                  <p className="text-sm font-semibold text-slate-900 font-mono mt-1">
-                    {profile.latitude && profile.longitude
-                      ? `${profile.latitude}° N, ${profile.longitude}° E`
-                      : 'Coordinates not specified'}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 shadow-xs">
-                  <p className="text-xs text-slate-600 font-medium">{t('common.date', 'Member Since')}</p>
-                  <p className="text-sm font-semibold text-slate-900 mt-1">
-                    {profile.createdAt ? formatDate(profile.createdAt) : 'Recently registered'}
-                  </p>
+                <div className="hc-hive-item-row">
+                  <span className="hc-hive-item-label">Registered On</span>
+                  <span className="hc-hive-item-value">
+                    {profile.createdAt ? formatDate(profile.createdAt) : '—'}
+                  </span>
                 </div>
               </div>
-            </Card>
+            </div>
           </div>
         )}
       </div>

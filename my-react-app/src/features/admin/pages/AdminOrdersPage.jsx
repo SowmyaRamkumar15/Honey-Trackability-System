@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import AdminLayout from '../../../layouts/AdminLayout'
-import AdminSidebar from '../components/AdminSidebar'
 import PageHeader from '../../../components/layout/PageHeader'
 import MetricCard from '../../../components/ui/MetricCard'
-import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
 import Badge from '../../../components/ui/Badge'
 import Alert from '../../../components/feedback/Alert'
 import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
+import EmptyState from '../../../components/ui/EmptyState'
 import adminApi from '../api/adminApi'
 import { useLanguage } from '../../../i18n/LanguageContext'
+import '../styles/admin.css'
 
 const SAMPLE_ORDERS = [
   {
@@ -114,7 +114,6 @@ export const AdminOrdersPage = () => {
         setOrders(SAMPLE_ORDERS)
       }
     } catch {
-      // Gracefully fall back to verified platform sample orders for admin inspection
       setOrders(SAMPLE_ORDERS)
     } finally {
       setLoading(false)
@@ -173,10 +172,10 @@ export const AdminOrdersPage = () => {
       case 'IN_TRANSIT':
         return <Badge variant="primary">🚚 {t('order.shipped', 'Shipped')}</Badge>
       case 'PACKED':
-        return <Badge variant="honey">📦 {t('order.packed', 'Packed')}</Badge>
+        return <Badge variant="warning">📦 {t('order.packed', 'Packed')}</Badge>
       case 'CONFIRMED':
       case 'PAID':
-        return <Badge variant="neutral">⏳ {t('order.confirmed', 'Confirmed')}</Badge>
+        return <Badge variant="info">⏳ {t('order.confirmed', 'Confirmed')}</Badge>
       case 'CANCELLED':
         return <Badge variant="danger">✕ {t('order.cancelled', 'Cancelled')}</Badge>
       default:
@@ -186,7 +185,7 @@ export const AdminOrdersPage = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="hc-admin-page">
         <PageHeader
           title={t('admin.ordersTitle', '📦 Customer Orders & Platform Fulfillment')}
           subtitle={t('admin.ordersSubtitle', 'Monitor customer transactions, order fulfillments, and delivery progress across all beekeepers.')}
@@ -197,12 +196,10 @@ export const AdminOrdersPage = () => {
           }
         />
 
-        <AdminSidebar />
-
         {error && <Alert type="danger" message={error} />}
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 align-stretch">
+        <div className="hc-admin-stats-grid">
           <MetricCard
             icon="🛍️"
             label={t('admin.totalOrders', 'Total Orders')}
@@ -230,54 +227,52 @@ export const AdminOrdersPage = () => {
         </div>
 
         {/* Search & Filter Controls */}
-        <Card className="p-4 sm:p-6">
-          <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                className="form-input w-full"
-                placeholder={t('admin.searchOrdersPlaceholder', 'Search by order #, customer, or city...')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { key: 'ALL', label: t('common.all', 'All') },
-                { key: 'PENDING', label: t('order.pending', 'Pending') },
-                { key: 'IN_TRANSIT', label: t('order.inTransit', 'In Transit') },
-                { key: 'DELIVERED', label: t('order.delivered', 'Delivered') },
-              ].map(({ key, label }) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setStatusFilter(key)}
-                  className={`btn btn--sm ${statusFilter === key ? 'btn--primary' : 'btn--ghost'}`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+        <div className="hc-admin-filter-bar">
+          <div style={{ flex: 1, minWidth: 260 }}>
+            <input
+              type="text"
+              className="hc-input__field"
+              placeholder={t('admin.searchOrdersPlaceholder', 'Search by order #, customer, or city...')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-        </Card>
+          <div className="hc-admin-filter-pills">
+            {[
+              { key: 'ALL', label: t('common.all', 'All') },
+              { key: 'PENDING', label: t('order.pending', 'Pending') },
+              { key: 'IN_TRANSIT', label: t('order.inTransit', 'In Transit') },
+              { key: 'DELIVERED', label: t('order.delivered', 'Delivered') },
+            ].map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setStatusFilter(key)}
+                className={`hc-admin-filter-pill ${statusFilter === key ? 'hc-admin-filter-pill--active' : ''}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Orders List / Table */}
         {loading ? (
-          <div className="py-12 text-center">
+          <div style={{ padding: 'var(--space-12) 0', textAlign: 'center' }}>
             <LoadingSpinner text={t('admin.loadingOrders', 'Loading platform orders...')} />
           </div>
         ) : filteredOrders.length === 0 ? (
-          <div className="card empty-state p-12 text-center">
-            <div className="empty-state__icon">📦</div>
-            <h2 className="empty-state__title">{t('admin.noOrdersFound', 'No Orders Found')}</h2>
-            <p className="empty-state__description">
-              {searchQuery
+          <EmptyState
+            icon="📦"
+            title={t('admin.noOrdersFound', 'No Orders Found')}
+            description={
+              searchQuery
                 ? t('admin.noMatchingOrders', 'No orders match your search criteria.')
-                : t('admin.noOrdersPlatform', 'There are no active orders recorded yet.')}
-            </p>
-          </div>
+                : t('admin.noOrdersPlatform', 'There are no active orders recorded yet.')
+            }
+          />
         ) : (
-          <div className="space-y-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             {filteredOrders.map((order) => {
               const {
                 orderNumber,
@@ -300,22 +295,28 @@ export const AdminOrdersPage = () => {
               })
 
               return (
-                <div key={orderNumber} className="card p-6 transition-all hover:shadow-md">
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                <div key={orderNumber} className="hc-admin-order-card">
+                  <div className="hc-admin-order-header">
                     <div>
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono font-bold text-lg text-slate-800">{orderNumber}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                        <span style={{ fontFamily: 'monospace', fontWeight: 'var(--font-bold)', fontSize: 'var(--text-base)', color: 'var(--text-primary)' }}>
+                          {orderNumber}
+                        </span>
                         {getStatusBadge(orderStatus)}
                       </div>
-                      <div className="text-xs text-slate-500 mt-1">
+                      <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', marginTop: 'var(--space-1)' }}>
                         📅 {formattedDate} • 🚚 {fulfillmentType || 'Standard Shipping'}
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between lg:justify-end gap-4">
-                      <div className="text-right">
-                        <span className="text-xs text-slate-500 uppercase tracking-wider block">{t('order.amount', 'Amount')}</span>
-                        <span className="text-xl font-extrabold text-blue-700">₹{Number(totalAmount || 0).toLocaleString()}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-4)' }}>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block' }}>
+                          {t('order.amount', 'Amount')}
+                        </span>
+                        <span style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-extrabold)', color: 'var(--primary)', fontFamily: 'monospace' }}>
+                          ₹{Number(totalAmount || 0).toLocaleString()}
+                        </span>
                       </div>
                       <Button
                         variant="secondary"
@@ -328,12 +329,16 @@ export const AdminOrdersPage = () => {
                   </div>
 
                   {/* Customer & Items Brief */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 text-sm">
+                  <div className="hc-admin-order-body">
                     <div>
-                      <span className="font-semibold text-slate-700 block mb-1">👤 {t('order.customerDetails', 'Customer & Delivery')}</span>
-                      <p className="text-slate-800 font-medium">{customerName || 'Verified Customer'} {customerPhone ? `(${customerPhone})` : ''}</p>
+                      <span style={{ fontWeight: 'var(--font-semibold)', color: 'var(--text-secondary)', fontSize: 'var(--text-xs)', display: 'block', marginBottom: 'var(--space-1)' }}>
+                        👤 {t('order.customerDetails', 'Customer & Delivery')}
+                      </span>
+                      <p style={{ color: 'var(--text-primary)', fontWeight: 'var(--font-medium)', fontSize: 'var(--text-xs)' }}>
+                        {customerName || 'Verified Customer'} {customerPhone ? `(${customerPhone})` : ''}
+                      </p>
                       {deliveryAddress && (
-                        <p className="text-slate-600 text-xs mt-0.5">
+                        <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', marginTop: 2 }}>
                           📍 {deliveryAddress.addressLine1 ? `${deliveryAddress.addressLine1}, ` : ''}
                           {deliveryAddress.city}, {deliveryAddress.state} - {deliveryAddress.postalCode}
                         </p>
@@ -341,12 +346,16 @@ export const AdminOrdersPage = () => {
                     </div>
 
                     <div>
-                      <span className="font-semibold text-slate-700 block mb-1">🍯 {t('order.itemsPurchased', 'Items Purchased')} ({items?.length || 0})</span>
-                      <ul className="space-y-1 text-xs text-slate-600">
+                      <span style={{ fontWeight: 'var(--font-semibold)', color: 'var(--text-secondary)', fontSize: 'var(--text-xs)', display: 'block', marginBottom: 'var(--space-1)' }}>
+                        🍯 {t('order.itemsPurchased', 'Items Purchased')} ({items?.length || 0})
+                      </span>
+                      <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', listStyle: 'none', padding: 0, margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
                         {Array.isArray(items) && items.map((it, idx) => (
-                          <li key={idx} className="flex justify-between">
+                          <li key={idx} style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <span>• {it.productName || 'Honey Batch Item'} × {it.quantity || 1}</span>
-                            <span className="font-medium text-slate-700">₹{(Number(it.unitPrice || 0) * Number(it.quantity || 1)).toLocaleString()}</span>
+                            <span style={{ fontWeight: 'var(--font-medium)', color: 'var(--text-primary)', fontFamily: 'monospace' }}>
+                              ₹{(Number(it.unitPrice || 0) * Number(it.quantity || 1)).toLocaleString()}
+                            </span>
                           </li>
                         ))}
                       </ul>
@@ -355,20 +364,22 @@ export const AdminOrdersPage = () => {
 
                   {/* Expanded Details Drawer */}
                   {selectedOrder?.orderNumber === orderNumber && (
-                    <div className="mt-4 pt-4 border-t border-slate-100 bg-slate-50 p-4 rounded-xl">
-                      <h4 className="font-bold text-slate-800 mb-2">📋 {t('order.fullAuditData', 'Order Audit Details')}</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-600">
+                    <div className="hc-admin-audit-box">
+                      <h4 style={{ fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', fontSize: 'var(--text-xs)', marginBottom: 'var(--space-2)' }}>
+                        📋 {t('order.fullAuditData', 'Order Audit Details')}
+                      </h4>
+                      <div className="hc-admin-audit-grid">
                         <div>
-                          <span className="font-semibold text-slate-500 block">Status Timeline</span>
-                          <span className="font-medium text-slate-800">{orderStatus}</span>
+                          <span style={{ fontWeight: 'var(--font-semibold)', color: 'var(--text-muted)', display: 'block' }}>Status Timeline</span>
+                          <span style={{ fontWeight: 'var(--font-medium)', color: 'var(--text-primary)' }}>{orderStatus}</span>
                         </div>
                         <div>
-                          <span className="font-semibold text-slate-500 block">Payment Method</span>
-                          <span className="font-medium text-slate-800">Prepaid (Escrow Protected)</span>
+                          <span style={{ fontWeight: 'var(--font-semibold)', color: 'var(--text-muted)', display: 'block' }}>Payment Method</span>
+                          <span style={{ fontWeight: 'var(--font-medium)', color: 'var(--text-primary)' }}>Prepaid (Escrow Protected)</span>
                         </div>
                         <div>
-                          <span className="font-semibold text-slate-500 block">Traceability Verified</span>
-                          <span className="font-semibold" style={{ color: '#15803D' }}>✓ Blockchain Recorded</span>
+                          <span style={{ fontWeight: 'var(--font-semibold)', color: 'var(--text-muted)', display: 'block' }}>Traceability Verified</span>
+                          <span style={{ fontWeight: 'var(--font-semibold)', color: 'var(--success)' }}>✓ Blockchain Recorded</span>
                         </div>
                       </div>
                     </div>

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import AdminLayout from '../../../layouts/AdminLayout'
-import AdminSidebar from '../components/AdminSidebar'
 import DisputeTable from '../components/DisputeTable'
+import PageHeader from '../../../components/layout/PageHeader'
 import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
 import Alert from '../../../components/feedback/Alert'
+import Button from '../../../components/ui/Button'
+import Card from '../../../components/ui/Card'
 import adminApi from '../api/adminApi'
 import { useLanguage } from '../../../i18n/LanguageContext'
+import '../styles/admin.css'
 
 export const AdminDisputesPage = () => {
   const { t } = useLanguage()
@@ -68,22 +71,26 @@ export const AdminDisputesPage = () => {
 
   return (
     <AdminLayout>
-      <div className="container section">
-        <div className="dashboard__header mb-6">
-          <div>
-            <h1 className="dashboard__title">⚖️ {t('admin.disputesTitle', 'Consumer Authenticity Disputes')}</h1>
-            <p className="dashboard__subtitle">{t('admin.disputesSub', 'Investigate and resolve customer authenticity concerns and compromised product reports')}</p>
-          </div>
-        </div>
+      <div className="hc-admin-page">
+        <PageHeader
+          title={`⚖️ ${t('admin.disputesTitle', 'Consumer Authenticity Disputes')}`}
+          subtitle={t('admin.disputesSub', 'Investigate and resolve customer authenticity concerns and compromised product reports')}
+          actions={
+            <Button variant="secondary" size="sm" onClick={() => loadDisputes(page)} disabled={loading}>
+              🔄 {t('common.refresh', 'Refresh')}
+            </Button>
+          }
+        />
 
-        <AdminSidebar />
-
-        {/* Filter Card */}
-        <div className="card mb-6">
-          <div className="flex gap-4 items-center">
-            <label className="text-sm font-semibold">{t('admin.filterDisputeStatus', 'Filter by Dispute Status:')}</label>
+        {/* Filter Bar */}
+        <div className="hc-admin-filter-bar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            <label style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-semibold)', color: 'var(--text-secondary)' }}>
+              {t('admin.filterDisputeStatus', 'Filter by Dispute Status:')}
+            </label>
             <select
-              className="form-input w-52"
+              className="hc-input__field"
+              style={{ width: 'auto', minWidth: 200 }}
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -99,7 +106,7 @@ export const AdminDisputesPage = () => {
         {error && <Alert type="danger" message={error} />}
 
         {loading ? (
-          <div className="py-12 text-center">
+          <div style={{ padding: 'var(--space-12) 0', textAlign: 'center' }}>
             <LoadingSpinner text={t('loading.loading', 'Loading disputes...')} />
           </div>
         ) : (
@@ -114,57 +121,71 @@ export const AdminDisputesPage = () => {
             />
 
             {totalPages > 1 && (
-              <div className="flex gap-2 justify-center mt-6">
-                <button
-                  className="btn btn--ghost btn--sm"
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)', marginTop: 'var(--space-6)' }}>
+                <Button
+                  variant="secondary"
+                  size="sm"
                   disabled={page === 0}
                   onClick={() => loadDisputes(page - 1)}
                 >
                   ← {t('common.back', 'Prev')}
-                </button>
-                <span className="text-secondary self-center">
+                </Button>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>
                   {t('common.page', 'Page')} {page + 1} / {totalPages}
                 </span>
-                <button
-                  className="btn btn--ghost btn--sm"
+                <Button
+                  variant="secondary"
+                  size="sm"
                   disabled={page >= totalPages - 1}
                   onClick={() => loadDisputes(page + 1)}
                 >
                   {t('common.next', 'Next')} →
-                </button>
+                </Button>
               </div>
             )}
           </>
         )}
 
-        {/* Dispute Resolution Modal */}
+        {/* Dispute Resolution Card */}
         {selectedDispute && (
-          <div className="card mt-6 border-gold">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="card__title">
-                {t('admin.manageDispute', 'Manage Dispute')} #{selectedDispute.id} ({t('batch.batchId', 'Batch')} <code>{selectedDispute.batchId}</code>)
+          <Card style={{ border: '2px solid var(--primary)', marginTop: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+              <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: 0 }}>
+                {t('admin.manageDispute', 'Manage Dispute')} #{selectedDispute.id} ({t('batch.batchId', 'Batch')} <code style={{ color: 'var(--primary)' }}>{selectedDispute.batchId}</code>)
               </h3>
-              <button
-                type="button"
-                className="btn btn--ghost btn--xs"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setSelectedDispute(null)}
               >
                 ✕ {t('common.close', 'Close')}
-              </button>
+              </Button>
             </div>
 
-            <div className="text-sm space-y-2 mb-4 bg-input p-4 rounded-md">
-              <p><strong>Reason:</strong> {selectedDispute.reason}</p>
-              {selectedDispute.description && <p><strong>Description:</strong> {selectedDispute.description}</p>}
-              <p><strong>Order Number:</strong> <code>{selectedDispute.orderNumber || 'N/A'}</code></p>
-              <p><strong>Current Status:</strong> <span className="badge">{selectedDispute.status}</span></p>
+            <div className="hc-admin-audit-box" style={{ marginBottom: 'var(--space-4)' }}>
+              <p style={{ margin: '0 0 var(--space-2) 0', fontSize: 'var(--text-xs)' }}>
+                <strong style={{ color: 'var(--text-primary)' }}>Reason:</strong> <span style={{ color: 'var(--text-secondary)' }}>{selectedDispute.reason}</span>
+              </p>
+              {selectedDispute.description && (
+                <p style={{ margin: '0 0 var(--space-2) 0', fontSize: 'var(--text-xs)' }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>Description:</strong> <span style={{ color: 'var(--text-secondary)' }}>{selectedDispute.description}</span>
+                </p>
+              )}
+              <p style={{ margin: '0 0 var(--space-2) 0', fontSize: 'var(--text-xs)' }}>
+                <strong style={{ color: 'var(--text-primary)' }}>Order Number:</strong> <code style={{ color: 'var(--text-secondary)', fontFamily: 'monospace' }}>{selectedDispute.orderNumber || 'N/A'}</code>
+              </p>
+              <p style={{ margin: 0, fontSize: 'var(--text-xs)' }}>
+                <strong style={{ color: 'var(--text-primary)' }}>Current Status:</strong> <span style={{ fontWeight: 'var(--font-bold)', color: 'var(--primary)' }}>{selectedDispute.status}</span>
+              </p>
             </div>
 
-            <form onSubmit={handleUpdateStatus} className="space-y-4">
-              <div>
-                <label className="form-label">Set New Status</label>
+            <form onSubmit={handleUpdateStatus} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+              <div className="hc-input">
+                <label className="hc-input__label">
+                  Set New Status
+                </label>
                 <select
-                  className="form-input"
+                  className="hc-input__field"
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value)}
                 >
@@ -174,10 +195,12 @@ export const AdminDisputesPage = () => {
                 </select>
               </div>
 
-              <div>
-                <label className="form-label">Resolution / Investigation Notes</label>
+              <div className="hc-input">
+                <label className="hc-input__label">
+                  Resolution / Investigation Notes
+                </label>
                 <textarea
-                  className="form-input"
+                  className="hc-input__field"
                   rows={3}
                   placeholder="Describe resolution or investigation findings..."
                   value={resolutionNotes}
@@ -185,20 +208,26 @@ export const AdminDisputesPage = () => {
                 />
               </div>
 
-              <div className="flex gap-2">
-                <button type="submit" className="btn btn--primary btn--sm" disabled={updating}>
+              <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  disabled={updating}
+                >
                   {updating ? t('loading.submitting', 'Saving...') : t('common.save', 'Update Dispute Status')}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  className="btn btn--ghost btn--sm"
+                  variant="secondary"
+                  size="sm"
                   onClick={() => setSelectedDispute(null)}
                 >
                   {t('common.cancel', 'Cancel')}
-                </button>
+                </Button>
               </div>
             </form>
-          </div>
+          </Card>
         )}
       </div>
     </AdminLayout>

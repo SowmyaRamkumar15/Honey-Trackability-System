@@ -1,6 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import OrderTracking from './OrderTracking'
+import Badge from '../../../components/ui/Badge'
+import Button from '../../../components/ui/Button'
+import '../styles/order.css'
 
 const OrderCard = ({ order, onCancel, isCancelling }) => {
   if (!order) return null
@@ -18,76 +21,76 @@ const OrderCard = ({ order, onCancel, isCancelling }) => {
   const isConfirmed = orderStatus === 'CONFIRMED'
 
   return (
-    <div className="card order-card">
-      <div className="order-card__header">
+    <div className="hc-order-card">
+      <div className="hc-order-grid-meta">
         <div>
-          <span className="text-secondary text-xs">ORDER PLACED</span>
-          <p className="order-card__date">
+          <span className="hc-order-meta-label">ORDER PLACED</span>
+          <p className="hc-order-meta-val" style={{ margin: 0, fontSize: 'var(--text-xs)' }}>
             {createdAt ? new Date(createdAt).toLocaleDateString('en-IN', { dateStyle: 'medium' }) : 'Recently'}
           </p>
         </div>
 
         <div>
-          <span className="text-secondary text-xs">TOTAL</span>
-          <p className="order-card__total">₹{Number(totalAmount).toFixed(2)}</p>
-        </div>
-
-        <div>
-          <span className="text-secondary text-xs">ORDER #</span>
-          <p className="order-card__number">
-            <code>{orderNumber}</code>
+          <span className="hc-order-meta-label">TOTAL</span>
+          <p className="hc-order-meta-val" style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: 'var(--text-sm)' }}>
+            ₹{Number(totalAmount).toFixed(2)}
           </p>
         </div>
 
-        <div className="order-card__status-badges">
-          <span
-            className={`badge ${
-              paymentStatus === 'SUCCESS' ? 'badge--success' : 'badge--warning'
-            }`}
-          >
+        <div>
+          <span className="hc-order-meta-label">ORDER #</span>
+          <p className="hc-order-meta-val" style={{ margin: 0, fontFamily: 'var(--font-mono)', color: 'var(--primary)' }}>
+            {orderNumber}
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+          <Badge variant={paymentStatus === 'SUCCESS' ? 'success' : 'warning'} size="sm">
             {paymentStatus === 'SUCCESS' ? '✅ Paid' : paymentStatus}
-          </span>
-          <span className="badge badge--dark">
+          </Badge>
+          <Badge variant="default" size="sm">
             {fulfillmentType === 'LOCAL_PICKUP' ? '🏪 Pickup' : '🚚 Delivery'}
-          </span>
+          </Badge>
         </div>
       </div>
 
-      <div className="order-card__tracker mt-4">
+      <div style={{ padding: 'var(--space-2) 0' }}>
         <OrderTracking currentStatus={orderStatus} />
       </div>
 
-      <div className="order-card__items mt-4">
+      <div style={{ borderTop: '1px solid var(--border)', paddingTop: 'var(--space-2)', fontSize: 'var(--text-xs)' }}>
         {items?.map((item) => (
-          <div key={item.id} className="order-card__item-row">
+          <div key={item.id} style={{ padding: 'var(--space-1) 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-2)' }}>
             <div>
-              <strong>{item.productName}</strong>
-              <span className="text-secondary text-xs ml-2">
+              <strong style={{ color: 'var(--text-primary)' }}>{item.productName}</strong>
+              <span style={{ color: 'var(--text-secondary)', marginLeft: 'var(--space-2)' }}>
                 ({Number(item.quantityKg).toFixed(1)} kg × ₹{Number(item.unitPrice).toFixed(2)})
               </span>
             </div>
-            <strong>₹{Number(item.subtotal).toFixed(2)}</strong>
+            <strong style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>
+              ₹{Number(item.subtotal).toFixed(2)}
+            </strong>
           </div>
         ))}
       </div>
 
-      <div className="order-card__footer mt-4">
-        <Link
-          to={`/orders/${orderNumber}`}
-          className="btn btn--outline btn--sm"
-        >
-          View Full Details
+      <div style={{ paddingTop: 'var(--space-3)', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-2)' }}>
+        <Link to={`/orders/${orderNumber}`} style={{ textDecoration: 'none' }}>
+          <Button variant="ghost" size="sm">
+            View Full Details →
+          </Button>
         </Link>
 
         {isConfirmed && onCancel && (
-          <button
+          <Button
             type="button"
-            className="btn btn--ghost btn--sm text-danger"
+            variant="danger"
+            size="sm"
             disabled={isCancelling}
             onClick={() => onCancel(orderNumber)}
           >
             Cancel Order
-          </button>
+          </Button>
         )}
       </div>
     </div>

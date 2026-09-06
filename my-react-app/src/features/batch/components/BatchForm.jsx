@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import QuantityStepper from './QuantityStepper'
 import BatchPhotoInput from './BatchPhotoInput'
 import Button from '../../../components/ui/Button'
+import '../styles/batch.css'
 
 export const BatchForm = ({
   initialValues = {},
@@ -68,19 +69,19 @@ export const BatchForm = ({
   const activeHives = hives.filter((h) => h.status === 'ACTIVE')
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="hc-batch-form">
       {/* Hive Selector (Create Mode Only) */}
       {!isEdit && (
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-slate-700">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+          <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)' }}>
             Select Source Hive *
           </label>
           {activeHives.length === 0 ? (
-            <div className="p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 text-sm">
+            <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--warning-border)', backgroundColor: 'var(--warning-soft)', color: 'var(--warning)', fontSize: 'var(--text-sm)' }}>
               ⚠️ No active hives found. Please register and activate a hive before creating a batch.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="hc-hive-selector-grid">
               {activeHives.map((hive) => {
                 const isSelected = String(hiveId) === String(hive.id)
                 return (
@@ -88,36 +89,32 @@ export const BatchForm = ({
                     key={hive.id}
                     type="button"
                     onClick={() => setHiveId(hive.id)}
-                    className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3 ${
-                      isSelected
-                        ? 'border-blue-600 bg-blue-50/70 shadow-sm'
-                        : 'border-slate-200 bg-slate-50 hover:border-blue-300'
-                    }`}
+                    className={`hc-hive-select-card ${isSelected ? 'hc-hive-select-card--active' : ''}`}
                   >
-                    <span className="text-2xl mt-0.5">🐝</span>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono font-bold text-slate-900 text-sm">
+                    <span style={{ fontSize: '1.5rem', marginTop: '2px' }}>🐝</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-2)' }}>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', fontSize: 'var(--text-sm)' }}>
                           {hive.hiveCode}
                         </span>
                         {isSelected && (
-                          <span className="text-blue-600 text-xs font-bold">✓ Selected</span>
+                          <span style={{ color: 'var(--primary)', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-bold)' }}>✓ Selected</span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-500 mt-0.5">{hive.clusterName}</p>
+                      <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', margin: '2px 0 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{hive.clusterName}</p>
                     </div>
                   </button>
                 )
               })}
             </div>
           )}
-          {errors.hiveId && <p className="text-blue-600 text-xs mt-1">{errors.hiveId}</p>}
+          {errors.hiveId && <p style={{ color: 'var(--danger)', fontSize: 'var(--text-xs)', margin: '4px 0 0 0' }}>{errors.hiveId}</p>}
         </div>
       )}
 
       {/* Harvest Date */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">
+        <label htmlFor="batch-harvest-date" style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)', marginBottom: 'var(--space-2)' }}>
           Harvest Date *
         </label>
         <input
@@ -126,10 +123,10 @@ export const BatchForm = ({
           value={harvestDate}
           max={new Date().toISOString().substring(0, 10)}
           onChange={(e) => setHarvestDate(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
+          className="hc-input"
           required
         />
-        {errors.harvestDate && <p className="text-blue-600 text-xs mt-1">{errors.harvestDate}</p>}
+        {errors.harvestDate && <p style={{ color: 'var(--danger)', fontSize: 'var(--text-xs)', margin: '4px 0 0 0' }}>{errors.harvestDate}</p>}
       </div>
 
       {/* Quantity Stepper */}
@@ -147,13 +144,13 @@ export const BatchForm = ({
       />
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-3 pt-4">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', paddingTop: 'var(--space-4)' }}>
         <Button
           type="submit"
           variant="primary"
           loading={loading}
           disabled={!isEdit && activeHives.length === 0}
-          className="flex-1 py-3 text-base font-bold"
+          style={{ flex: 1, paddingBlock: 'var(--space-3)', fontSize: 'var(--text-base)', fontWeight: 'var(--font-bold)' }}
         >
           {loading ? 'Processing Batch...' : submitLabel}
         </Button>
@@ -162,7 +159,7 @@ export const BatchForm = ({
             type="button"
             variant="secondary"
             onClick={onCancel}
-            className="py-3 px-6"
+            style={{ paddingBlock: 'var(--space-3)', paddingInline: 'var(--space-6)' }}
           >
             Cancel
           </Button>

@@ -10,6 +10,7 @@ import Input from '../../../components/ui/Input'
 import Button from '../../../components/ui/Button'
 import Card from '../../../components/ui/Card'
 import Alert from '../../../components/feedback/Alert'
+import '../styles/beekeeper.css'
 
 const TOTAL_STEPS = 6
 
@@ -70,273 +71,238 @@ export const BeekeeperOnboardingPage = () => {
     }
   }
 
+  const progressPct = (currentStep / TOTAL_STEPS) * 100
+
   return (
     <BeekeeperLayout>
-      <div className="w-full py-4 relative">
-        {/* Background glow */}
-        <div className="fixed -top-24 -left-24 w-96 h-96 sm:w-128 sm:h-128 rounded-full bg-blue-500/5 blur-3xl pointer-events-none" />
+      <div style={{ width: '100%', paddingTop: 'var(--space-4)', position: 'relative' }}>
 
         {/* Top Header */}
-        <header className="max-w-3xl mx-auto w-full text-center mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="inline-flex items-center gap-2">
-              <span className="text-2xl">🍯</span>
-              <span className="font-extrabold text-xl font-['Outfit'] text-blue-600">{t('common.appName', 'HoneyChain')}</span>
+        <header style={{ maxWidth: 768, margin: '0 auto var(--space-6)', width: '100%', textAlign: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-4)' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+              <span style={{ fontSize: 'var(--text-2xl)' }}>🍯</span>
+              <span style={{ fontWeight: 'var(--font-extrabold)', fontSize: 'var(--text-xl)', color: 'var(--primary)', fontFamily: 'var(--font-display)' }}>
+                {t('common.appName', 'HoneyChain')}
+              </span>
             </div>
             <GlobalLanguageSelector />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 font-['Outfit']">{t('onboarding.title', 'Beekeeper Setup')}</h1>
-          <p className="text-slate-500 text-sm mt-1">{t('onboarding.sub', 'Complete your identity and apiary verification')}</p>
+          <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-black)', color: 'var(--text-primary)', margin: '0 0 var(--space-1) 0', fontFamily: 'var(--font-display)' }}>
+            {t('onboarding.title', 'Beekeeper Setup')}
+          </h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', margin: 0 }}>
+            {t('onboarding.sub', 'Complete your identity and apiary verification')}
+          </p>
 
           {/* Progress Bar */}
-          <div className="mt-6 max-w-lg mx-auto">
-            <div className="flex items-center justify-between text-xs font-semibold text-blue-700 mb-2">
+          <div style={{ marginTop: 'var(--space-6)', maxWidth: 512, margin: 'var(--space-6) auto 0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-semibold)', color: 'var(--primary)', marginBottom: 'var(--space-2)' }}>
               <span>Step {currentStep} of {TOTAL_STEPS}</span>
-              <span>{Math.round((currentStep / TOTAL_STEPS) * 100)}% Completed</span>
+              <span>{Math.round(progressPct)}% Completed</span>
             </div>
-            <div className="w-full h-2.5 rounded-full bg-slate-200 overflow-hidden">
-              <div
-                className="h-full bg-blue-600 transition-all duration-300 rounded-full"
-                style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
-              />
+            <div style={{ width: '100%', height: 10, borderRadius: 'var(--radius-full)', backgroundColor: 'var(--bg-muted)', overflow: 'hidden' }}>
+              <div style={{ height: '100%', backgroundColor: 'var(--primary)', transition: 'width 0.3s ease', borderRadius: 'var(--radius-full)', width: `${progressPct}%` }} />
             </div>
           </div>
         </header>
 
-        {/* Main Step Grid on Desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start max-w-5xl mx-auto">
+        {/* Main Step Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-6)', alignItems: 'start', maxWidth: 1024, margin: '0 auto' }}>
           {/* Main Form Step Area */}
-          <main className="lg:col-span-8 w-full">
-            <Card className="p-6 sm:p-8 shadow-xl bg-white border border-slate-200/90 rounded-3xl">
-              <div className="flex justify-end mb-4">
+          <main>
+            <Card style={{ padding: 'var(--space-8)', boxShadow: 'var(--shadow-xl)', borderRadius: 'var(--radius-3xl)' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--space-4)' }}>
                 <VoiceButton translationKey="onboarding.sub" />
               </div>
 
-              {error && <Alert type="error" message={error} onClose={clearError} className="mb-6" />}
+              {error && <Alert type="error" message={error} onClose={clearError} style={{ marginBottom: 'var(--space-6)' }} />}
 
-            {successComplete ? (
-              <div className="text-center py-10 space-y-4 animate-fade-in">
-                <div className="text-6xl animate-bounce">🎉</div>
-                <h2 className="text-2xl font-bold text-slate-900 font-['Outfit']">{t('success.profileSaved', 'Profile Created Successfully!')}</h2>
-                <p className="text-slate-500 text-sm">{t('loading.loading', 'Redirecting to your Beekeeper Dashboard...')}</p>
-              </div>
-            ) : (
-              <div>
-                {/* Step 1: KVIC ID */}
-                {currentStep === 1 && (
-                  <div className="space-y-6 animate-fade-in">
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl">📜</span>
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">{t('onboarding.kvicId', 'Enter your KVIC ID')}</h2>
-                        <p className="text-slate-500 text-xs">Assigned by Khadi & Village Industries Commission</p>
-                      </div>
-                    </div>
-
-                    <Input
-                      id="onboarding-kvic-id"
-                      label={t('onboarding.kvicId', 'KVIC ID Number *')}
-                      value={formData.kvicId}
-                      onChange={(e) => setFormData({ ...formData, kvicId: e.target.value.toUpperCase() })}
-                      placeholder={t('onboarding.kvicPlaceholder', 'e.g. KVIC-BH-88421')}
-                      error={stepErrors.kvicId}
-                      className="text-lg uppercase tracking-wider"
-                      required
-                    />
-                  </div>
-                )}
-
-                {/* Step 2: Name & Village */}
-                {currentStep === 2 && (
-                  <div className="space-y-6 animate-fade-in">
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl">👤</span>
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">{t('onboarding.fullName', 'Personal Information')}</h2>
-                        <p className="text-slate-500 text-xs">Appears on public honey batch certificates</p>
-                      </div>
-                    </div>
-
-                    <Input
-                      id="onboarding-name"
-                      label={t('onboarding.fullName', 'Full Name *')}
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder={t('onboarding.namePlaceholder', 'e.g. Ramesh Kumar')}
-                      error={stepErrors.name}
-                      className="text-lg"
-                      required
-                    />
-
-                    <Input
-                      id="onboarding-village"
-                      label={t('onboarding.village', 'Village / Base Town *')}
-                      value={formData.village}
-                      onChange={(e) => setFormData({ ...formData, village: e.target.value })}
-                      placeholder={t('onboarding.villagePlaceholder', 'e.g. Rampur, Bihar')}
-                      error={stepErrors.village}
-                      className="text-lg"
-                      required
-                    />
-                  </div>
-                )}
-
-                {/* Step 3: Location */}
-                {currentStep === 3 && (
-                  <div className="space-y-6 animate-fade-in">
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl">📍</span>
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">{t('verification.beekeeperInfo', 'Apiary Location')}</h2>
-                        <p className="text-slate-500 text-xs">Provides honey origin proof for consumers</p>
-                      </div>
-                    </div>
-
-                    <LocationSelector
-                      village={formData.village}
-                      latitude={formData.latitude}
-                      longitude={formData.longitude}
-                      onVillageChange={(v) => setFormData({ ...formData, village: v })}
-                      onLocationChange={(lat, lng) => setFormData({ ...formData, latitude: lat, longitude: lng })}
-                      errors={stepErrors}
-                    />
-                  </div>
-                )}
-
-                {/* Step 4: Language */}
-                {currentStep === 4 && (
-                  <div className="space-y-6 animate-fade-in">
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl">🗣️</span>
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">{t('onboarding.language', 'Preferred Language')}</h2>
-                        <p className="text-slate-500 text-xs">Select your preferred app and SMS notification language</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 5: Optional Photo */}
-                {currentStep === 5 && (
-                  <div className="space-y-6 animate-fade-in">
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl">📸</span>
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">{t('profile.uploadPhoto', 'Profile Photo (Optional)')}</h2>
-                        <p className="text-slate-500 text-xs">Builds trust with marketplace buyers</p>
-                      </div>
-                    </div>
-
-                    <Input
-                      id="onboarding-photo"
-                      label="Photo URL"
-                      value={formData.photoUrl}
-                      onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })}
-                      placeholder="https://..."
-                    />
-                  </div>
-                )}
-
-                {/* Step 6: Review & Submit */}
-                {currentStep === 6 && (
-                  <div className="space-y-6 animate-fade-in">
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl">🔍</span>
-                      <div>
-                        <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">Review Details</h2>
-                        <p className="text-slate-500 text-xs">Confirm your information before submission</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-sm shadow-sm">
-                      <div className="flex justify-between py-1 border-b border-amber-200/60">
-                        <span className="text-slate-600">{t('onboarding.kvicId', 'KVIC ID')}:</span>
-                        <span className="text-slate-900 font-mono font-bold">{formData.kvicId}</span>
-                      </div>
-                      <div className="flex justify-between py-1 border-b border-amber-200/60">
-                        <span className="text-slate-600">{t('onboarding.fullName', 'Name')}:</span>
-                        <span className="text-slate-900 font-semibold">{formData.name}</span>
-                      </div>
-                      <div className="flex justify-between py-1 border-b border-amber-200/60">
-                        <span className="text-slate-600">{t('onboarding.village', 'Village')}:</span>
-                        <span className="text-slate-900">{formData.village}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Navigation Controls */}
-                <div className="flex items-center gap-3 mt-8 pt-4 border-t border-slate-100">
-                  {currentStep > 1 && (
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={handlePrev}
-                      className="py-3 px-6 font-semibold"
-                    >
-                      {t('common.back', '← Back')}
-                    </Button>
-                  )}
-
-                  {currentStep < TOTAL_STEPS ? (
-                    <Button
-                      id="onboarding-continue-btn"
-                      type="button"
-                      variant="primary"
-                      onClick={handleNext}
-                      className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 border-blue-600 font-bold text-white"
-                    >
-                      {t('common.continue', 'Continue →')}
-                    </Button>
-                  ) : (
-                    <Button
-                      id="onboarding-submit-btn"
-                      type="button"
-                      variant="primary"
-                      onClick={handleSubmit}
-                      loading={loading}
-                      className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 border-blue-600 font-bold text-white"
-                    >
-                      {t('onboarding.submitOnboarding', 'Create Profile ✨')}
-                    </Button>
-                  )}
+              {successComplete ? (
+                <div style={{ textAlign: 'center', padding: 'var(--space-10) 0', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                  <div style={{ fontSize: 'var(--text-5xl)' }}>🎉</div>
+                  <h2 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: 0 }}>
+                    {t('success.profileSaved', 'Profile Created Successfully!')}
+                  </h2>
+                  <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', margin: 0 }}>
+                    {t('loading.loading', 'Redirecting to your Beekeeper Dashboard...')}
+                  </p>
                 </div>
+              ) : (
+                <div>
+                  {/* Step 1: KVIC ID */}
+                  {currentStep === 1 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                        <span style={{ fontSize: 'var(--text-4xl)' }}>📜</span>
+                        <div>
+                          <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: '0 0 var(--space-1) 0' }}>
+                            {t('onboarding.kvicId', 'Enter your KVIC ID')}
+                          </h2>
+                          <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', margin: 0 }}>Assigned by Khadi & Village Industries Commission</p>
+                        </div>
+                      </div>
+                      <Input
+                        id="onboarding-kvic-id"
+                        label={t('onboarding.kvicId', 'KVIC ID Number *')}
+                        value={formData.kvicId}
+                        onChange={(e) => setFormData({ ...formData, kvicId: e.target.value.toUpperCase() })}
+                        placeholder={t('onboarding.kvicPlaceholder', 'e.g. KVIC-BH-88421')}
+                        error={stepErrors.kvicId}
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {/* Step 2: Name & Village */}
+                  {currentStep === 2 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                        <span style={{ fontSize: 'var(--text-4xl)' }}>👤</span>
+                        <div>
+                          <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: '0 0 var(--space-1) 0' }}>
+                            {t('onboarding.fullName', 'Personal Information')}
+                          </h2>
+                          <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', margin: 0 }}>Appears on public honey batch certificates</p>
+                        </div>
+                      </div>
+                      <Input id="onboarding-name" label={t('onboarding.fullName', 'Full Name *')} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder={t('onboarding.namePlaceholder', 'e.g. Ramesh Kumar')} error={stepErrors.name} required />
+                      <Input id="onboarding-village" label={t('onboarding.village', 'Village / Base Town *')} value={formData.village} onChange={(e) => setFormData({ ...formData, village: e.target.value })} placeholder={t('onboarding.villagePlaceholder', 'e.g. Rampur, Bihar')} error={stepErrors.village} required />
+                    </div>
+                  )}
+
+                  {/* Step 3: Location */}
+                  {currentStep === 3 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                        <span style={{ fontSize: 'var(--text-4xl)' }}>📍</span>
+                        <div>
+                          <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: '0 0 var(--space-1) 0' }}>
+                            {t('verification.beekeeperInfo', 'Apiary Location')}
+                          </h2>
+                          <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', margin: 0 }}>Provides honey origin proof for consumers</p>
+                        </div>
+                      </div>
+                      <LocationSelector
+                        village={formData.village}
+                        latitude={formData.latitude}
+                        longitude={formData.longitude}
+                        onVillageChange={(v) => setFormData({ ...formData, village: v })}
+                        onLocationChange={(lat, lng) => setFormData({ ...formData, latitude: lat, longitude: lng })}
+                        errors={stepErrors}
+                      />
+                    </div>
+                  )}
+
+                  {/* Step 4: Language */}
+                  {currentStep === 4 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                        <span style={{ fontSize: 'var(--text-4xl)' }}>🗣️</span>
+                        <div>
+                          <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: '0 0 var(--space-1) 0' }}>
+                            {t('onboarding.language', 'Preferred Language')}
+                          </h2>
+                          <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', margin: 0 }}>Select your preferred app and SMS notification language</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 5: Optional Photo */}
+                  {currentStep === 5 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                        <span style={{ fontSize: 'var(--text-4xl)' }}>📸</span>
+                        <div>
+                          <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: '0 0 var(--space-1) 0' }}>
+                            {t('profile.uploadPhoto', 'Profile Photo (Optional)')}
+                          </h2>
+                          <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', margin: 0 }}>Builds trust with marketplace buyers</p>
+                        </div>
+                      </div>
+                      <Input id="onboarding-photo" label="Photo URL" value={formData.photoUrl} onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })} placeholder="https://..." />
+                    </div>
+                  )}
+
+                  {/* Step 6: Review & Submit */}
+                  {currentStep === 6 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                        <span style={{ fontSize: 'var(--text-4xl)' }}>🔍</span>
+                        <div>
+                          <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: '0 0 var(--space-1) 0' }}>Review Details</h2>
+                          <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', margin: 0 }}>Confirm your information before submission</p>
+                        </div>
+                      </div>
+
+                      <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-2xl)', backgroundColor: 'var(--primary-soft)', border: '1px solid var(--primary-light)', fontSize: 'var(--text-sm)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                        {[
+                          { label: t('onboarding.kvicId', 'KVIC ID'), value: formData.kvicId, mono: true },
+                          { label: t('onboarding.fullName', 'Name'), value: formData.name },
+                          { label: t('onboarding.village', 'Village'), value: formData.village },
+                        ].map(({ label, value, mono }, idx, arr) => (
+                          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: idx < arr.length - 1 ? 'var(--space-2)' : 0, borderBottom: idx < arr.length - 1 ? `1px solid var(--primary-light)` : 'none' }}>
+                            <span style={{ color: 'var(--text-secondary)' }}>{label}:</span>
+                            <span style={{ color: 'var(--text-primary)', fontWeight: mono ? 'var(--font-bold)' : 'var(--font-semibold)', fontFamily: mono ? 'monospace' : undefined }}>{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Navigation Controls */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginTop: 'var(--space-8)', paddingTop: 'var(--space-4)', borderTop: '1px solid var(--border)' }}>
+                    {currentStep > 1 && (
+                      <Button type="button" variant="secondary" onClick={handlePrev}>
+                        {t('common.back', '← Back')}
+                      </Button>
+                    )}
+
+                    {currentStep < TOTAL_STEPS ? (
+                      <Button id="onboarding-continue-btn" type="button" variant="primary" onClick={handleNext} style={{ flex: 1, fontWeight: 'var(--font-bold)' }}>
+                        {t('common.continue', 'Continue →')}
+                      </Button>
+                    ) : (
+                      <Button id="onboarding-submit-btn" type="button" variant="primary" onClick={handleSubmit} loading={loading} style={{ flex: 1, fontWeight: 'var(--font-bold)' }}>
+                        {t('onboarding.submitOnboarding', 'Create Profile ✨')}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </Card>
+          </main>
+
+          {/* Sidebar Guidance Column */}
+          <aside style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <Card style={{ border: '1px solid var(--primary-light)', background: 'linear-gradient(135deg, rgba(253,230,138,0.2) 0%, var(--surface) 100%)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
+                <span style={{ fontSize: 'var(--text-xl)' }}>🌟</span>
+                <h3 style={{ fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', fontSize: 'var(--text-sm)', margin: 0 }}>Why Onboarding Matters</h3>
               </div>
-            )}
-          </Card>
-        </main>
+              <ul style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', lineHeight: 1.7, listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                {[
+                  { bold: 'Direct Payouts:', text: 'Sell pure honey directly to consumers at guaranteed fair floor prices.' },
+                  { bold: 'Cryptographic Trust:', text: 'Every jar is tied to your verified apiary coordinates.' },
+                  { bold: 'Free IoT Telemetry:', text: 'Connect smart hive sensors to monitor weight, moisture, and colony health.' },
+                ].map(({ bold, text }) => (
+                  <li key={bold} style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-1)' }}>
+                    <span style={{ color: 'var(--primary)', fontWeight: 'var(--font-bold)', flexShrink: 0 }}>✓</span>
+                    <span><strong>{bold}</strong> {text}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </aside>
+        </div>
 
-        {/* Sidebar Guidance Column on Desktop */}
-        <aside className="lg:col-span-4 space-y-4">
-          <Card className="p-5 border border-amber-200/80 bg-gradient-to-br from-amber-50/60 to-white space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🌟</span>
-              <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Why Onboarding Matters</h3>
-            </div>
-            <ul className="text-xs text-slate-600 space-y-2 leading-relaxed">
-              <li className="flex items-start gap-1.5">
-                <span className="text-amber-600 font-bold">✓</span>
-                <span><strong>Direct Payouts:</strong> Sell pure honey directly to consumers at guaranteed fair floor prices.</span>
-              </li>
-              <li className="flex items-start gap-1.5">
-                <span className="text-amber-600 font-bold">✓</span>
-                <span><strong>Cryptographic Trust:</strong> Every jar is tied to your verified apiary coordinates.</span>
-              </li>
-              <li className="flex items-start gap-1.5">
-                <span className="text-amber-600 font-bold">✓</span>
-                <span><strong>Free IoT Telemetry:</strong> Connect smart hive sensors to monitor weight, moisture, and colony health.</span>
-              </li>
-            </ul>
-          </Card>
-        </aside>
+        {/* Footer */}
+        <footer style={{ maxWidth: 512, margin: 'var(--space-8) auto 0', width: '100%', textAlign: 'center', fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>
+          HoneyChain • National Honey Traceability Platform
+        </footer>
       </div>
-
-      {/* Footer info */}
-      <footer className="max-w-xl mx-auto w-full text-center text-xs text-slate-500 mt-8 font-medium">
-        HoneyChain • National Honey Traceability Platform
-      </footer>
-    </div>
-  </BeekeeperLayout>
+    </BeekeeperLayout>
   )
 }
 

@@ -23,18 +23,46 @@ export const NotificationBell = () => {
   if (!isAuthenticated) return null
 
   return (
-    <div className="relative" ref={bellRef}>
+    <div style={{ position: 'relative' }} ref={bellRef}>
       <button
         type="button"
         id="nav-notification-bell"
-        className="btn btn--ghost btn--sm relative p-2 text-lg hover:bg-white/5 transition-colors"
+        style={{
+          position: 'relative',
+          padding: '8px',
+          fontSize: '1.25rem',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          borderRadius: 'var(--radius-lg)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'all var(--transition-fast)',
+        }}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Notifications"
         title="Notifications"
       >
         <span>🔔</span>
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-blue-600 text-white font-bold text-[10px] flex items-center justify-center border-2 border-white animate-bounce shadow-sm">
+          <span style={{
+            position: 'absolute',
+            top: '-2px',
+            right: '-2px',
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            backgroundColor: 'var(--primary)',
+            color: 'var(--primary-contrast)',
+            fontWeight: 'var(--font-black)',
+            fontSize: '0.625rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px solid var(--surface)',
+            boxShadow: 'var(--shadow-xs)',
+          }}>
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}

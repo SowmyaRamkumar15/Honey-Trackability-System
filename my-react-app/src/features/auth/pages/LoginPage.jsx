@@ -7,6 +7,7 @@ import Button from '../../../components/ui/Button'
 import Alert from '../../../components/feedback/Alert'
 import LanguageSelector from '../../../components/common/LanguageSelector'
 import { ROLE_ROUTES } from '../../../constants/roles'
+import '../styles/auth.css'
 
 export const LoginPage = ({ initialRole }) => {
   const [formData, setFormData] = useState({ phoneNumber: '', password: '' })
@@ -39,66 +40,63 @@ export const LoginPage = ({ initialRole }) => {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-page__orb auth-page__orb--tl" />
-      <div className="auth-page__orb auth-page__orb--br" />
-
+    <div className="hc-auth-page">
       {/* Language Switcher */}
-      <div className="absolute top-4 right-6 z-50">
+      <div className="hc-auth-page__lang">
         <LanguageSelector />
       </div>
 
-      <div className="auth-card">
+      <div className="hc-auth-card">
         {/* Header */}
-        <div className="auth-header">
-          <Link to="/" className="inline-flex flex-col items-center gap-2">
-            <div className="auth-logo-icon">🍯</div>
-            <span className="text-gradient font-black text-xl font-brand">{t('common.appName', 'HoneyChain')}</span>
+        <div className="hc-auth-header">
+          <Link to="/" className="hc-auth-brand">
+            <div className="hc-auth-brand-logo">
+              🍯
+            </div>
+            <span className="hc-auth-brand-name">
+              HoneyChain
+            </span>
           </Link>
-          <h1 className="auth-header__title">{t('auth.loginTitle', 'Sign In to HoneyChain')}</h1>
-          <p className="auth-header__sub">{t('auth.loginSub', 'Secure Role-Based Portal Access')}</p>
+          <h1 className="hc-auth-title">
+            {t('auth.loginTitle', 'Sign In to HoneyChain')}
+          </h1>
+          <p className="hc-auth-subtitle">
+            {t('auth.loginSub', 'Secure Role-Based Portal Access')}
+          </p>
         </div>
 
-        {/* Role Portal Options */}
-        <div className="flex items-center justify-center gap-1.5 p-1 bg-slate-100 rounded-lg mb-6 text-xs font-semibold overflow-x-auto">
+        {/* Role Portal Tabs */}
+        <div className="hc-auth-tabs">
           <Link
             to="/login/customer"
-            className={`px-3 py-1.5 rounded-md transition-all ${
-              activeRoleTab === 'CUSTOMER' ? 'bg-white text-primary shadow-sm font-bold' : 'text-slate-600 hover:text-slate-900'
-            }`}
+            className={`hc-auth-tab ${activeRoleTab === 'CUSTOMER' ? 'hc-auth-tab--active' : ''}`}
           >
             🛒 Customer
           </Link>
           <Link
             to="/login/beekeeper"
-            className={`px-3 py-1.5 rounded-md transition-all ${
-              activeRoleTab === 'BEEKEEPER' ? 'bg-white text-primary shadow-sm font-bold' : 'text-slate-600 hover:text-slate-900'
-            }`}
+            className={`hc-auth-tab ${activeRoleTab === 'BEEKEEPER' ? 'hc-auth-tab--active' : ''}`}
           >
             🐝 Beekeeper
           </Link>
           <Link
             to="/login/lab"
-            className={`px-3 py-1.5 rounded-md transition-all ${
-              activeRoleTab === 'LAB' ? 'bg-white text-primary shadow-sm font-bold' : 'text-slate-600 hover:text-slate-900'
-            }`}
+            className={`hc-auth-tab ${activeRoleTab === 'LAB' ? 'hc-auth-tab--active' : ''}`}
           >
             🔬 Lab
           </Link>
           <Link
             to="/login/admin"
-            className={`px-3 py-1.5 rounded-md transition-all ${
-              activeRoleTab === 'ADMIN' ? 'bg-white text-primary shadow-sm font-bold' : 'text-slate-600 hover:text-slate-900'
-            }`}
+            className={`hc-auth-tab ${activeRoleTab === 'ADMIN' ? 'hc-auth-tab--active' : ''}`}
           >
             🛡️ Admin
           </Link>
         </div>
 
-        {error && <Alert type="error" message={error} onClose={clearError} className="mb-4" />}
+        {error && <Alert type="error" message={error} onClose={clearError} style={{ marginBottom: '16px' }} />}
 
         {/* Form */}
-        <form id="login-form" onSubmit={handleSubmit} className="flex-col gap-4">
+        <form id="login-form" onSubmit={handleSubmit} className="hc-auth-form">
           <Input
             id="login-phone"
             name="phoneNumber"
@@ -125,47 +123,47 @@ export const LoginPage = ({ initialRole }) => {
             type="submit"
             variant="primary"
             loading={loading}
-            className="btn--full py-3 mt-2"
+            style={{ width: '100%', marginTop: '8px' }}
           >
             {t('navigation.login', 'Sign In')}
           </Button>
         </form>
 
         {/* Switch to OTP */}
-        <div className="auth-divider">
-          <div className="auth-divider__line" />
-          <span className="auth-divider__text">{t('common.or', 'OR')}</span>
-          <div className="auth-divider__line" />
+        <div className="hc-auth-footer">
+          <Link
+            to="/otp-login"
+            id="switch-to-otp-btn"
+            style={{ display: 'block', padding: '10px', backgroundColor: 'var(--primary-soft)', border: '1px solid var(--primary-light)', borderRadius: 'var(--radius-xl)' }}
+          >
+            {t('auth.switchToOtp', '📲 Beekeeper / Customer? Login with OTP')}
+          </Link>
         </div>
 
-        <Link to="/otp-login" id="switch-to-otp-btn">
-          <button className="auth-switch-btn">
-            {t('auth.switchToOtp', '📲 Beekeeper / Customer? Login with OTP')}
-          </button>
-        </Link>
-
         {/* Quick test credentials */}
-        <div className="quick-fills">
-          <p className="quick-fills__label">{t('auth.quickFill', 'Role Sign-in Presets:')}</p>
-          <div className="quick-fills__grid">
+        <div className="hc-auth-quick-fill">
+          <div className="hc-auth-quick-fill-title">
+            <span>{t('auth.quickFill', 'Demo Quick-Access Credentials:')}</span>
+          </div>
+          <div className="hc-auth-quick-fill-buttons">
             <button
               type="button"
               onClick={() => handleQuickFill('9876543210', 'Admin@123', 'ADMIN')}
-              className="quick-fill-chip"
+              className="hc-auth-quick-fill-btn"
             >
               🛡️ {t('auth.adminRole', 'Admin')}
             </button>
             <button
               type="button"
               onClick={() => handleQuickFill('9876543212', 'Lab@123', 'LAB')}
-              className="quick-fill-chip"
+              className="hc-auth-quick-fill-btn"
             >
-              🔬 {t('auth.labRole', 'Lab Tech')}
+              🔬 {t('auth.labRole', 'Lab')}
             </button>
             <button
               type="button"
               onClick={() => handleQuickFill('9876543211', 'Kvic@123', 'KVIC_OFFICER')}
-              className="quick-fill-chip"
+              className="hc-auth-quick-fill-btn"
             >
               ⚖️ {t('auth.kvicRole', 'KVIC')}
             </button>

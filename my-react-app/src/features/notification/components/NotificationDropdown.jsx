@@ -4,14 +4,29 @@ import NotificationItem from './NotificationItem'
 
 export const NotificationDropdown = ({ items = [], unreadCount = 0, onMarkAllRead, onClose }) => {
   return (
-    <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-slate-200 bg-white backdrop-blur-xl shadow-2xl z-50 overflow-hidden flex flex-col max-h-[32rem]">
+    <div style={{
+      position: 'absolute',
+      right: 0,
+      marginTop: '8px',
+      width: '360px',
+      maxWidth: '90vw',
+      borderRadius: 'var(--radius-2xl)',
+      border: '1px solid var(--border)',
+      backgroundColor: 'var(--surface)',
+      boxShadow: 'var(--shadow-xl)',
+      zIndex: 50,
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+      maxHeight: '32rem',
+    }}>
       {/* Header */}
-      <div className="p-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-        <div className="flex items-center gap-2">
-          <span className="text-base">🔔</span>
-          <h3 className="font-bold text-slate-900 text-sm font-['Outfit']">Notifications</h3>
+      <div style={{ padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'var(--bg-soft)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <span style={{ fontSize: '1rem' }}>🔔</span>
+          <h3 style={{ fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', fontSize: 'var(--text-sm)', margin: 0 }}>Notifications</h3>
           {unreadCount > 0 && (
-            <span className="bg-blue-50 border border-blue-200 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold">
+            <span style={{ backgroundColor: 'var(--primary-soft)', border: '1px solid var(--primary-light)', color: 'var(--primary-dark)', fontSize: '0.625rem', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 'var(--font-bold)' }}>
               {unreadCount} new
             </span>
           )}
@@ -19,7 +34,7 @@ export const NotificationDropdown = ({ items = [], unreadCount = 0, onMarkAllRea
         {unreadCount > 0 && (
           <button
             type="button"
-            className="text-xs text-blue-600 hover:text-blue-800 font-semibold transition-colors"
+            style={{ fontSize: 'var(--text-xs)', color: 'var(--primary)', fontWeight: 'var(--font-semibold)', background: 'none', border: 'none', cursor: 'pointer' }}
             onClick={onMarkAllRead}
           >
             Mark all read
@@ -28,11 +43,11 @@ export const NotificationDropdown = ({ items = [], unreadCount = 0, onMarkAllRea
       </div>
 
       {/* List Content */}
-      <div className="p-3 space-y-2 overflow-y-auto flex-1 custom-scrollbar">
+      <div style={{ padding: 'var(--space-3)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', overflowY: 'auto', flex: 1 }}>
         {items.length === 0 ? (
-          <div className="py-8 text-center space-y-2">
-            <span className="text-3xl opacity-50 block">🔔</span>
-            <p className="text-xs text-slate-500">No notifications yet</p>
+          <div style={{ padding: 'var(--space-8) 0', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <span style={{ fontSize: '2rem', opacity: 0.5, display: 'block' }}>🔔</span>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', margin: 0 }}>No notifications yet</p>
           </div>
         ) : (
           items.slice(0, 5).map((item) => (
@@ -42,11 +57,11 @@ export const NotificationDropdown = ({ items = [], unreadCount = 0, onMarkAllRea
       </div>
 
       {/* Footer */}
-      <div className="p-2.5 border-t border-slate-100 text-center bg-slate-50">
+      <div style={{ padding: 'var(--space-3)', borderTop: '1px solid var(--border-light)', textAlign: 'center', backgroundColor: 'var(--bg-soft)' }}>
         <Link
           to="/notifications"
           onClick={onClose}
-          className="text-xs text-blue-600 font-bold hover:underline"
+          style={{ fontSize: 'var(--text-xs)', color: 'var(--primary)', fontWeight: 'var(--font-bold)', textDecoration: 'none' }}
         >
           View All Notifications →
         </Link>

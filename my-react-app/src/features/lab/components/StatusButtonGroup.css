@@ -1,0 +1,184 @@
+/* ── Honey Test Status Button Group CSS ────────────────────────────── */
+
+.hc-status-group-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.hc-status-group-label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.hc-status-group-req {
+  color: var(--danger, #dc2626);
+}
+
+.hc-status-button-group {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--space-3);
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .hc-status-button-group {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── Base Status Button ── */
+.hc-status-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px;
+  min-height: 84px;
+  background-color: var(--surface, #ffffff);
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-xl, 12px);
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  transition: all var(--transition-fast, 0.15s ease);
+  user-select: none;
+  width: 100%;
+}
+
+.hc-status-btn:hover:not(:disabled) {
+  border-color: var(--border-dark, #94a3b8);
+  background-color: var(--bg-muted, #f8fafc);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.05));
+}
+
+.hc-status-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.35);
+}
+
+.hc-status-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Header inside Button */
+.hc-status-btn__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Indicator Circle */
+.hc-status-btn__indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full, 9999px);
+  border: 2px solid var(--border-dark, #cbd5e1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: var(--surface, #ffffff);
+  transition: all var(--transition-fast, 0.15s ease);
+}
+
+.hc-status-btn__label {
+  font-size: var(--text-xs, 0.875rem);
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: 0.04em;
+  font-family: var(--font-heading, sans-serif);
+}
+
+.hc-status-btn__subtitle {
+  margin: var(--space-2) 0 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-muted, #64748b);
+  font-weight: 500;
+}
+
+/* ── PURE Variant Selected State ── */
+.hc-status-btn--pure.hc-status-btn--selected {
+  border-color: #16a34a;
+  background-color: #f0fdf4;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.15);
+}
+
+.hc-status-btn--pure.hc-status-btn--selected .hc-status-btn__indicator {
+  background-color: #16a34a;
+  border-color: #16a34a;
+}
+
+.hc-status-btn--pure.hc-status-btn--selected .hc-status-btn__label {
+  color: #15803d;
+}
+
+.hc-status-btn--pure.hc-status-btn--selected .hc-status-btn__subtitle {
+  color: #166534;
+}
+
+/* ── UNDER REVIEW Variant Selected State ── */
+.hc-status-btn--review.hc-status-btn--selected {
+  border-color: #d97706;
+  background-color: #fffbeb;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.15);
+}
+
+.hc-status-btn--review.hc-status-btn--selected .hc-status-btn__indicator {
+  background-color: #d97706;
+  border-color: #d97706;
+}
+
+.hc-status-btn--review.hc-status-btn--selected .hc-status-btn__label {
+  color: #b45309;
+}
+
+.hc-status-btn--review.hc-status-btn--selected .hc-status-btn__subtitle {
+  color: #92400e;
+}
+
+/* ── FAILED Variant Selected State ── */
+.hc-status-btn--failed.hc-status-btn--selected {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
+}
+
+.hc-status-btn--failed.hc-status-btn--selected .hc-status-btn__indicator {
+  background-color: #dc2626;
+  border-color: #dc2626;
+}
+
+.hc-status-btn--failed.hc-status-btn--selected .hc-status-btn__label {
+  color: #b91c1c;
+}
+
+.hc-status-btn--failed.hc-status-btn--selected .hc-status-btn__subtitle {
+  color: #991b1b;
+}
+
+/* SVG Check Icon */
+.hc-status-btn__check-icon {
+  color: #ffffff;
+}
+
+/* Error Text */
+.hc-status-group-error {
+  color: #dc2626;
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  margin: var(--space-1) 0 0 0;
+}

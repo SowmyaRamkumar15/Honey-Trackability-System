@@ -1,27 +1,23 @@
 import React from 'react'
 import Card from '../../../components/ui/Card'
+import '../styles/verification.css'
 
 export const VerificationTimeline = ({ timeline }) => {
   if (!timeline || timeline.length === 0) return null
 
   return (
-    <Card className="p-6 space-y-5 border border-[#E2E8F0] bg-white">
-      <h2 className="text-lg font-bold text-[#1E293B] font-['Inter'] flex items-center gap-2">
-        <span>⏱️</span> Traceability Milestone History
-      </h2>
-
-      <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#2563EB]">
+    <Card header={<h3>⏱️ Traceability Milestone History</h3>}>
+      <div className="hc-verify-timeline">
         {timeline.map((item, idx) => (
-          <div key={idx} className="relative flex items-start gap-4 group">
-            {/* Timeline node icon */}
-            <div className="absolute -left-6 top-0 w-6 h-6 rounded-full bg-white border-2 border-[#2563EB] flex items-center justify-center text-xs shadow-sm">
+          <div key={idx} className="hc-verify-timeline-item">
+            <div className="hc-verify-timeline-dot">
               <span>{item.icon || '●'}</span>
             </div>
 
-            <div className="flex-1 bg-[#F8FAFC] p-3.5 rounded-xl border border-[#E2E8F0] group-hover:border-[#2563EB] transition-colors">
-              <div className="flex items-center justify-between gap-2 mb-1">
-                <p className="text-[#1E293B] font-bold text-xs font-['Inter']">{item.title}</p>
-                <span className="text-[10px] text-[#64748B] font-mono">
+            <div className="hc-verify-timeline-content">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-2)', marginBottom: '4px' }}>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: 'var(--text-xs)', color: 'var(--text-primary)' }}>{item.title}</p>
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                   {item.date
                     ? new Date(item.date).toLocaleDateString('en-IN', {
                       day: '2-digit',
@@ -31,7 +27,7 @@ export const VerificationTimeline = ({ timeline }) => {
                     : '—'}
                 </span>
               </div>
-              <p className="text-xs text-[#64748B] leading-relaxed">{item.description}</p>
+              <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{item.description}</p>
             </div>
           </div>
         ))}

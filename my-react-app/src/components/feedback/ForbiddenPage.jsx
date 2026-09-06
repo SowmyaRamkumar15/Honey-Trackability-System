@@ -13,28 +13,28 @@ export const ForbiddenPage = () => {
   const userRoleLabel = isAuthenticated && role ? ROLE_LABELS[role] || role : 'Guest'
 
   const content = (
-    <div className="min-h-[70vh] flex items-center justify-center p-6">
-      <Card className="max-w-md w-full text-center p-8 space-y-6 bg-white border border-slate-200 shadow-sm rounded-xl">
-        <div className="w-16 h-16 rounded-full bg-slate-100 border border-slate-200 text-slate-800 flex items-center justify-center text-3xl mx-auto">
+    <div style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-6)' }}>
+      <Card style={{ maxWidth: '440px', width: '100%', textAlign: 'center', padding: 'var(--space-8)', display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+        <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'var(--danger-soft)', border: '1px solid var(--danger-border)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginInline: 'auto' }}>
           🛡️
         </div>
-        <div className="space-y-2">
-          <h1 className="text-2xl font-extrabold text-slate-900 font-['Outfit']">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+          <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-black)', color: 'var(--text-primary)', margin: 0 }}>
             403 — Access Denied
           </h1>
-          <p className="text-sm text-slate-600 leading-relaxed">
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
             You do not have permission to access this page. Your account role is logged in as{' '}
-            <span className="font-semibold text-primary">{userRoleLabel}</span>.
+            <span style={{ fontWeight: 'var(--font-bold)', color: 'var(--primary-dark)' }}>{userRoleLabel}</span>.
           </p>
         </div>
-        <div className="pt-2 flex flex-col gap-3">
-          <Link to={dashboardRoute}>
-            <Button variant="primary" className="w-full justify-center">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', paddingTop: 'var(--space-2)' }}>
+          <Link to={dashboardRoute} style={{ textDecoration: 'none' }}>
+            <Button variant="primary" style={{ width: '100%', justifyContent: 'center', fontWeight: 'var(--font-bold)' }}>
               Go to Your Role Dashboard
             </Button>
           </Link>
-          <Link to="/">
-            <Button variant="secondary" className="w-full justify-center">
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <Button variant="secondary" style={{ width: '100%', justifyContent: 'center' }}>
               Back to Home Page
             </Button>
           </Link>

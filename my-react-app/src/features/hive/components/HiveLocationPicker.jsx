@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Button from '../../../components/ui/Button'
+import '../styles/hive.css'
 
 export const HiveLocationPicker = ({ latitude, longitude, onLocationChange }) => {
   const [locating, setLocating] = useState(false)
@@ -30,22 +31,22 @@ export const HiveLocationPicker = ({ latitude, longitude, onLocationChange }) =>
   }
 
   return (
-    <div className="space-y-3">
-      <label className="block text-sm font-semibold text-slate-800">
-        Hive Location <span className="text-slate-500 text-xs font-normal">(Optional)</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+      <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)' }}>
+        Hive Location <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-normal)' }}>(Optional)</span>
       </label>
 
-      <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between shadow-sm">
+      <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-xl)', backgroundColor: 'var(--primary-soft)', border: '1px solid var(--primary-light)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', justifyContent: 'space-between', boxShadow: 'var(--shadow-xs)' }}>
         <div>
-          <p className="text-slate-900 text-sm font-medium flex items-center gap-2">
+          <p style={{ color: 'var(--text-primary)', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', margin: 0 }}>
             <span>📍</span> Auto-Detect GPS
           </p>
           {gpsSuccess && latitude && (
-            <p className="text-blue-700 text-xs mt-1 font-mono font-bold">
+            <p style={{ color: 'var(--primary-dark)', fontSize: 'var(--text-xs)', marginTop: '4px', fontFamily: 'var(--font-mono)', fontWeight: 'var(--font-bold)', margin: '4px 0 0 0' }}>
               ✓ {latitude}°N, {longitude}°E
             </p>
           )}
-          {gpsError && <p className="text-amber-800 text-xs mt-1 font-semibold">{gpsError}</p>}
+          {gpsError && <p style={{ color: 'var(--danger)', fontSize: 'var(--text-xs)', marginTop: '4px', fontWeight: 'var(--font-semibold)', margin: '4px 0 0 0' }}>{gpsError}</p>}
         </div>
         <Button
           variant={gpsSuccess ? 'secondary' : 'primary'}
@@ -53,33 +54,34 @@ export const HiveLocationPicker = ({ latitude, longitude, onLocationChange }) =>
           onClick={handleGps}
           loading={locating}
           type="button"
-          className="w-full sm:w-auto"
         >
           {gpsSuccess ? '✓ Captured' : '📡 Get GPS'}
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
         <div>
-          <label className="text-xs text-slate-500 mb-1 block font-medium">Latitude</label>
+          <label htmlFor="hive-lat" style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', marginBottom: '4px', display: 'block', fontWeight: 'var(--font-medium)' }}>Latitude</label>
           <input
+            id="hive-lat"
             type="number"
             step="0.0001"
             value={latitude ?? ''}
             onChange={(e) => onLocationChange(e.target.value ? parseFloat(e.target.value) : null, longitude)}
             placeholder="e.g. 11.4200"
-            className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-blue-600 shadow-sm"
+            className="hc-input"
           />
         </div>
         <div>
-          <label className="text-xs text-slate-500 mb-1 block font-medium">Longitude</label>
+          <label htmlFor="hive-lng" style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', marginBottom: '4px', display: 'block', fontWeight: 'var(--font-medium)' }}>Longitude</label>
           <input
+            id="hive-lng"
             type="number"
             step="0.0001"
             value={longitude ?? ''}
             onChange={(e) => onLocationChange(latitude, e.target.value ? parseFloat(e.target.value) : null)}
             placeholder="e.g. 76.8800"
-            className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-blue-600 shadow-sm"
+            className="hc-input"
           />
         </div>
       </div>

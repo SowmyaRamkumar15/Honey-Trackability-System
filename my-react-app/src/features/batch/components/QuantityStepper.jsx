@@ -1,4 +1,5 @@
 import React from 'react'
+import '../styles/batch.css'
 
 export const QuantityStepper = ({
   value = 5.0,
@@ -30,24 +31,24 @@ export const QuantityStepper = ({
   }
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-slate-700">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+      <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)' }}>
         Harvest Quantity (KG) *
       </label>
 
       {/* Stepper Control */}
-      <div className="flex items-center gap-3">
+      <div className="hc-stepper">
         <button
           type="button"
           onClick={handleDecrement}
           disabled={currentVal <= min}
-          className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-2xl font-black flex items-center justify-center hover:bg-amber-100 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all"
+          className="hc-stepper-btn"
           aria-label="Decrease quantity"
         >
           −
         </button>
 
-        <div className="flex-1 text-center py-3 px-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center gap-2">
+        <div className="hc-stepper-display">
           <input
             type="number"
             step="0.1"
@@ -55,16 +56,16 @@ export const QuantityStepper = ({
             max={max}
             value={value}
             onChange={handleDirectInput}
-            className="w-28 text-center text-3xl font-black text-slate-900 font-mono bg-transparent focus:outline-none focus:border-b-2 focus:border-blue-600"
+            className="hc-stepper-input"
           />
-          <span className="text-amber-800 font-bold text-lg">KG</span>
+          <span style={{ color: 'var(--primary-dark)', fontWeight: 'var(--font-bold)', fontSize: 'var(--text-lg)' }}>KG</span>
         </div>
 
         <button
           type="button"
           onClick={handleIncrement}
           disabled={currentVal >= max}
-          className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-2xl font-black flex items-center justify-center hover:bg-amber-100 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all"
+          className="hc-stepper-btn"
           aria-label="Increase quantity"
         >
           +
@@ -72,25 +73,21 @@ export const QuantityStepper = ({
       </div>
 
       {/* Quick Preset Buttons */}
-      <div className="flex items-center gap-2 pt-1">
-        <span className="text-xs text-slate-500">Quick:</span>
+      <div className="hc-stepper-presets">
+        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>Quick:</span>
         {[1, 5, 10, 25, 50].map((preset) => (
           <button
             key={preset}
             type="button"
             onClick={() => onChange(preset)}
-            className={`px-2.5 py-1 text-xs rounded-lg border transition-all ${
-              currentVal === preset
-                ? 'bg-amber-500 text-white font-bold border-amber-500'
-                : 'border-slate-200 text-slate-700 hover:border-amber-400 bg-white'
-            }`}
+            className={`hc-preset-pill ${currentVal === preset ? 'hc-preset-pill--active' : ''}`}
           >
             {preset}kg
           </button>
         ))}
       </div>
 
-      {error && <p className="text-blue-600 text-xs mt-1">{error}</p>}
+      {error && <p style={{ color: 'var(--danger)', fontSize: 'var(--text-xs)', margin: '4px 0 0 0' }}>{error}</p>}
     </div>
   )
 }

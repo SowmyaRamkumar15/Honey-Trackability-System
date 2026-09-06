@@ -41,7 +41,7 @@ export const ProfileForm = ({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
       <Input
         id="profile-name"
         label="Full Name *"
@@ -74,12 +74,12 @@ export const ProfileForm = ({
         placeholder="https://..."
       />
 
-      <div className="flex items-center gap-3 pt-4">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', paddingTop: 'var(--space-4)' }}>
         <Button
           type="submit"
           variant="primary"
           loading={loading}
-          className="flex-1 py-3"
+          style={{ flex: 1, paddingBlock: 'var(--space-3)', fontWeight: 'var(--font-bold)' }}
         >
           Save Changes
         </Button>
@@ -88,7 +88,7 @@ export const ProfileForm = ({
             type="button"
             variant="secondary"
             onClick={onCancel}
-            className="py-3 px-6"
+            style={{ paddingBlock: 'var(--space-3)', paddingInline: 'var(--space-6)' }}
           >
             Cancel
           </Button>

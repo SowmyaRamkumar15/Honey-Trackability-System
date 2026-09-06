@@ -1,10 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
 import HealthStatusBadge from './HealthStatusBadge'
 import VoiceButton from '../../../components/common/VoiceButton'
 import { useLanguage } from '../../../i18n/LanguageContext'
+import '../styles/iot.css'
 
 export const HiveHealthCard = ({ health }) => {
   const { t } = useLanguage()
@@ -13,13 +13,12 @@ export const HiveHealthCard = ({ health }) => {
 
   const { hiveId, hiveCode, clusterName, status, message, checkedAt } = health
 
-  const getBorderTheme = () => {
-    if (status === 'ALERT') return 'border-blue-300 bg-blue-50/40 text-blue-950 shadow-sm'
-    if (status === 'WATCH') return 'border-amber-300 bg-amber-50/40 text-amber-950 shadow-sm'
-    return 'border-slate-200 bg-white text-slate-900 shadow-sm'
+  const getStatusClass = () => {
+    if (status === 'ALERT') return 'hc-hive-card--alert'
+    if (status === 'WATCH') return 'hc-hive-card--watch'
+    return 'hc-hive-card--healthy'
   }
 
-  // Voice text based on hive status
   const getVoiceAlertText = () => {
     let alertMsg = ''
     if (status === 'HEALTHY') alertMsg = t('iot.voiceAlertHealthy', 'Hive is healthy. Temperature and colony activity are normal.')
@@ -29,50 +28,54 @@ export const HiveHealthCard = ({ health }) => {
   }
 
   return (
-    <Card className={`p-6 space-y-4 border ${getBorderTheme()} transition-all hover:scale-[1.01]`}>
-      {/* Header */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center text-2xl">
-            🐝
+    <div className={`hc-hive-card ${getStatusClass()}`}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        {/* Header */}
+        <div className="hc-hive-card__header">
+          <div className="hc-hive-card__brand">
+            <div className="hc-hive-card__icon">
+              🐝
+            </div>
+            <div>
+              <h3 className="hc-hive-card__title">
+                {hiveCode || `Hive #${hiveId}`}
+              </h3>
+              <p className="hc-hive-card__sub">
+                {clusterName ? `Apiary: ${clusterName}` : 'Registered Colony'}
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-slate-900 font-bold text-lg font-['Outfit'] flex items-center gap-2">
-              <span>{hiveCode || `Hive #${hiveId}`}</span>
-            </h3>
-            <p className="text-xs text-slate-500">
-              {clusterName ? `Apiary: ${clusterName}` : 'Registered Hive'}
-            </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <HealthStatusBadge status={status} size="sm" />
+            <VoiceButton textToSpeak={getVoiceAlertText()} size="xs" />
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <HealthStatusBadge status={status} size="sm" />
-          <VoiceButton text={getVoiceAlertText()} size="xs" />
-        </div>
-      </div>
 
-      {/* Primary Plain-Language UX Message */}
-      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Health Assessment</p>
-        <p className="text-sm font-medium text-slate-800 leading-relaxed">
-          {message}
-        </p>
+        {/* Diagnostic Assessment */}
+        <div className="hc-hive-card__assessment">
+          <span className="hc-hive-card__assessment-tag">
+            Diagnostic Telemetry Assessment
+          </span>
+          <p className="hc-hive-card__assessment-msg">
+            {message}
+          </p>
+        </div>
       </div>
 
       {/* Footer Info & Action */}
-      <div className="flex items-center justify-between pt-1 text-xs text-slate-500">
-        <span className="font-mono text-[11px]">
+      <div className="hc-hive-card__footer">
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem' }}>
           {checkedAt
             ? `Updated ${new Date(checkedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`
             : 'Live monitoring'}
         </span>
         <Link to={`/hives/${hiveId}/health`}>
-          <Button variant="secondary" size="sm" className="text-xs">
-            {t('common.viewDetails', 'View Sensor Details')} →
+          <Button variant="secondary" size="sm">
+            {t('common.viewDetails', 'Inspect Sensors')} →
           </Button>
         </Link>
       </div>
-    </Card>
+    </div>
   )
 }
 

@@ -31,9 +31,9 @@ export const CertificateUpload = ({ file, onFileChange, currentCertificateUrl })
   }
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-slate-800 font-semibold">
-        Laboratory Certificate Document <span className="text-slate-500 text-xs font-normal">(PDF / Image, Max 5MB)</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+      <label className="hc-input__label">
+        Laboratory Certificate Document <span style={{ color: 'var(--text-muted)', textTransform: 'none', fontWeight: 400 }}>(PDF / Image, Max 5MB)</span>
       </label>
 
       <input
@@ -41,22 +41,22 @@ export const CertificateUpload = ({ file, onFileChange, currentCertificateUrl })
         type="file"
         accept="application/pdf,image/jpeg,image/png,image/webp"
         onChange={handleSelect}
-        className="hidden"
+        style={{ display: 'none' }}
         id="lab-certificate-input"
       />
 
       {fileName || currentCertificateUrl ? (
-        <div className="rounded-2xl border border-blue-200 bg-blue-50/60 p-4 flex items-center justify-between gap-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">📄</span>
+        <div style={{ borderRadius: 'var(--radius-lg)', border: '1px solid var(--primary-light)', background: 'var(--primary-soft)', padding: 'var(--space-4)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-3)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            <span style={{ fontSize: '1.75rem' }}>📄</span>
             <div>
-              <p className="text-slate-900 text-xs font-bold font-mono">
+              <p style={{ margin: 0, color: 'var(--text-primary)', fontSize: 'var(--text-xs)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
                 {fileName || 'Laboratory Certificate Attached'}
               </p>
-              <p className="text-slate-500 text-[11px]">Ready for blockchain recording</p>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '11px' }}>Ready for blockchain recording</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
             <Button
               type="button"
               size="sm"
@@ -65,24 +65,25 @@ export const CertificateUpload = ({ file, onFileChange, currentCertificateUrl })
             >
               Replace
             </Button>
-            <button
+            <Button
               type="button"
+              size="sm"
+              variant="ghost"
               onClick={handleRemove}
-              className="text-xs text-slate-600 hover:text-slate-900 py-1.5 px-3 rounded-xl border border-slate-200 hover:bg-slate-100 transition-colors font-medium"
             >
               Remove
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="w-full p-6 rounded-2xl border-2 border-dashed border-slate-300 hover:border-blue-500 bg-slate-50 hover:bg-blue-50/50 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer group shadow-sm"
+          style={{ width: '100%', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', border: '2px dashed var(--border)', background: 'var(--background)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-2)', cursor: 'pointer', transition: 'border-color var(--transition-fast)' }}
         >
-          <span className="text-3xl group-hover:scale-110 transition-transform">📄</span>
-          <span className="text-slate-900 text-sm font-semibold">Upload Certificate PDF / Image</span>
-          <span className="text-xs text-slate-500">
+          <span style={{ fontSize: '2rem' }}>📄</span>
+          <span style={{ color: 'var(--text-primary)', fontSize: 'var(--text-sm)', fontWeight: 700 }}>Upload Certificate PDF / Image</span>
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
             Attach official lab test report or purity certification (Optional)
           </span>
         </button>

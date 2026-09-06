@@ -5,11 +5,16 @@ import Card from '../../../components/ui/Card'
 import PageHeader from '../../../components/layout/PageHeader'
 import MetricCard from '../../../components/ui/MetricCard'
 import Button from '../../../components/ui/Button'
+import Badge from '../../../components/ui/Badge'
+import DataTable from '../../../components/ui/DataTable'
+import EmptyState from '../../../components/ui/EmptyState'
+import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
 import { useAuth } from '../../auth/hooks/useAuth'
 import customerApi from '../api/customerApi'
 import disputeApi from '../api/disputeApi'
 import orderApi from '../../order/api/orderApi'
 import { useLanguage } from '../../../i18n/LanguageContext'
+import '../styles/customer.css'
 
 export const CustomerDashboard = () => {
   const { phoneNumber } = useAuth()
@@ -60,37 +65,98 @@ export const CustomerDashboard = () => {
     (o) => o.status === 'PENDING' || o.status === 'CONFIRMED' || o.status === 'PROCESSING' || o.status === 'SHIPPED'
   ).length
 
+  const getOrderStatusVariant = (status) => {
+    switch (status) {
+      case 'DELIVERED':
+        return 'success'
+      case 'CANCELLED':
+        return 'danger'
+      case 'SHIPPED':
+      case 'CONFIRMED':
+        return 'info'
+      case 'PENDING':
+      case 'PROCESSING':
+      default:
+        return 'warning'
+    }
+  }
+
+  const orderColumns = [
+    {
+      key: 'orderNumber',
+      header: 'Order #',
+      render: (row) => (
+        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
+          {row.orderNumber || `#${row.id}`}
+        </span>
+      ),
+    },
+    {
+      key: 'date',
+      header: 'Date',
+      render: (row) => (
+        <span style={{ color: 'var(--text-secondary)' }}>
+          {row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'Recent'}
+        </span>
+      ),
+    },
+    {
+      key: 'items',
+      header: 'Items',
+      render: (row) => <span>{row.items?.length || 1} item(s)</span>,
+    },
+    {
+      key: 'totalAmount',
+      header: 'Total Amount',
+      render: (row) => (
+        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
+          ₹{Number(row.totalAmount ?? row.totalPrice ?? 0).toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (row) => (
+        <Badge variant={getOrderStatusVariant(row.status)} size="sm">
+          {row.status || 'PROCESSING'}
+        </Badge>
+      ),
+    },
+    {
+      key: 'action',
+      header: 'Action',
+      align: 'right',
+      render: (row) => (
+        <Link to={`/orders/${row.orderNumber || row.id}`}>
+          <Button variant="ghost" size="sm">
+            View Details
+          </Button>
+        </Link>
+      ),
+    },
+  ]
+
   return (
     <CustomerLayout>
-      <div className="space-y-6">
+      <div className="hc-cust-page">
         <PageHeader
-          title={
-            <span>
-              Customer <span className="text-primary-medium font-bold">Portal</span>
-            </span>
-          }
-          subtitle={
-            <span>
-              Welcome back{profile?.fullName ? `, ${profile.fullName}` : ''} | Account:{' '}
-              <strong className="font-mono">{phoneNumber || 'Customer'}</strong>
-            </span>
-          }
-          action={
-            <div className="flex gap-2">
-              <Link to="/marketplace">
-                <Button variant="primary">🛍️ Browse Honey</Button>
-              </Link>
-            </div>
+          title="Customer Portal"
+          subtitle={`Welcome back${profile?.fullName ? `, ${profile.fullName}` : ''} | Account: ${phoneNumber || 'Customer'}`}
+          actions={
+            <Link to="/marketplace">
+              <Button variant="primary">🛍️ Browse Honey</Button>
+            </Link>
           }
         />
 
         {!profileComplete && (
-          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="hc-cust-banner">
             <div>
-              <p className="font-semibold text-amber-900">Complete Your Delivery Profile</p>
-              <p className="text-sm text-amber-800">
-                Add your shipping address and contact name to enable one-click checkout.
-              </p>
+              <div className="hc-cust-banner__title">Complete Your Delivery Profile</div>
+              <div className="hc-cust-banner__desc">
+                Add your shipping address and contact name to enable quick one-click checkout.
+              </div>
             </div>
             <Link to="/customer/profile">
               <Button variant="secondary" size="sm">
@@ -101,7 +167,7 @@ export const CustomerDashboard = () => {
         )}
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 align-stretch">
+        <div className="hc-cust-kpi-grid">
           <MetricCard
             icon="🛒"
             label="Total Orders"
@@ -128,137 +194,89 @@ export const CustomerDashboard = () => {
           />
         </div>
 
-        {/* Quick Navigation Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="p-5 flex flex-col justify-between hover:border-primary-light transition-all shadow-sm">
-            <div className="space-y-2">
-              <div className="text-3xl">🍯</div>
-              <h3 className="text-lg font-bold text-slate-900">Traceable Marketplace</h3>
-              <p className="text-sm text-slate-600">
+        {/* Quick Navigation Hub */}
+        <div className="hc-cust-hub-grid">
+          <div className="hc-cust-hub-card">
+            <div>
+              <div className="hc-cust-hub-card__icon">🍯</div>
+              <h3 className="hc-cust-hub-card__title">Traceable Marketplace</h3>
+              <p className="hc-cust-hub-card__desc">
                 Explore 100% lab-verified raw honey directly from certified beekeepers with blockchain traceability.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <Link to="/marketplace" className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1">
+            <div className="hc-cust-hub-card__action">
+              <Link to="/marketplace" className="hc-cust-hub-card__link">
                 Explore Marketplace →
               </Link>
             </div>
-          </Card>
+          </div>
 
-          <Card className="p-5 flex flex-col justify-between hover:border-primary-light transition-all shadow-sm">
-            <div className="space-y-2">
-              <div className="text-3xl">🔍</div>
-              <h3 className="text-lg font-bold text-slate-900">Verify Honey Batch</h3>
-              <p className="text-sm text-slate-600">
+          <div className="hc-cust-hub-card">
+            <div>
+              <div className="hc-cust-hub-card__icon">🔍</div>
+              <h3 className="hc-cust-hub-card__title">Verify Honey Batch</h3>
+              <p className="hc-cust-hub-card__desc">
                 Scan your jar's QR code or enter a batch ID to inspect lab purity tests, pollen composition, and hive origin.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <Link to="/verify" className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1">
+            <div className="hc-cust-hub-card__action">
+              <Link to="/" className="hc-cust-hub-card__link">
                 Verify Batch →
               </Link>
             </div>
-          </Card>
+          </div>
 
-          <Card className="p-5 flex flex-col justify-between hover:border-primary-light transition-all shadow-sm">
-            <div className="space-y-2">
-              <div className="text-3xl">🛡️</div>
-              <h3 className="text-lg font-bold text-slate-900">Dispute & Support</h3>
-              <p className="text-sm text-slate-600">
+          <div className="hc-cust-hub-card">
+            <div>
+              <div className="hc-cust-hub-card__icon">🛡️</div>
+              <h3 className="hc-cust-hub-card__title">Dispute & Support</h3>
+              <p className="hc-cust-hub-card__desc">
                 Need assistance with an order or test discrepancy? File a dispute with full transparent resolution tracking.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <Link to="/customer/disputes" className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1">
+            <div className="hc-cust-hub-card__action">
+              <Link to="/customer/disputes" className="hc-cust-hub-card__link">
                 Manage Disputes →
               </Link>
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Recent Orders Section */}
-        <Card className="p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">Recent Orders</h2>
-              <p className="text-xs text-slate-500">Your latest purchases and live fulfillment status</p>
+        <Card
+          header={
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <div>
+                <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 'var(--text-lg)' }}>Recent Orders</h3>
+                <p style={{ margin: '2px 0 0', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                  Your latest purchases and live fulfillment status
+                </p>
+              </div>
+              <Link to="/orders">
+                <Button variant="ghost" size="sm">
+                  View All Orders →
+                </Button>
+              </Link>
             </div>
-            <Link to="/orders">
-              <Button variant="ghost" size="sm">
-                View All Orders →
-              </Button>
-            </Link>
-          </div>
-
+          }
+        >
           {loading ? (
-            <div className="py-8 text-center text-slate-500">
-              <div className="btn-spinner__icon inline-block mb-2" />
-              <p className="text-sm">Loading orders...</p>
-            </div>
+            <LoadingSpinner message="Loading orders..." />
           ) : orders.length === 0 ? (
-            <div className="py-10 text-center border border-dashed border-slate-200 rounded-lg space-y-2">
-              <div className="text-4xl">🛍️</div>
-              <p className="font-semibold text-slate-700">No orders placed yet</p>
-              <p className="text-xs text-slate-500">Browse pure certified honey batches in our marketplace.</p>
-              <div className="pt-2">
+            <EmptyState
+              icon="🛍️"
+              title="No orders placed yet"
+              description="Browse pure certified honey batches in our marketplace."
+              action={
                 <Link to="/marketplace">
-                  <Button variant="secondary" size="sm">
+                  <Button variant="primary" size="sm">
                     Start Shopping
                   </Button>
                 </Link>
-              </div>
-            </div>
+              }
+            />
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
-                    <th className="pb-3 font-semibold">Order #</th>
-                    <th className="pb-3 font-semibold">Date</th>
-                    <th className="pb-3 font-semibold">Items</th>
-                    <th className="pb-3 font-semibold">Total Amount</th>
-                    <th className="pb-3 font-semibold">Status</th>
-                    <th className="pb-3 font-semibold text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {orders.slice(0, 5).map((order) => (
-                    <tr key={order.orderNumber || order.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="py-3 font-mono font-medium text-slate-800">
-                        {order.orderNumber || `#${order.id}`}
-                      </td>
-                      <td className="py-3 text-slate-600">
-                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Recent'}
-                      </td>
-                      <td className="py-3 text-slate-600">
-                        {order.items?.length || 1} item(s)
-                      </td>
-                      <td className="py-3 font-semibold text-slate-900 font-mono">
-                        ₹{order.totalAmount ?? order.totalPrice ?? '—'}
-                      </td>
-                      <td className="py-3">
-                        <span className={`badge ${
-                          order.status === 'DELIVERED'
-                            ? 'badge--success'
-                            : order.status === 'CANCELLED'
-                            ? 'badge--error'
-                            : 'badge--info'
-                        }`}>
-                          {order.status || 'PROCESSING'}
-                        </span>
-                      </td>
-                      <td className="py-3 text-right">
-                        <Link to={`/orders/${order.orderNumber || order.id}`}>
-                          <Button variant="ghost" size="xs">
-                            Details
-                          </Button>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DataTable columns={orderColumns} data={orders.slice(0, 5)} keyField="id" />
           )}
         </Card>
       </div>

@@ -5,7 +5,7 @@ export const SensorHistoryChart = ({ readings = [] }) => {
 
   if (!readings || readings.length === 0) {
     return (
-      <div className="p-8 text-center text-xs text-slate-500 border border-dashed border-slate-300 rounded-xl bg-white shadow-sm">
+      <div style={{ padding: 'var(--space-8)', textAlign: 'center', fontSize: 'var(--text-xs)', color: 'var(--text-muted)', border: '1px dashed var(--border)', borderRadius: 'var(--radius-xl)', backgroundColor: 'var(--surface)' }}>
         No historical sensor readings recorded yet.
       </div>
     )
@@ -65,11 +65,11 @@ export const SensorHistoryChart = ({ readings = [] }) => {
     : ''
 
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
       {/* Metric Selector Tabs */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <span className="text-xs text-slate-500 font-medium">Historical Telemetry</span>
-        <div className="flex gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontWeight: 'var(--font-medium)' }}>Historical Telemetry</span>
+        <div style={{ display: 'flex', gap: '4px', padding: '4px', backgroundColor: 'var(--bg-muted)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', fontSize: 'var(--text-xs)' }}>
           {[
             { id: 'temperature', label: '🌡️ Temperature' },
             { id: 'humidity', label: '💧 Humidity' },
@@ -78,11 +78,16 @@ export const SensorHistoryChart = ({ readings = [] }) => {
             <button
               key={tab.id}
               onClick={() => setMetric(tab.id)}
-              className={`px-3 py-1 rounded-lg font-medium transition-all ${
-                metric === tab.id
-                  ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
+              style={{
+                padding: '4px 12px',
+                borderRadius: 'var(--radius-md)',
+                fontWeight: metric === tab.id ? 'var(--font-bold)' : 'var(--font-medium)',
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: metric === tab.id ? 'var(--primary)' : 'transparent',
+                color: metric === tab.id ? 'var(--primary-contrast)' : 'var(--text-secondary)',
+                transition: 'all var(--transition-fast)',
+              }}
             >
               {tab.label}
             </button>
@@ -91,8 +96,8 @@ export const SensorHistoryChart = ({ readings = [] }) => {
       </div>
 
       {/* SVG Line Chart */}
-      <div className="p-4 rounded-xl bg-white border border-slate-200 overflow-x-auto shadow-sm">
-        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-44">
+      <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-xl)', backgroundColor: 'var(--surface)', border: '1px solid var(--border)', overflowX: 'auto', boxShadow: 'var(--shadow-xs)' }}>
+        <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: '176px' }}>
           {/* Background Grid Lines */}
           <line x1={padding} y1={padding} x2={width - padding} y2={padding} stroke="rgba(0,0,0,0.06)" />
           <line x1={padding} y1={height / 2} x2={width - padding} y2={height / 2} stroke="rgba(0,0,0,0.06)" />
@@ -120,7 +125,7 @@ export const SensorHistoryChart = ({ readings = [] }) => {
 
           {/* Data Points */}
           {points.map((p, idx) => (
-            <g key={idx} className="group">
+            <g key={idx} style={{ cursor: 'pointer' }}>
               <circle
                 cx={p.x}
                 cy={p.y}
@@ -128,26 +133,12 @@ export const SensorHistoryChart = ({ readings = [] }) => {
                 fill="#FFFFFF"
                 stroke={config.color}
                 strokeWidth="2"
-                className="transition-all hover:r-6 cursor-pointer"
               />
-              {/* Tooltip on last or hover */}
-              <text
-                x={p.x}
-                y={p.y - 10}
-                textAnchor="middle"
-                fill="#1E293B"
-                fontSize="10"
-                fontFamily="monospace"
-                className="opacity-0 group-hover:opacity-100 transition-opacity font-bold"
-              >
-                {p.val}
-                {config.unit}
-              </text>
             </g>
           ))}
         </svg>
 
-        <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100 font-mono">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.6875rem', color: 'var(--text-muted)', paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border-light)', fontFamily: 'var(--font-mono)' }}>
           <span>Oldest Reading</span>
           <span>Latest Telemetry Stream</span>
         </div>

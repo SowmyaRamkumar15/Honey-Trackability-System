@@ -5,11 +5,12 @@ import BeekeeperLayout from '../../../layouts/BeekeeperLayout'
 import CustomerLayout from '../../../layouts/CustomerLayout'
 import AdminLayout from '../../../layouts/AdminLayout'
 import LabLayout from '../../../layouts/LabLayout'
-import Card from '../../../components/ui/Card'
+import PageHeader from '../../../components/layout/PageHeader'
 import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
 import Alert from '../../../components/feedback/Alert'
 import NotificationList from '../components/NotificationList'
 import useNotifications from '../hooks/useNotifications'
+import '../styles/notifications.css'
 
 export const NotificationsPage = () => {
   const { role } = useSelector((state) => state.auth)
@@ -30,62 +31,60 @@ export const NotificationsPage = () => {
 
   return (
     <RoleLayout>
-      <div className="w-full space-y-6">
+      <div className="hc-notif-page">
         {/* Page Header */}
-        <div>
-          <h1 className="text-3xl font-black text-slate-900 font-['Outfit'] flex items-center gap-3">
-            <span>🔔</span> Notifications Center
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Stay informed on lab quality tests, IoT hive alerts, marketplace orders, and profile status updates.
-          </p>
-        </div>
+        <PageHeader
+          title="Notifications Center"
+          subtitle="Stay informed on lab quality tests, IoT hive alerts, marketplace orders, and profile status updates."
+        />
 
         {error && <Alert type="error" message={error} onClose={clearError} />}
 
         {loading && items.length === 0 ? (
           <LoadingSpinner text="Loading notifications..." />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', alignItems: 'start' }}>
             {/* Main Notifications Feed */}
-            <div className="lg:col-span-8">
-              <Card className="p-6 bg-white border border-slate-200/90 shadow-sm">
-                <NotificationList items={items} onMarkAllRead={markAllRead} loading={loading} />
-              </Card>
+            <div style={{ backgroundColor: 'var(--surface)', padding: '24px', borderRadius: 'var(--radius-2xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xs)' }}>
+              <NotificationList items={items} onMarkAllRead={markAllRead} loading={loading} />
             </div>
 
             {/* Sidebar Preferences & Info */}
-            <div className="lg:col-span-4 space-y-6">
-              <Card className="p-5 border border-amber-200/80 bg-gradient-to-br from-amber-50/50 to-white space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">⚙️</span>
-                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Notification Channels</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ padding: '20px', borderRadius: 'var(--radius-2xl)', backgroundColor: 'var(--primary-soft)', border: '1px solid var(--primary-light)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '1.25rem' }}>⚙️</span>
+                  <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+                    Notification Channels
+                  </h3>
                 </div>
-                <ul className="text-xs text-slate-600 space-y-2 leading-relaxed">
-                  <li className="flex items-center justify-between py-1 border-b border-amber-100">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: 'var(--text-xs)' }}>
+                  <div className="hc-hive-item-row">
                     <span>IoT Health Alerts</span>
-                    <span className="font-bold text-blue-600">Immediate</span>
-                  </li>
-                  <li className="flex items-center justify-between py-1 border-b border-amber-100">
+                    <strong style={{ color: 'var(--primary-dark)' }}>Immediate</strong>
+                  </div>
+                  <div className="hc-hive-item-row">
                     <span>Lab Test Approvals</span>
-                    <span className="font-bold text-blue-600">Real-time</span>
-                  </li>
-                  <li className="flex items-center justify-between py-1">
+                    <strong style={{ color: 'var(--primary-dark)' }}>Real-time</strong>
+                  </div>
+                  <div className="hc-hive-item-row">
                     <span>Marketplace Orders</span>
-                    <span className="font-bold text-blue-600">Push & SMS</span>
-                  </li>
-                </ul>
-              </Card>
-
-              <Card className="p-5 border border-blue-200/80 bg-gradient-to-br from-blue-50/40 to-white space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🛡️</span>
-                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Cryptographic Verification</h3>
+                    <strong style={{ color: 'var(--primary-dark)' }}>Push & SMS</strong>
+                  </div>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
+              </div>
+
+              <div style={{ padding: '20px', borderRadius: 'var(--radius-2xl)', backgroundColor: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '1.25rem' }}>🛡️</span>
+                  <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+                    Cryptographic Verification
+                  </h3>
+                </div>
+                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
                   System alerts are triggered directly by on-chain events and verified IoT threshold monitors.
                 </p>
-              </Card>
+              </div>
             </div>
           </div>
         )}

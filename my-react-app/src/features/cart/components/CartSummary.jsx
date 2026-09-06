@@ -1,57 +1,58 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Card from '../../../components/ui/Card'
+import Button from '../../../components/ui/Button'
+import '../styles/cart.css'
 
 const CartSummary = ({ subtotal, itemCount, onClear, disabled }) => {
-  const deliveryEstimate = 0.0 // Free delivery for prototype
+  const deliveryEstimate = 0.0 // Free delivery
   const total = Number(subtotal) + deliveryEstimate
 
   return (
-    <div className="card cart-summary">
-      <h3 className="cart-summary__title">Order Summary</h3>
-
-      <div className="cart-summary__rows mt-4">
-        <div className="cart-summary__row">
+    <Card header={<h3>Order Summary</h3>}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+        <div className="hc-cart-summary-row">
           <span>Items ({itemCount}):</span>
-          <strong>₹{Number(subtotal).toFixed(2)}</strong>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
+            ₹{Number(subtotal).toFixed(2)}
+          </span>
         </div>
 
-        <div className="cart-summary__row">
+        <div className="hc-cart-summary-row">
           <span>Standard Delivery:</span>
-          <span className="text-success">FREE</span>
+          <span style={{ fontWeight: 700, color: 'var(--success)' }}>FREE</span>
         </div>
 
-        <div className="cart-summary__divider"></div>
+        <div className="hc-cart-summary-total">
+          <span>Total Payable:</span>
+          <span className="hc-cart-summary-price">₹{total.toFixed(2)}</span>
+        </div>
 
-        <div className="cart-summary__row cart-summary__row--total">
-          <span>Total Amount:</span>
-          <span className="cart-summary__total-val">₹{total.toFixed(2)}</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
+          <Link to="/checkout" style={{ textDecoration: 'none' }}>
+            <Button variant="primary" size="lg" style={{ width: '100%' }}>
+              Proceed to Checkout →
+            </Button>
+          </Link>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            style={{ width: '100%', color: 'var(--text-muted)' }}
+            onClick={onClear}
+            disabled={disabled}
+          >
+            Clear Cart
+          </Button>
+        </div>
+
+        <div style={{ paddingTop: 'var(--space-3)', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
+          <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            🔒 100% Secure Checkout • Direct Beekeeper Fair Pricing • Blockchain Purity Guarantee
+          </p>
         </div>
       </div>
-
-      <div className="cart-summary__actions mt-6">
-        <Link
-          to="/checkout"
-          className="btn btn--primary btn--full btn--lg"
-        >
-          Proceed to Checkout →
-        </Link>
-
-        <button
-          type="button"
-          className="btn btn--ghost btn--full btn--sm mt-2 text-secondary"
-          onClick={onClear}
-          disabled={disabled}
-        >
-          Clear Cart
-        </button>
-      </div>
-
-      <div className="cart-summary__guarantee mt-6">
-        <p className="text-xs text-secondary text-center">
-          🔒 100% Secure Checkout • Direct Beekeeper Fair Pricing • Blockchain Purity Guarantee
-        </p>
-      </div>
-    </div>
+    </Card>
   )
 }
 

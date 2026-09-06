@@ -31,7 +31,7 @@ export const LocationSelector = ({
         setLocating(false)
         setGpsSuccess(true)
       },
-      (err) => {
+      () => {
         setLocating(false)
         setGpsError('GPS permission denied or unavailable. Please type your village name below.')
       },
@@ -40,15 +40,15 @@ export const LocationSelector = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
       {/* GPS Detection Button */}
-      <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-2xl)', backgroundColor: 'var(--primary-soft)', border: '1px solid var(--primary-light)', boxShadow: 'var(--shadow-xs)' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
           <div>
-            <p className="text-slate-900 font-semibold text-sm flex items-center gap-2">
+            <p style={{ color: 'var(--text-primary)', fontWeight: 'var(--font-semibold)', fontSize: 'var(--text-sm)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', margin: 0 }}>
               <span>📍</span> Auto-Detect GPS Location
             </p>
-            <p className="text-slate-500 text-xs mt-0.5">
+            <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-xs)', marginTop: '2px', margin: '2px 0 0 0' }}>
               One-click precise coordinates from your device
             </p>
           </div>
@@ -57,20 +57,20 @@ export const LocationSelector = ({
             size="sm"
             onClick={handleGetGps}
             loading={locating}
-            className="w-full sm:w-auto"
+            type="button"
           >
             {gpsSuccess ? '✓ GPS Captured' : '📡 Get GPS'}
           </Button>
         </div>
 
         {gpsSuccess && latitude && longitude && (
-          <div className="mt-3 text-xs text-blue-700 font-bold flex items-center gap-2 font-mono">
+          <div style={{ marginTop: 'var(--space-3)', fontSize: 'var(--text-xs)', color: 'var(--primary-dark)', fontWeight: 'var(--font-bold)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontFamily: 'var(--font-mono)' }}>
             <span>✓ Lat: {latitude}° N, Lng: {longitude}° E</span>
           </div>
         )}
 
         {gpsError && (
-          <div className="mt-2 text-xs text-amber-800 font-semibold">
+          <div style={{ marginTop: 'var(--space-2)', fontSize: 'var(--text-xs)', color: 'var(--danger)', fontWeight: 'var(--font-semibold)' }}>
             {gpsError}
           </div>
         )}
@@ -88,7 +88,7 @@ export const LocationSelector = ({
       />
 
       {/* Manual Coordinates Override */}
-      <div className="grid grid-cols-2 gap-3 pt-1">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)', paddingTop: '4px' }}>
         <Input
           id="latitude-input"
           label="Latitude (Optional)"

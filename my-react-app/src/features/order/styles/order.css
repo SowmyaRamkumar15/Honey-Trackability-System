@@ -1,0 +1,147 @@
+/* ── HoneyChain Order Module Styles ────────────────────────── */
+
+.hc-order-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+.hc-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.hc-order-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.hc-order-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
+}
+
+.hc-order-grid-meta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-xs);
+}
+
+@media (min-width: 640px) {
+  .hc-order-grid-meta {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.hc-order-meta-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.hc-order-meta-val {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Tracking Stepper */
+.hc-order-tracking {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: var(--space-3) 0;
+}
+
+.hc-track-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hc-track-step__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  background: var(--background);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  transition: all var(--transition-normal);
+}
+
+.hc-track-step--active .hc-track-step__icon {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
+  transform: scale(1.08);
+}
+
+.hc-track-step--done .hc-track-step__icon {
+  background: var(--success);
+  color: #ffffff;
+  border-color: var(--success);
+}
+
+.hc-track-step__label {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: var(--space-1);
+  color: var(--text-secondary);
+}
+
+.hc-track-step--active .hc-track-step__label {
+  color: var(--primary-dark);
+}
+
+.hc-track-step--done .hc-track-step__label {
+  color: var(--success);
+}
+
+.hc-track-line {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  margin: 0 var(--space-2);
+  margin-bottom: 20px;
+  border-radius: var(--radius-full);
+}
+
+.hc-track-line--done {
+  background: var(--success);
+}
+
+.hc-track-line--active {
+  background: var(--primary);
+}
+
+/* Checkout layout */
+.hc-checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  max-width: 800px;
+  margin: 0 auto;
+}

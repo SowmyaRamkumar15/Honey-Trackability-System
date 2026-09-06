@@ -1,4 +1,5 @@
 import React from 'react'
+import './DataTable.css'
 
 /**
  * DataTable — Standardized Data Table wrapper component.
@@ -6,8 +7,8 @@ import React from 'react'
  */
 export const DataTable = ({ children, className = '' }) => {
   return (
-    <div className={`w-full overflow-x-auto rounded-xl border border-slate-200 shadow-sm bg-white ${className}`}>
-      <table className="w-full text-left border-collapse text-sm">
+    <div className={`hc-data-table-container ${className}`.trim()}>
+      <table className="hc-data-table">
         {children}
       </table>
     </div>

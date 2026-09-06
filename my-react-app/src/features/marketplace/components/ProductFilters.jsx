@@ -1,5 +1,7 @@
 import React from 'react'
 import { FLOWER_SOURCES, HONEY_REGIONS, SORT_OPTIONS } from '../constants/marketplaceConstants'
+import Button from '../../../components/ui/Button'
+import '../styles/marketplace.css'
 
 /**
  * ProductFilters — executive search, category, region, and sort filter bar.
@@ -19,50 +21,40 @@ const ProductFilters = ({
     filters.sortBy !== 'newest'
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-4">
+    <div className="hc-market-filters">
       {/* Top Header Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <span className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-sm">
-            🔍
-          </span>
+      <div className="hc-market-filters__header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+          <span style={{ fontSize: '1.5rem' }}>🔍</span>
           <div>
-            <h3 className="font-['Outfit'] font-bold text-base text-slate-900">
+            <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 'var(--text-base)', fontWeight: 800, color: 'var(--text-primary)' }}>
               Filter Verified Honey
             </h3>
-            <p className="text-xs text-slate-600">
+            <p style={{ margin: '2px 0 0', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
               Narrow down by botanical floral source, apiary territory, or purity tier.
             </p>
           </div>
         </div>
 
         {hasActiveFilters && (
-          <button
-            onClick={onReset}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-blue-600 bg-slate-100 hover:bg-slate-200 transition-colors self-start sm:self-auto cursor-pointer"
-            type="button"
-          >
-            <span>✕</span>
-            <span>Reset Filters</span>
-          </button>
+          <Button variant="ghost" size="sm" onClick={onReset} style={{ color: 'var(--danger)', fontWeight: 'var(--font-bold)' }}>
+            ✕ Reset Filters
+          </Button>
         )}
       </div>
 
       {/* Main Filter Controls Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <div className="hc-market-filters__grid">
         {/* Search Input */}
-        <div className="space-y-1 sm:col-span-2 lg:col-span-1">
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider" htmlFor="filter-search">
+        <div className="hc-market-filter-group">
+          <label className="hc-market-filter-label" htmlFor="filter-search">
             Search Honey / Beekeeper
           </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-600 text-xs">
-              🔎
-            </span>
+          <div style={{ position: 'relative' }}>
             <input
               id="filter-search"
               type="text"
-              className="w-full pl-8 pr-8 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 transition-all placeholder:text-slate-600"
+              className="hc-market-filter-input"
               placeholder="e.g. Wildflower, Nilgiris, Ramesh..."
               value={filters.search || ''}
               onChange={(e) => onSearchChange(e.target.value)}
@@ -71,7 +63,18 @@ const ProductFilters = ({
               <button
                 type="button"
                 onClick={() => onSearchChange('')}
-                className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-600 hover:text-slate-800 text-xs cursor-pointer"
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  fontSize: 'var(--text-xs)',
+                  fontWeight: 'bold',
+                }}
                 title="Clear search"
               >
                 ✕
@@ -81,15 +84,16 @@ const ProductFilters = ({
         </div>
 
         {/* Flower Source Filter */}
-        <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider" htmlFor="filter-flower">
+        <div className="hc-market-filter-group">
+          <label className="hc-market-filter-label" htmlFor="filter-flower">
             Flower Source
           </label>
           <select
             id="filter-flower"
-            className="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 transition-all cursor-pointer font-medium"
+            className="hc-market-filter-input"
             value={filters.flowerSource || ''}
             onChange={(e) => onFilterChange('flowerSource', e.target.value)}
+            style={{ cursor: 'pointer' }}
           >
             {FLOWER_SOURCES.map((f) => (
               <option key={f.value} value={f.value}>
@@ -100,15 +104,16 @@ const ProductFilters = ({
         </div>
 
         {/* Region Filter */}
-        <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider" htmlFor="filter-region">
+        <div className="hc-market-filter-group">
+          <label className="hc-market-filter-label" htmlFor="filter-region">
             Geographic Region
           </label>
           <select
             id="filter-region"
-            className="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 transition-all cursor-pointer font-medium"
+            className="hc-market-filter-input"
             value={filters.region || ''}
             onChange={(e) => onFilterChange('region', e.target.value)}
+            style={{ cursor: 'pointer' }}
           >
             {HONEY_REGIONS.map((r) => (
               <option key={r.value} value={r.value}>
@@ -119,15 +124,16 @@ const ProductFilters = ({
         </div>
 
         {/* Sort By */}
-        <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider" htmlFor="filter-sort">
+        <div className="hc-market-filter-group">
+          <label className="hc-market-filter-label" htmlFor="filter-sort">
             Sort Order
           </label>
           <select
             id="filter-sort"
-            className="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 transition-all cursor-pointer font-medium"
+            className="hc-market-filter-input"
             value={filters.sortBy || 'newest'}
             onChange={(e) => onFilterChange('sortBy', e.target.value)}
+            style={{ cursor: 'pointer' }}
           >
             {SORT_OPTIONS.map((s) => (
               <option key={s.value} value={s.value}>
@@ -139,16 +145,12 @@ const ProductFilters = ({
       </div>
 
       {/* Quick Category Chips */}
-      <div className="pt-2 flex items-center gap-2 flex-wrap text-xs">
-        <span className="text-slate-600 font-bold mr-1">Popular:</span>
+      <div className="hc-market-chips">
+        <span style={{ fontSize: 'var(--text-xs)', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Popular:</span>
         <button
           type="button"
           onClick={() => onFilterChange('flowerSource', '')}
-          className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-            !filters.flowerSource
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-          }`}
+          className={`hc-market-chip ${!filters.flowerSource ? 'hc-market-chip--active' : ''}`}
         >
           All Honey
         </button>
@@ -160,11 +162,7 @@ const ProductFilters = ({
               key={src}
               type="button"
               onClick={() => onFilterChange('flowerSource', isSelected ? '' : src)}
-              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                isSelected
-                  ? 'bg-amber-500 text-slate-900 font-bold shadow-xs'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-              }`}
+              className={`hc-market-chip ${isSelected ? 'hc-market-chip--active' : ''}`}
             >
               🍯 {match?.label || src}
             </button>

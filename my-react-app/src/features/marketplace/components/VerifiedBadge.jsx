@@ -1,16 +1,25 @@
 import React from 'react'
 
-/**
- * VerifiedBadge — indicates blockchain verification status.
- * Props:
- *   verified: boolean
- *   batchId: string
- */
 const VerifiedBadge = ({ verified, batchId }) => {
   if (!verified) {
     return (
-      <span className="badge badge--warning" title="Blockchain verification pending">
-        <span className="badge__dot"></span>
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '2px 10px',
+          borderRadius: 'var(--radius-full)',
+          fontSize: 'var(--text-xs)',
+          fontWeight: 'var(--font-semibold)',
+          backgroundColor: 'var(--warning-soft)',
+          color: 'var(--warning)',
+          border: '1px solid var(--warning-border)',
+          boxShadow: 'var(--shadow-xs)',
+        }}
+        title="Blockchain verification pending"
+      >
+        <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--warning)', display: 'inline-block' }} />
         Unverified
       </span>
     )
@@ -18,11 +27,23 @@ const VerifiedBadge = ({ verified, batchId }) => {
 
   return (
     <span
-      className="badge badge--success"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '2px 10px',
+        borderRadius: 'var(--radius-full)',
+        fontSize: 'var(--text-xs)',
+        fontWeight: 'var(--font-bold)',
+        backgroundColor: 'var(--success-soft)',
+        color: 'var(--success)',
+        border: '1px solid var(--success-border)',
+        boxShadow: 'var(--shadow-xs)',
+      }}
       title={`Cryptographically verified on Blockchain (Batch: ${batchId || 'Verified'})`}
     >
-      <span className="badge__dot badge__dot--pulse"></span>
-      ✅ Verified Honey
+      <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--success)', display: 'inline-block' }} />
+      Verified
     </span>
   )
 }

@@ -1,5 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Badge from '../../../components/ui/Badge'
+import Button from '../../../components/ui/Button'
+import EmptyState from '../../../components/ui/EmptyState'
 import { useLanguage } from '../../../i18n/LanguageContext'
 
 export const BatchTable = ({ batches = [] }) => {
@@ -7,43 +10,45 @@ export const BatchTable = ({ batches = [] }) => {
 
   if (batches.length === 0) {
     return (
-      <div className="card text-center py-8">
-        <p className="text-secondary">{t('empty.noBatches', 'No honey batches found.')}</p>
-      </div>
+      <EmptyState
+        icon="🍯"
+        title={t('empty.noBatches', 'No honey batches found.')}
+        description="No batches match your current filter parameters."
+      />
     )
   }
 
-  const getStatusBadge = (status) => {
+  const getStatusVariant = (status) => {
     switch (status) {
       case 'PURE':
       case 'IN_STOCK':
       case 'QR_GENERATED':
-        return <span className="badge badge--success">{t(`batch.status${status}`, status)}</span>
+        return 'success'
       case 'FAILED':
-        return <span className="badge badge--danger">{t('lab.failed', 'FAILED')}</span>
+        return 'danger'
       case 'UNDER_REVIEW':
       case 'SENT_FOR_TESTING':
-        return <span className="badge badge--warning">{t(`batch.status${status}`, status)}</span>
+        return 'warning'
       default:
-        return <span className="badge badge--dark">{status}</span>
+        return 'default'
     }
   }
 
   const getRiskBadge = (risk) => {
     switch (risk) {
       case 'HIGH_RISK':
-        return <span className="badge badge--danger">{t('verification.riskHigh', 'HIGH RISK')}</span>
+        return <Badge variant="danger" size="sm">🚨 HIGH RISK</Badge>
       case 'WATCH':
-        return <span className="badge badge--warning">{t('verification.riskWatch', 'WATCH')}</span>
+        return <Badge variant="warning" size="sm">⚠️ WATCH</Badge>
       case 'NORMAL':
       default:
-        return <span className="badge badge--success">{t('verification.riskNormal', 'NORMAL')}</span>
+        return <Badge variant="success" size="sm">✅ NORMAL</Badge>
     }
   }
 
   return (
-    <div className="overflow-x-auto card p-0">
-      <table className="data-table">
+    <div style={{ overflowX: 'auto' }}>
+      <table className="hc-table" style={{ width: '100%', margin: 0 }}>
         <thead>
           <tr>
             <th>{t('batch.batchId', 'Batch ID')}</th>
@@ -52,42 +57,68 @@ export const BatchTable = ({ batches = [] }) => {
             <th>{t('batch.quantityKg', 'Quantity')}</th>
             <th>{t('common.status', 'Status')}</th>
             <th>{t('lab.purityScore', 'Purity')}</th>
-            <th>{t('blockchain.network', 'Blockchain')}</th>
-            <th>{t('verification.riskLevel', 'Risk')}</th>
-            <th>{t('common.actions', 'Actions')}</th>
+            <th>{t('blockchain.network', 'Blockchain Proof')}</th>
+            <th>{t('verification.riskLevel', 'Risk Assessment')}</th>
+            <th style={{ textAlign: 'right' }}>{t('common.actions', 'Actions')}</th>
           </tr>
         </thead>
         <tbody>
           {batches.map((b) => (
             <tr key={b.id || b.batchId}>
-              <td><code>{b.batchId}</code></td>
-              <td>
-                <strong className="block">{b.beekeeperName || 'N/A'}</strong>
-                <span className="text-secondary text-xs">{b.village}</span>
+              <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--primary-dark)', fontSize: 'var(--text-xs)' }}>
+                {b.batchId}
               </td>
-              <td>{b.hiveCode || 'Hive #' + b.hiveId}</td>
-              <td>{b.quantityKg != null ? `${b.quantityKg.toFixed(1)} kg` : 'N/A'}</td>
-              <td>{getStatusBadge(b.status)}</td>
+              <td>
+                <strong style={{ display: 'block', color: 'var(--text-primary)', fontWeight: 600 }}>{b.beekeeperName || 'N/A'}</strong>
+                <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{b.village || 'Apiary'}</span>
+              </td>
+              <td style={{ fontSize: 'var(--text-xs)' }}>{b.hiveCode || (b.hiveId ? `Hive #${b.hiveId}` : '—')}</td>
+              <td style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', fontWeight: 700 }}>
+                {b.quantityKg != null ? `${b.quantityKg.toFixed(1)} kg` : '—'}
+              </td>
+              <td>
+                <Badge variant={getStatusVariant(b.status)} size="sm">
+                  {t(`batch.status${b.status}`, b.status)}
+                </Badge>
+              </td>
               <td>
                 {b.purityScore != null ? (
-                  <span className="font-bold text-success">{b.purityScore}%</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: b.purityScore >= 90 ? 'var(--success)' : 'var(--warning)' }}>
+                    {b.purityScore}%
+                  </span>
                 ) : (
-                  <span className="text-secondary text-xs">{t('lab.untested', 'Untested')}</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>{t('lab.untested', 'Pending Lab')}</span>
                 )}
               </td>
               <td>
                 {b.blockchainTxHash ? (
-                  <span className="badge badge--secondary badge--xs" title={b.blockchainTxHash}>
-                    🔗 {t('blockchain.integrityVerified', 'Verified')}
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: 'var(--info)',
+                      background: 'rgba(37, 99, 235, 0.08)',
+                      padding: '2px 8px',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid rgba(37, 99, 235, 0.2)',
+                    }}
+                    title={b.blockchainTxHash}
+                  >
+                    ⛓️ On-Chain
                   </span>
                 ) : (
-                  <span className="text-secondary text-xs">{t('profile.statusPending', 'Pending')}</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>Pending Hash</span>
                 )}
               </td>
               <td>{getRiskBadge(b.riskLevel)}</td>
-              <td>
-                <Link to={`/admin/batches/${b.batchId}`} className="btn btn--outline btn--xs">
-                  {t('common.viewDetails', 'Inspect')}
+              <td style={{ textAlign: 'right' }}>
+                <Link to={`/admin/batches/${b.batchId}`} style={{ textDecoration: 'none' }}>
+                  <Button variant="ghost" size="sm">
+                    Inspect ↗
+                  </Button>
                 </Link>
               </td>
             </tr>

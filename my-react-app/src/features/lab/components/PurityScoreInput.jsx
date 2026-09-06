@@ -3,22 +3,23 @@ import React from 'react'
 export const PurityScoreInput = ({ value = 98, onChange, error }) => {
   const numVal = typeof value === 'number' ? value : parseInt(value, 10) || 0
 
-  const getScoreColor = (score) => {
-    if (score >= 90) return 'text-blue-700 border-blue-200 bg-blue-50'
-    if (score >= 75) return 'text-amber-800 border-amber-200 bg-amber-50'
-    return 'text-slate-800 border-slate-300 bg-slate-100'
-  }
-
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium text-slate-800 font-semibold">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <label className="hc-input__label" style={{ marginBottom: 0 }}>
           Laboratory Purity Score (0 - 100%) *
         </label>
         <div
-          className={`px-3 py-1 rounded-xl border font-mono font-black text-lg ${getScoreColor(
-            numVal
-          )}`}
+          style={{
+            padding: 'var(--space-1) var(--space-3)',
+            borderRadius: 'var(--radius-md)',
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 900,
+            fontSize: 'var(--text-lg)',
+            background: 'var(--primary-soft)',
+            color: 'var(--primary-dark)',
+            border: '1px solid var(--primary-light)',
+          }}
         >
           {numVal}%
         </div>
@@ -31,29 +32,37 @@ export const PurityScoreInput = ({ value = 98, onChange, error }) => {
         max="100"
         value={numVal}
         onChange={(e) => onChange(parseInt(e.target.value, 10))}
-        className="w-full h-2.5 rounded-lg bg-slate-200 accent-blue-600 cursor-pointer"
+        style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }}
       />
 
       {/* Preset Quick Selectors */}
-      <div className="flex items-center justify-between gap-2 pt-1">
-        <span className="text-xs text-slate-500 font-medium">Quick Presets:</span>
-        {[99, 95, 90, 80, 50].map((preset) => (
-          <button
-            key={preset}
-            type="button"
-            onClick={() => onChange(preset)}
-            className={`px-2.5 py-1 text-xs rounded-lg border font-mono transition-all ${
-              numVal === preset
-                ? 'bg-blue-600 text-white font-bold border-blue-600 shadow-sm'
-                : 'border-slate-200 text-slate-700 bg-white hover:border-blue-500'
-            }`}
-          >
-            {preset}%
-          </button>
-        ))}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-2)' }}>
+        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontWeight: 600 }}>Quick Presets:</span>
+        <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
+          {[99, 95, 90, 80, 50].map((preset) => (
+            <button
+              key={preset}
+              type="button"
+              onClick={() => onChange(preset)}
+              style={{
+                padding: '2px 8px',
+                fontSize: 'var(--text-xs)',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: 'var(--font-mono)',
+                cursor: 'pointer',
+                background: numVal === preset ? 'var(--primary)' : 'var(--surface)',
+                color: numVal === preset ? '#ffffff' : 'var(--text-primary)',
+                border: numVal === preset ? '1px solid var(--primary-dark)' : '1px solid var(--border)',
+                fontWeight: numVal === preset ? 700 : 500,
+              }}
+            >
+              {preset}%
+            </button>
+          ))}
+        </div>
       </div>
 
-      {error && <p className="text-blue-600 text-xs mt-1 font-semibold">{error}</p>}
+      {error && <p style={{ color: 'var(--danger)', fontSize: 'var(--text-xs)', margin: 0, fontWeight: 600 }}>{error}</p>}
     </div>
   )
 }

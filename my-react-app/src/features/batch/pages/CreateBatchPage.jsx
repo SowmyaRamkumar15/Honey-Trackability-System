@@ -15,6 +15,7 @@ import useNetworkStatus from '../hooks/useNetworkStatus'
 import { useLanguage } from '../../../i18n/LanguageContext'
 import hiveApi from '../../hive/api/hiveApi'
 import { cacheHives, getCachedHives } from '../services/offlineBatchStore'
+import '../styles/batch.css'
 
 export const CreateBatchPage = () => {
   const { createBatchOfflineAware, loading, error, clearError } = useBatches()
@@ -92,26 +93,26 @@ export const CreateBatchPage = () => {
 
   return (
     <BeekeeperLayout>
-      <div className="w-full space-y-6">
+      <div className="hc-batch-page">
         {/* Header & Network Indicator */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <nav className="flex items-center gap-2 text-xs text-slate-500">
-            <Link to="/beekeeper/batches" className="hover:text-blue-600 transition-colors font-medium">
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-4)', flexWrap: 'wrap' }}>
+          <nav style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
+            <Link to="/beekeeper/batches" style={{ color: 'var(--primary)', fontWeight: 'var(--font-semibold)', textDecoration: 'none' }}>
               {t('navigation.myBatches', 'My Honey Batches')}
             </Link>
             <span>/</span>
-            <span className="text-slate-800 font-semibold">{t('dashboard.newBatch', 'New Batch')}</span>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 'var(--font-bold)' }}>{t('dashboard.newBatch', 'New Batch')}</span>
           </nav>
           <OfflineBatchIndicator />
         </div>
 
         {/* Title + Read Aloud Voice Button */}
-        <div className="flex items-start justify-between flex-wrap gap-4">
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
           <div>
-            <h1 className="text-3xl font-black text-slate-900 font-['Outfit'] flex items-center gap-3">
+            <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-black)', color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
               <span>🐝</span> {t('batch.createTitle', 'Log New Honey Harvest')}
             </h1>
-            <p className="text-slate-500 text-sm mt-1">
+            <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', marginTop: '4px', margin: 0 }}>
               {t('batch.createSub', 'Register a fresh harvest from one of your active hives.')}
             </p>
           </div>
@@ -125,106 +126,106 @@ export const CreateBatchPage = () => {
         {createdResult ? (
           createdResult.offline ? (
             /* 🟡 OFFLINE SUCCESS CARD */
-            <Card className="p-8 text-center space-y-6 border border-amber-200 bg-amber-50 shadow-sm max-w-2xl mx-auto">
-              <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-800 text-3xl flex items-center justify-center mx-auto border border-amber-200">
+            <Card className="hc-result-card" style={{ border: '1px solid var(--warning-border)', backgroundColor: 'var(--warning-soft)' }}>
+              <div className="hc-result-icon hc-result-icon--offline">
                 💾
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 font-['Outfit']">
+                <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: 0 }}>
                   ✅ {t('success.batchCreated', 'Saved Offline')}
                 </h2>
-                <div className="mt-3 flex justify-center">
+                <div style={{ marginTop: 'var(--space-3)', display: 'flex', justifyContent: 'center' }}>
                   <VoiceButton translationKey="success.batchCreated" size="xs" />
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-white border border-amber-200 max-w-md mx-auto space-y-3 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">Local Reference:</span>
-                  <span className="font-mono font-bold text-base text-amber-800">
+              <div className="hc-result-meta-box">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>Local Reference:</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 'var(--font-bold)', fontSize: 'var(--text-base)', color: 'var(--primary-dark)' }}>
                     {createdResult.localId || createdResult.payload.batchId}
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">{t('common.status', 'Status')}:</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>{t('common.status', 'Status')}:</span>
                   <SyncStatusBadge status="PENDING" />
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">{t('batch.quantityKg', 'Quantity')}:</span>
-                  <span className="text-slate-900 font-bold text-sm">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>{t('batch.quantityKg', 'Quantity')}:</span>
+                  <span style={{ color: 'var(--text-primary)', fontWeight: 'var(--font-bold)', fontSize: 'var(--text-sm)' }}>
                     {createdResult.payload.quantityKg} {t('units.kg', 'kg')}
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">{t('hive.hiveCode', 'Hive')}:</span>
-                  <span className="text-slate-900 font-mono text-sm">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>{t('hive.hiveCode', 'Hive')}:</span>
+                  <span style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-sm)' }}>
                     {createdResult.payload.hiveCode}
                   </span>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                <Link to="/beekeeper/batches" className="w-full sm:w-auto">
-                  <Button variant="primary" className="w-full bg-blue-600 hover:bg-blue-700 border-blue-600 text-white font-bold">
+              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)', paddingTop: 'var(--space-2)' }}>
+                <Link to="/beekeeper/batches" style={{ textDecoration: 'none' }}>
+                  <Button variant="primary" style={{ fontWeight: 'var(--font-bold)' }}>
                     {t('dashboard.viewBatches', 'View My Batches')} →
                   </Button>
                 </Link>
-                <button
+                <Button
                   type="button"
-                  className="w-full sm:w-auto btn btn--secondary"
+                  variant="secondary"
                   onClick={() => setCreatedResult(null)}
                 >
                   + {t('dashboard.newHarvest', 'Create Another Batch')}
-                </button>
+                </Button>
               </div>
             </Card>
           ) : (
             /* 🟢 ONLINE SUCCESS CARD */
-            <Card className="p-8 text-center space-y-6 border border-blue-200 bg-blue-50/60 shadow-sm max-w-2xl mx-auto">
-              <div className="w-16 h-16 rounded-full bg-blue-100 text-blue-700 text-3xl flex items-center justify-center mx-auto border border-blue-200">
+            <Card className="hc-result-card" style={{ border: '1px solid var(--success-border)', backgroundColor: 'var(--success-soft)' }}>
+              <div className="hc-result-icon hc-result-icon--success">
                 ✓
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 font-['Outfit']">
+                <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: 0 }}>
                   {t('success.batchCreated', 'Batch Created Successfully!')}
                 </h2>
-                <div className="mt-3 flex justify-center">
+                <div style={{ marginTop: 'var(--space-3)', display: 'flex', justifyContent: 'center' }}>
                   <VoiceButton translationKey="success.batchCreated" size="xs" />
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-white border border-blue-200 max-w-md mx-auto space-y-3 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">{t('batch.batchId', 'Batch ID')}:</span>
-                  <span className="font-mono font-bold text-base text-amber-800">
+              <div className="hc-result-meta-box">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>{t('batch.batchId', 'Batch ID')}:</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 'var(--font-bold)', fontSize: 'var(--text-base)', color: 'var(--primary-dark)' }}>
                     {createdResult.payload.batchId}
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">{t('common.status', 'Status')}:</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>{t('common.status', 'Status')}:</span>
                   <BatchStatusBadge status={createdResult.payload.status} />
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">{t('batch.quantityKg', 'Quantity')}:</span>
-                  <span className="text-slate-900 font-bold text-sm">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 'var(--font-medium)' }}>{t('batch.quantityKg', 'Quantity')}:</span>
+                  <span style={{ color: 'var(--text-primary)', fontWeight: 'var(--font-bold)', fontSize: 'var(--text-sm)' }}>
                     {createdResult.payload.quantityKg} {t('units.kg', 'kg')}
                   </span>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)', paddingTop: 'var(--space-2)' }}>
                 <Link
                   to={`/beekeeper/batches/${createdResult.payload.batchId}`}
-                  className="w-full sm:w-auto"
+                  style={{ textDecoration: 'none' }}
                 >
-                  <Button variant="primary" className="w-full bg-blue-600 hover:bg-blue-700 border-blue-600 text-white font-bold">
+                  <Button variant="primary" style={{ fontWeight: 'var(--font-bold)' }}>
                     {t('common.viewDetails', 'View Details')} →
                   </Button>
                 </Link>
-                <Link to="/beekeeper/batches" className="w-full sm:w-auto">
-                  <Button variant="secondary" className="w-full font-semibold">
+                <Link to="/beekeeper/batches" style={{ textDecoration: 'none' }}>
+                  <Button variant="secondary" style={{ fontWeight: 'var(--font-semibold)' }}>
                     {t('navigation.myBatches', 'Back to My Batches')}
                   </Button>
                 </Link>
@@ -234,23 +235,23 @@ export const CreateBatchPage = () => {
         ) : loadingHives ? (
           <LoadingSpinner text={t('loading.loading', 'Loading your active hives...')} />
         ) : hives.length === 0 ? (
-          <Card className="text-center py-12 space-y-4 max-w-xl mx-auto">
-            <div className="text-5xl">🐝</div>
-            <h2 className="text-xl font-bold text-slate-900 font-['Outfit']">{t('hive.noHives', 'No Hives Registered')}</h2>
-            <p className="text-slate-500 text-sm max-w-sm mx-auto">
+          <Card style={{ textAlign: 'center', padding: 'var(--space-8)', maxWidth: '520px', marginInline: 'auto', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', alignItems: 'center' }}>
+            <div style={{ fontSize: '3rem' }}>🐝</div>
+            <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: 0 }}>{t('hive.noHives', 'No Hives Registered')}</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', maxWidth: '380px', margin: 0 }}>
               {t('validation.selectHive', 'You must register at least one hive before creating a honey batch.')}
             </p>
-            <Link to="/hives">
-              <Button variant="primary" className="mt-2 bg-blue-600 hover:bg-blue-700 border-blue-600 text-white font-bold">{t('navigation.myHives', 'Go to My Hives')}</Button>
+            <Link to="/hives" style={{ textDecoration: 'none', marginTop: 'var(--space-2)' }}>
+              <Button variant="primary" style={{ fontWeight: 'var(--font-bold)' }}>{t('navigation.myHives', 'Go to My Hives')}</Button>
             </Link>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="hc-batch-layout-grid">
             {/* Main Form Column */}
-            <div className="lg:col-span-8">
-              <Card className="p-6 bg-white border border-slate-200/90 shadow-sm">
+            <div>
+              <Card style={{ padding: 'var(--space-6)' }}>
                 {!isOnline && (
-                  <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center justify-between font-medium">
+                  <div style={{ marginBottom: 'var(--space-4)', padding: 'var(--space-3)', borderRadius: 'var(--radius-xl)', backgroundColor: 'var(--warning-soft)', border: '1px solid var(--warning-border)', color: 'var(--warning)', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)' }}>
                     <span>🔴 <strong>Offline Mode:</strong> Form submissions will be saved locally and synced automatically when internet returns.</span>
                   </div>
                 )}
@@ -265,13 +266,13 @@ export const CreateBatchPage = () => {
             </div>
 
             {/* Sidebar Guidance & Standards Column */}
-            <div className="lg:col-span-4 space-y-6">
-              <Card className="p-5 border border-amber-200/70 bg-gradient-to-br from-amber-50/50 to-white space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">📋</span>
-                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Harvest Protocol Guidelines</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+              <Card style={{ padding: 'var(--space-5)', border: '1px solid var(--primary-light)', backgroundColor: 'var(--primary-soft)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
+                  <span style={{ fontSize: '1.25rem' }}>📋</span>
+                  <h3 style={{ fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', fontSize: 'var(--text-sm)', margin: 0 }}>Harvest Protocol Guidelines</h3>
                 </div>
-                <ul className="text-xs text-slate-600 space-y-2 list-disc list-inside leading-relaxed">
+                <ul style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', lineHeight: 1.6, paddingLeft: 'var(--space-4)', margin: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                   <li>Ensure honeycomb frames are at least 75% capped for optimal moisture content.</li>
                   <li>Record accurate harvest weights directly from apiary scales.</li>
                   <li>After creation, your batch will generate a unique cryptographic ID on HoneyChain.</li>
@@ -279,12 +280,12 @@ export const CreateBatchPage = () => {
                 </ul>
               </Card>
 
-              <Card className="p-5 border border-blue-200/70 bg-gradient-to-br from-blue-50/40 to-white space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🛡️</span>
-                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Blockchain Verification</h3>
+              <Card style={{ padding: 'var(--space-5)', border: '1px solid var(--info-border)', backgroundColor: 'var(--info-soft)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
+                  <span style={{ fontSize: '1.25rem' }}>🛡️</span>
+                  <h3 style={{ fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', fontSize: 'var(--text-sm)', margin: 0 }}>Blockchain Verification</h3>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
                   Every batch log is signed and stamped on-chain. Customers will scan your QR code to verify floral origin and apiary coordinates.
                 </p>
               </Card>

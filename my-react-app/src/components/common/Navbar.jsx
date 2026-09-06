@@ -5,6 +5,7 @@ import { logout } from '../../features/auth/authSlice'
 import { useLanguage } from '../../i18n/LanguageContext'
 import LanguageSelector from './LanguageSelector'
 import NotificationBell from '../../features/notification/components/NotificationBell'
+import './Navbar.css'
 
 export const Navbar = ({ transparent = false, onMobileToggle }) => {
   const { isAuthenticated, role } = useSelector((state) => state.auth)
@@ -21,33 +22,48 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
   }
 
   return (
-    <nav id="main-navbar" className={`navbar${transparent ? ' navbar--transparent' : ''}`}>
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+    <nav
+      id="main-navbar"
+      className={`hc-navbar ${transparent ? 'hc-navbar--transparent' : ''}`.trim()}
+    >
+      <div className="hc-navbar__inner">
         {/* Brand Logo */}
-        <div className="flex items-center gap-6">
-          <Link to="/" id="nav-logo" className="navbar__logo shrink-0" onClick={() => setMobileOpen(false)}>
-            <div className="navbar__logo-icon">🍯</div>
-            <span className="navbar__logo-name">HoneyChain</span>
+        <div className="hc-navbar__left">
+          <Link
+            to="/"
+            id="nav-logo"
+            className="hc-navbar__brand"
+            onClick={() => setMobileOpen(false)}
+          >
+            <div className="hc-navbar__logo-icon">
+              🍯
+            </div>
+            <span className="hc-navbar__brand-name">
+              HoneyChain
+            </span>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="navbar__links hidden md:flex items-center gap-2">
-            <Link to="/marketplace" className="navbar__link">
+          <div className="hc-navbar__links">
+            <Link
+              to="/marketplace"
+              className="hc-navbar__link"
+            >
               {t('nav.marketplace', 'Marketplace')}
             </Link>
 
             {isAuthenticated && role === 'BEEKEEPER' && (
               <>
-                <Link to="/beekeeper/dashboard" className="navbar__link">
+                <Link to="/beekeeper/dashboard" className="hc-navbar__link">
                   {t('nav.dashboard', 'Dashboard')}
                 </Link>
-                <Link to="/hives" className="navbar__link">
+                <Link to="/hives" className="hc-navbar__link">
                   {t('nav.myHives', 'My Hives')}
                 </Link>
-                <Link to="/batches" className="navbar__link">
+                <Link to="/batches" className="hc-navbar__link">
                   {t('nav.myBatches', 'My Batches')}
                 </Link>
-                <Link to="/hives/health" className="navbar__link">
+                <Link to="/hives/health" className="hc-navbar__link">
                   {t('nav.hiveHealth', 'Hive Health')}
                 </Link>
               </>
@@ -55,19 +71,16 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
 
             {isAuthenticated && role === 'CUSTOMER' && (
               <>
-                <Link to="/customer/dashboard" className="navbar__link">
+                <Link to="/customer/dashboard" className="hc-navbar__link">
                   {t('nav.dashboard', 'Dashboard')}
                 </Link>
-                <Link to="/customer/profile" className="navbar__link">
-                  {t('nav.profile', 'Profile')}
-                </Link>
-                <Link to="/orders" className="navbar__link">
+                <Link to="/orders" className="hc-navbar__link">
                   {t('nav.orders', 'My Orders')}
                 </Link>
-                <Link to="/my-reviews" className="navbar__link">
+                <Link to="/my-reviews" className="hc-navbar__link">
                   {t('nav.myReviews', 'My Reviews')}
                 </Link>
-                <Link to="/customer/disputes" className="navbar__link">
+                <Link to="/customer/disputes" className="hc-navbar__link">
                   {t('nav.disputes', 'Disputes')}
                 </Link>
               </>
@@ -75,17 +88,31 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
 
             {isAuthenticated && (role === 'ADMIN' || role === 'KVIC_OFFICER') && (
               <>
-                <Link to="/admin/dashboard" className="navbar__link">
+                <Link to="/admin/dashboard" className="hc-navbar__link">
                   {t('nav.adminDashboard', 'Dashboard')}
                 </Link>
-                <Link to="/admin/beekeepers" className="navbar__link">
+                <Link to="/admin/beekeepers" className="hc-navbar__link">
                   {t('nav.beekeepers', 'Beekeepers')}
                 </Link>
-                <Link to="/admin/batches" className="navbar__link">
+                <Link to="/admin/batches" className="hc-navbar__link">
                   {t('nav.batches', 'Batches')}
                 </Link>
-                <Link to="/admin/analytics" className="navbar__link">
+                <Link to="/admin/analytics" className="hc-navbar__link">
                   {t('nav.analytics', 'Analytics')}
+                </Link>
+              </>
+            )}
+
+            {isAuthenticated && role === 'LAB' && (
+              <>
+                <Link to="/lab/dashboard" className="hc-navbar__link">
+                  {t('nav.dashboard', 'Lab Dashboard')}
+                </Link>
+                <Link to="/lab/tests" className="hc-navbar__link">
+                  {t('nav.pendingTests', 'Pending Tests')}
+                </Link>
+                <Link to="/lab/certificates" className="hc-navbar__link">
+                  {t('nav.certificates', 'Certificates')}
                 </Link>
               </>
             )}
@@ -93,21 +120,25 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
         </div>
 
         {/* Actions */}
-        <div className="navbar__actions flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="hc-navbar__actions">
           {/* Language Selector Dropdown */}
-          <div className="flex items-center">
-            <LanguageSelector />
-          </div>
+          <LanguageSelector />
 
           {/* Notification Bell */}
           {isAuthenticated && <NotificationBell />}
 
           {/* Cart Icon for Customers / Public */}
           {(!isAuthenticated || role === 'CUSTOMER') && (
-            <Link to="/cart" id="nav-cart-btn" className="btn btn--ghost btn--sm relative" title={t('accessibility.viewCart', 'View Cart')}>
-              <span>🛒 {t('nav.cart', 'Cart')}</span>
+            <Link
+              to="/cart"
+              id="nav-cart-btn"
+              className="hc-navbar__cart-btn"
+              title={t('accessibility.viewCart', 'View Cart')}
+            >
+              <span>🛒</span>
+              <span>{t('nav.cart', 'Cart')}</span>
               {itemCount > 0 && (
-                <span className="badge badge--gold badge--xs ml-1 font-bold">
+                <span className="hc-navbar__cart-count">
                   {itemCount}
                 </span>
               )}
@@ -115,18 +146,24 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
           )}
 
           {isAuthenticated ? (
-            <div className="hidden md:flex items-center gap-2">
-              <span className="navbar__role-badge">{role}</span>
+            <div className="hc-navbar__user-pill">
+              <span className="hc-navbar__role-badge">
+                {role}
+              </span>
               <button
                 id="nav-logout-btn"
                 onClick={handleLogout}
-                className="btn btn--secondary btn--sm"
+                className="hc-navbar__logout-btn"
               >
                 {t('nav.logout', 'Logout')}
               </button>
             </div>
           ) : (
-            <Link to="/login" id="nav-login-btn" className="btn btn--primary btn--sm hidden md:inline-flex">
+            <Link
+              to="/login"
+              id="nav-login-btn"
+              className="hc-navbar__login-btn"
+            >
               {t('nav.login', 'Login')}
             </Link>
           )}
@@ -142,7 +179,7 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
                 setMobileOpen(!mobileOpen)
               }
             }}
-            className="md:hidden btn btn--ghost btn--sm p-2 text-slate-700"
+            className="hc-navbar__toggle"
             aria-label="Toggle Navigation Menu"
           >
             {mobileOpen ? '✕' : '☰'}
@@ -152,29 +189,53 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
 
       {/* Mobile Drawer / Menu Panel */}
       {mobileOpen && (
-        <div className="md:hidden w-full bg-white border-b border-slate-200 px-4 py-4 space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+        <div className="hc-navbar__mobile-drawer">
+          <div className="hc-navbar__mobile-drawer-top">
             <LanguageSelector />
-            {isAuthenticated && <span className="navbar__role-badge">{role}</span>}
+            {isAuthenticated && (
+              <span className="hc-navbar__role-badge">
+                {role}
+              </span>
+            )}
           </div>
 
-          <div className="flex flex-col space-y-1">
-            <Link to="/marketplace" className="navbar__link" onClick={() => setMobileOpen(false)}>
+          <div className="hc-navbar__mobile-links">
+            <Link
+              to="/marketplace"
+              className="hc-navbar__mobile-link"
+              onClick={() => setMobileOpen(false)}
+            >
               {t('nav.marketplace', 'Marketplace')}
             </Link>
 
             {isAuthenticated && role === 'BEEKEEPER' && (
               <>
-                <Link to="/beekeeper/dashboard" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/beekeeper/dashboard"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.dashboard', 'Dashboard')}
                 </Link>
-                <Link to="/hives" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/hives"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.myHives', 'My Hives')}
                 </Link>
-                <Link to="/batches" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/batches"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.myBatches', 'My Batches')}
                 </Link>
-                <Link to="/hives/health" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/hives/health"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.hiveHealth', 'Hive Health')}
                 </Link>
               </>
@@ -182,19 +243,32 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
 
             {isAuthenticated && role === 'CUSTOMER' && (
               <>
-                <Link to="/customer/dashboard" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/customer/dashboard"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.dashboard', 'Dashboard')}
                 </Link>
-                <Link to="/customer/profile" className="navbar__link" onClick={() => setMobileOpen(false)}>
-                  {t('nav.profile', 'Profile')}
-                </Link>
-                <Link to="/orders" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/orders"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.orders', 'My Orders')}
                 </Link>
-                <Link to="/my-reviews" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/my-reviews"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.myReviews', 'My Reviews')}
                 </Link>
-                <Link to="/customer/disputes" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/customer/disputes"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.disputes', 'Disputes')}
                 </Link>
               </>
@@ -202,32 +276,78 @@ export const Navbar = ({ transparent = false, onMobileToggle }) => {
 
             {isAuthenticated && (role === 'ADMIN' || role === 'KVIC_OFFICER') && (
               <>
-                <Link to="/admin/dashboard" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/admin/dashboard"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.adminDashboard', 'Dashboard')}
                 </Link>
-                <Link to="/admin/beekeepers" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/admin/beekeepers"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.beekeepers', 'Beekeepers')}
                 </Link>
-                <Link to="/admin/batches" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/admin/batches"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.batches', 'Batches')}
                 </Link>
-                <Link to="/admin/analytics" className="navbar__link" onClick={() => setMobileOpen(false)}>
+                <Link
+                  to="/admin/analytics"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t('nav.analytics', 'Analytics')}
+                </Link>
+              </>
+            )}
+
+            {isAuthenticated && role === 'LAB' && (
+              <>
+                <Link
+                  to="/lab/dashboard"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t('nav.dashboard', 'Lab Dashboard')}
+                </Link>
+                <Link
+                  to="/lab/tests"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t('nav.pendingTests', 'Pending Tests')}
+                </Link>
+                <Link
+                  to="/lab/certificates"
+                  className="hc-navbar__mobile-link"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t('nav.certificates', 'Certificates')}
                 </Link>
               </>
             )}
           </div>
 
-          <div className="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+          <div className="hc-navbar__mobile-footer">
             {isAuthenticated ? (
               <button
                 onClick={handleLogout}
-                className="btn btn--secondary btn--sm w-full"
+                className="hc-navbar__mobile-logout"
               >
                 {t('nav.logout', 'Logout')}
               </button>
             ) : (
-              <Link to="/login" className="btn btn--primary btn--sm w-full text-center" onClick={() => setMobileOpen(false)}>
+              <Link
+                to="/login"
+                className="hc-navbar__mobile-login"
+                onClick={() => setMobileOpen(false)}
+              >
                 {t('nav.login', 'Login')}
               </Link>
             )}

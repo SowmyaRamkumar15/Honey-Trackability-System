@@ -5,7 +5,12 @@ import useCart from '../hooks/useCart'
 import CartItem from '../components/CartItem'
 import CartSummary from '../components/CartSummary'
 import CartEmptyState from '../components/CartEmptyState'
+import Card from '../../../components/ui/Card'
+import Button from '../../../components/ui/Button'
 import Alert from '../../../components/feedback/Alert'
+import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
+import PageHeader from '../../../components/layout/PageHeader'
+import '../styles/cart.css'
 
 const CartPage = () => {
   const {
@@ -23,72 +28,55 @@ const CartPage = () => {
 
   return (
     <CustomerLayout>
-      <div className="cart-page section">
-        <div className="container">
-          <nav className="breadcrumb mb-6">
-            <Link to="/">Home</Link> / <Link to="/marketplace">Marketplace</Link> /{' '}
-            <span className="text-secondary">Shopping Cart</span>
-          </nav>
+      <div className="hc-cart-page">
+        <PageHeader
+          title="Shopping Cart"
+          subtitle={!isEmpty ? `${itemCount} ${itemCount === 1 ? 'item' : 'items'} in your cart` : 'Review your pure honey items'}
+          actions={
+            <Link to="/marketplace" style={{ textDecoration: 'none' }}>
+              <Button variant="ghost" size="sm">
+                ← Continue Shopping
+              </Button>
+            </Link>
+          }
+        />
 
-          <div className="cart-page__header mb-6">
-            <h1 className="page-header__title">🛒 Your Shopping Cart</h1>
-            {!isEmpty && (
-              <span className="text-secondary">
-                {itemCount} {itemCount === 1 ? 'item' : 'items'} in your cart
-              </span>
-            )}
-          </div>
+        {error && <Alert type="danger" title="Cart Error">{error}</Alert>}
 
-          {error && <Alert type="danger" message={error} className="mb-6" />}
-
-          {loading && isEmpty ? (
-            <div className="card p-8 text-center">Loading cart...</div>
-          ) : isEmpty ? (
-            <CartEmptyState />
-          ) : (
-            <div className="cart-layout">
-              {/* Items List */}
-              <div className="cart-layout__items">
-                <div className="card cart-items-card">
-                  <div className="cart-items-card__header">
-                    <span>Product</span>
-                    <span>Quantity</span>
-                    <span>Subtotal</span>
-                    <span></span>
-                  </div>
-
-                  <div className="cart-items-card__list">
-                    {items.map((item) => (
-                      <CartItem
-                        key={item.id}
-                        item={item}
-                        onUpdateQuantity={updateQuantity}
-                        onRemove={removeItem}
-                        disabled={loading}
-                      />
-                    ))}
-                  </div>
+        {loading && isEmpty ? (
+          <LoadingSpinner message="Loading cart..." />
+        ) : isEmpty ? (
+          <CartEmptyState />
+        ) : (
+          <div className="hc-cart-layout">
+            {/* Items List */}
+            <div>
+              <Card>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {items.map((item) => (
+                    <CartItem
+                      key={item.id}
+                      item={item}
+                      onUpdateQuantity={updateQuantity}
+                      onRemove={removeItem}
+                      disabled={loading}
+                    />
+                  ))}
                 </div>
-
-                <div className="mt-4">
-                  <Link to="/marketplace" className="btn btn--ghost btn--sm">
-                    ← Continue Shopping
-                  </Link>
-                </div>
-              </div>
-
-              {/* Cart Summary */}
-              <div className="cart-layout__summary">
-                <CartSummary
-                  subtotal={subtotal}
-                  itemCount={itemCount}
-                  onClear={emptyCart}
-                  disabled={loading}
-                />
-              </div>
+              </Card>
             </div>
-          )}
-        </div>
+
+            {/* Cart Summary */}
+            <div>
+              <CartSummary
+                subtotal={subtotal}
+                itemCount={itemCount}
+                onClear={emptyCart}
+                disabled={loading}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </CustomerLayout>
   )

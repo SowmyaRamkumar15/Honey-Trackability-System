@@ -1,22 +1,21 @@
 import React from 'react'
+import '../styles/order.css'
 
 const STAGES = [
   { key: 'CONFIRMED', label: 'Confirmed', icon: '📝' },
   { key: 'PACKED', label: 'Packed', icon: '📦' },
-  { key: 'SHIPPED', label: 'Shipped', icon: '🚚' },
+  { key: 'SHIPPED', label: 'In Transit', icon: '🚚' },
   { key: 'DELIVERED', label: 'Delivered', icon: '🏠' },
 ]
 
-const OrderTracking = ({ currentStatus }) => {
+export const OrderTracking = ({ currentStatus }) => {
   if (currentStatus === 'CANCELLED') {
     return (
-      <div className="order-tracker order-tracker--cancelled">
-        <div className="order-tracker__cancelled-banner">
-          <span className="order-tracker__cancelled-icon">❌</span>
-          <div>
-            <strong>Order Cancelled</strong>
-            <p className="text-xs text-secondary">This order was cancelled and inventory was restored.</p>
-          </div>
+      <div style={{ padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', background: 'rgba(220, 38, 38, 0.08)', border: '1px solid rgba(220, 38, 38, 0.2)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+        <span style={{ fontSize: '1.5rem' }}>❌</span>
+        <div>
+          <strong style={{ fontSize: 'var(--text-sm)', color: 'var(--danger)', display: 'block' }}>Order Cancelled</strong>
+          <p style={{ margin: '2px 0 0', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>This customer order was cancelled and inventory was restored.</p>
         </div>
       </div>
     )
@@ -25,34 +24,28 @@ const OrderTracking = ({ currentStatus }) => {
   const currentIdx = STAGES.findIndex((s) => s.key === currentStatus)
 
   return (
-    <div className="order-tracker">
-      <div className="order-tracker__steps">
-        {STAGES.map((stage, idx) => {
-          const isCompleted = currentIdx >= idx
-          const isCurrent = currentIdx === idx
+    <div className="hc-order-tracking">
+      {STAGES.map((stage, idx) => {
+        const isCompleted = currentIdx >= idx
+        const isCurrent = currentIdx === idx
 
-          return (
-            <React.Fragment key={stage.key}>
-              <div
-                className={`order-tracker__step ${isCompleted ? 'order-tracker__step--completed' : ''} ${isCurrent ? 'order-tracker__step--current' : ''
-                  }`}
-              >
-                <div className="order-tracker__node">
-                  <span className="order-tracker__icon">{stage.icon}</span>
-                  {isCompleted && !isCurrent && <span className="order-tracker__check">✓</span>}
-                </div>
-                <span className="order-tracker__label">{stage.label}</span>
+        return (
+          <React.Fragment key={stage.key}>
+            <div className={`hc-track-step ${isCurrent ? 'hc-track-step--active' : isCompleted ? 'hc-track-step--done' : ''}`}>
+              <div className="hc-track-step__icon">
+                {isCompleted && !isCurrent ? '✓' : stage.icon}
               </div>
-              {idx < STAGES.length - 1 && (
-                <div
-                  className={`order-tracker__line ${currentIdx > idx ? 'order-tracker__line--completed' : ''
-                    }`}
-                />
-              )}
-            </React.Fragment>
-          )
-        })}
-      </div>
+              <span className="hc-track-step__label">
+                {stage.label}
+              </span>
+            </div>
+
+            {idx < STAGES.length - 1 && (
+              <div className={`hc-track-line ${currentIdx > idx ? 'hc-track-line--done' : currentIdx === idx ? 'hc-track-line--active' : ''}`} />
+            )}
+          </React.Fragment>
+        )
+      })}
     </div>
   )
 }

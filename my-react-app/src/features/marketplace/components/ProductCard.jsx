@@ -2,6 +2,8 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import PurityBadge from './PurityBadge'
 import VerifiedBadge from './VerifiedBadge'
+import Button from '../../../components/ui/Button'
+import '../styles/marketplace.css'
 
 /**
  * ProductCard — executive marketplace listing card with rich visual hierarchy.
@@ -30,62 +32,57 @@ const ProductCard = ({ product }) => {
   const isLowStock = stockKg > 0 && stockKg <= 10
 
   return (
-    <div className="group rounded-2xl bg-white border border-slate-200 shadow-xs hover:shadow-lg hover:border-blue-400 transition-all duration-300 flex flex-col overflow-hidden transform hover:-translate-y-1">
+    <div className="hc-prod-card">
       {/* Product Image & Badges Container */}
-      <div className="relative aspect-4/3 w-full bg-amber-50/50 overflow-hidden">
+      <div className="hc-prod-card__img-wrap">
         <img
           src={imageUrl || defaultImg}
           alt={productName}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+          className="hc-prod-card__img"
           onError={(e) => {
             e.target.src = defaultImg
           }}
         />
 
         {/* Floating Badges */}
-        <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 pointer-events-none">
-          <div className="pointer-events-auto">
+        <div className="hc-prod-card__badges">
+          <div className="hc-prod-card__badge-item">
             <VerifiedBadge verified={verified} batchId={batchId} />
           </div>
           {purityScore != null && (
-            <div className="pointer-events-auto shadow-xs rounded-full">
+            <div className="hc-prod-card__badge-item">
               <PurityBadge score={purityScore} size="sm" />
             </div>
           )}
         </div>
-
-        {/* Bottom image gradient for subtle contrast */}
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-slate-900/30 to-transparent pointer-events-none" />
       </div>
 
       {/* Product Details Content */}
-      <div className="p-5 flex-1 flex flex-col justify-between gap-4">
-        <div className="space-y-2.5">
+      <div className="hc-prod-card__body">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           {/* Floral source & Regional Origin */}
-          <div className="flex items-center justify-between gap-2 text-xs">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-900 border border-amber-200/80">
+          <div className="hc-prod-card__meta">
+            <span style={{ padding: '3px 10px', borderRadius: 'var(--radius-full)', background: 'var(--primary-soft)', color: 'var(--primary-dark)', border: '1px solid var(--primary-light)', fontWeight: 700, fontSize: '0.6875rem' }}>
               🍯 {flowerSource || 'Multiflora'}
             </span>
-            <span className="text-slate-600 font-medium truncate max-w-36">
+            <span style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.6875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               📍 {region || 'India'}
             </span>
           </div>
 
           {/* Product Title */}
-          <h3 className="font-['Outfit'] font-bold text-base sm:text-lg text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
-            <Link to={`/marketplace/product/${id}`} className="hover:underline">
+          <h3 className="hc-prod-card__title">
+            <Link to={`/marketplace/product/${id}`}>
               {productName}
             </Link>
           </h3>
 
           {/* Beekeeper Signature */}
           {beekeeper && (
-            <div className="flex items-center gap-2 pt-0.5 text-xs text-slate-600">
-              <span className="w-6 h-6 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-xs shrink-0">
-                🧑‍🌾
-              </span>
-              <span className="truncate">
-                Harvested by <strong className="text-slate-800 font-semibold">{beekeeper.name}</strong>
+            <div className="hc-prod-card__beekeeper">
+              <span>🧑‍🌾</span>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 'var(--text-xs)' }}>
+                Harvested by <strong style={{ color: 'var(--text-primary)' }}>{beekeeper.name}</strong>
                 {beekeeper.village ? ` (${beekeeper.village})` : ''}
               </span>
             </div>
@@ -93,22 +90,20 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Pricing & Stock Scarcity */}
-        <div className="pt-3 border-t border-slate-100 flex items-baseline justify-between gap-2">
-          <div className="flex items-baseline gap-1">
-            <span className="text-xl sm:text-2xl font-black font-mono text-slate-900">
-              ₹{Number(pricePerKg).toFixed(0)}
-            </span>
-            <span className="text-xs text-slate-600 font-semibold">/ kg</span>
+        <div className="hc-prod-card__pricing">
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+            <span className="hc-prod-card__price">₹{Number(pricePerKg).toFixed(0)}</span>
+            <span className="hc-prod-card__unit">/ kg</span>
           </div>
 
-          <div>
+          <div className="hc-prod-card__stock">
             {isLowStock ? (
-              <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-900 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded-md">
+              <span style={{ color: 'var(--warning)', fontWeight: 700, background: 'var(--warning-soft)', padding: '3px 8px', borderRadius: 'var(--radius-full)', border: '1px solid var(--warning-border)', fontSize: '0.6875rem' }}>
                 ⚡ Only {stockKg} kg left
               </span>
             ) : (
-              <span className="text-xs text-slate-600 font-medium">
-                <strong className="text-slate-800 font-semibold">{stockKg} kg</strong> available
+              <span style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-xs)' }}>
+                <strong style={{ color: 'var(--text-primary)' }}>{stockKg} kg</strong> in stock
               </span>
             )}
           </div>
@@ -116,12 +111,10 @@ const ProductCard = ({ product }) => {
 
         {/* Action Button */}
         <div>
-          <Link
-            to={`/marketplace/product/${id}`}
-            className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all duration-200"
-          >
-            <span>View Details & Proof</span>
-            <span>→</span>
+          <Link to={`/marketplace/product/${id}`} style={{ textDecoration: 'none' }}>
+            <Button variant="primary" size="sm" style={{ width: '100%', fontWeight: 'var(--font-bold)' }}>
+              View Details & Proof →
+            </Button>
           </Link>
         </div>
       </div>

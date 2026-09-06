@@ -2,44 +2,34 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import BatchStatusBadge from './BatchStatusBadge'
 import SyncStatusBadge from './SyncStatusBadge'
+import '../styles/batch.css'
 
 export const BatchCard = ({ batch }) => {
   const isLocal = Boolean(batch._isLocal || batch.localId)
 
   return (
-    <div
-      className={`bg-white rounded-2xl p-5 border ${
-        isLocal
-          ? 'border-amber-300 bg-amber-50/50 hover:border-amber-400'
-          : 'border-slate-200 hover:border-blue-300'
-      } transition-all shadow-sm hover:shadow-md flex flex-col justify-between`}
-    >
+    <div className={`hc-batch-card ${isLocal ? 'hc-batch-card--local' : ''}`}>
       {/* Top Header */}
       <div>
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex items-center gap-3">
+        <div className="hc-batch-card-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
             {batch.photoUrl ? (
               <img
                 src={batch.photoUrl}
                 alt={batch.batchId || batch.localId}
-                className="w-12 h-12 rounded-xl object-cover border border-slate-200"
+                className="hc-batch-photo"
               />
             ) : (
-              <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-2xl">
+              <div className="hc-batch-icon">
                 🍯
               </div>
             )}
-            <div>
-              <p
-                className={`font-mono font-bold text-sm tracking-wide ${
-                  isLocal ? 'text-amber-700' : 'text-blue-600'
-                }`}
-              >
+            <div style={{ minWidth: 0 }}>
+              <p className="hc-batch-card-id">
                 {batch.batchId || batch.localId}
               </p>
-              <p className="text-slate-800 font-semibold text-xs mt-0.5">
-                {batch.hiveCode || 'Hive'}{' '}
-                {batch.clusterName ? `· ${batch.clusterName}` : ''}
+              <p className="hc-batch-hive-info">
+                {batch.hiveCode || 'Hive'} {batch.clusterName ? `· ${batch.clusterName}` : ''}
               </p>
             </div>
           </div>
@@ -51,12 +41,10 @@ export const BatchCard = ({ batch }) => {
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-2 gap-2 my-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-          <div>
-            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">
-              Harvested
-            </p>
-            <p className="text-slate-800 text-xs font-medium mt-0.5">
+        <div className="hc-batch-meta-grid">
+          <div className="hc-batch-meta-item">
+            <span className="hc-batch-meta-label">Harvest Date</span>
+            <span className="hc-batch-meta-val">
               {batch.harvestDate
                 ? new Date(batch.harvestDate).toLocaleDateString('en-IN', {
                     day: '2-digit',
@@ -64,39 +52,44 @@ export const BatchCard = ({ batch }) => {
                     year: 'numeric',
                   })
                 : '—'}
-            </p>
+            </span>
           </div>
-          <div>
-            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">
-              Quantity
-            </p>
-            <p className="text-amber-600 text-xs font-mono font-bold mt-0.5">
+          <div className="hc-batch-meta-item">
+            <span className="hc-batch-meta-label">Harvest Yield</span>
+            <span className="hc-batch-meta-val hc-batch-meta-val--yield">
               {batch.quantityKg} KG
-            </p>
+            </span>
           </div>
         </div>
 
         {isLocal && batch.lastError && (
-          <div className="p-2 mb-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium">
+          <div className="hc-batch-error-box">
             ⚠ {batch.lastError}
           </div>
         )}
       </div>
 
       {/* Action Footer */}
-      <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-        <span className="text-[11px] text-slate-500">
-          {isLocal ? 'Saved Offline' : 'Registered'}{' '}
+      <div className="hc-batch-card-footer">
+        <span className="hc-batch-date-text">
+          {isLocal ? 'Offline Record' : 'Registered'}{' '}
           {batch.createdAt
             ? new Date(batch.createdAt).toLocaleDateString('en-IN')
             : '—'}
         </span>
-        {!isLocal && (
+        {!isLocal ? (
           <Link to={`/beekeeper/batches/${batch.batchId}`}>
-            <button className="px-3.5 py-1.5 rounded-lg border border-blue-200 bg-blue-50 text-blue-600 text-xs font-semibold hover:bg-blue-100 transition-colors flex items-center gap-1">
-              View Details →
+            <button
+              type="button"
+              className="hc-btn hc-btn--secondary hc-btn--xs"
+            >
+              Batch Passport →
             </button>
           </Link>
+        ) : (
+          <span style={{ fontSize: '0.75rem', color: 'var(--primary-dark)', fontWeight: 600 }}>
+            Will sync online 💾
+          </span>
         )}
       </div>
     </div>

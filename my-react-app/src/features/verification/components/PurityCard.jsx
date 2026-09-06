@@ -2,16 +2,19 @@ import React from 'react'
 import Card from '../../../components/ui/Card'
 import LabResultBadge from '../../lab/components/LabResultBadge'
 import Button from '../../../components/ui/Button'
+import '../styles/verification.css'
 
 export const PurityCard = ({ purity, onOpenCertificate }) => {
   if (!purity) {
     return (
-      <Card className="p-6 border border-[#E2E8F0] text-center space-y-2 bg-white">
-        <span className="text-3xl">🧪</span>
-        <h3 className="text-base font-bold text-[#1E293B] font-['Inter']">Laboratory Testing Pending</h3>
-        <p className="text-xs text-[#64748B]">
-          This honey batch is awaiting accredited laboratory chemical analysis.
-        </p>
+      <Card>
+        <div style={{ textAlign: 'center', padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <span style={{ fontSize: '2rem' }}>🧪</span>
+          <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 'var(--text-base)' }}>Laboratory Testing Pending</h3>
+          <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+            This honey batch is awaiting accredited laboratory chemical analysis.
+          </p>
+        </div>
       </Card>
     )
   }
@@ -19,61 +22,64 @@ export const PurityCard = ({ purity, onOpenCertificate }) => {
   const isPure = purity.result === 'PURE'
 
   return (
-    <Card className={`p-6 space-y-5 border ${isPure ? 'border-[#DBEAFE] bg-[#EFF6FF]' : 'border-[#F59E0B] bg-[#FEF3C7]'}`}>
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-[#1E293B] font-['Inter'] flex items-center gap-2">
-          <span>🧪</span> Laboratory Purity Analysis
-        </h2>
-        <LabResultBadge result={purity.result} size="lg" />
-      </div>
-
-      {/* Purity Score Gauge / Readout */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="p-4 rounded-2xl bg-white border border-[#DBEAFE] text-center">
-          <p className="text-[11px] text-[#64748B] uppercase font-bold tracking-wider">Purity Score</p>
-          <p className="text-4xl font-black text-[#2563EB] font-mono mt-1">
-            {purity.score}%
-          </p>
-          <p className="text-[10px] text-[#2563EB] mt-1">FSSAI Standard Compliant</p>
+    <Card
+      header={
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 'var(--text-base)' }}>
+            🧪 Laboratory Purity Analysis
+          </h3>
+          <LabResultBadge result={purity.result} size="lg" />
         </div>
-
-        <div className="p-4 rounded-2xl bg-white border border-[#DBEAFE] text-center flex flex-col justify-center">
-          <p className="text-[11px] text-[#64748B] uppercase font-bold tracking-wider">Analysis Result</p>
-          <p className="text-xl font-bold text-[#1E293B] mt-1">{purity.result}</p>
-          <p className="text-[10px] text-[#64748B] mt-1">
-            Tested {purity.testedAt ? new Date(purity.testedAt).toLocaleDateString('en-IN') : '—'}
-          </p>
-        </div>
-      </div>
-
-      {/* Lab Remarks */}
-      {purity.remarks && (
-        <div className="p-3.5 rounded-xl bg-white border border-[#E2E8F0] text-xs">
-          <span className="text-[#64748B] font-medium">Laboratory Findings: </span>
-          <span className="text-[#1E293B] leading-relaxed">{purity.remarks}</span>
-        </div>
-      )}
-
-      {/* Certificate Action */}
-      {purity.certificateUrl && (
-        <div className="flex items-center justify-between p-3.5 rounded-xl bg-white border border-[#DBEAFE]">
-          <div className="flex items-center gap-2 text-xs text-[#1E293B]">
-            <span className="text-xl">📄</span>
-            <div>
-              <p className="font-bold">Accredited Laboratory Certificate</p>
-              <p className="text-[10px] text-[#64748B]">Official purity test documentation</p>
-            </div>
+      }
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+        {/* Purity Score Gauge / Readout */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-3)' }}>
+          <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', background: 'var(--primary-soft)', border: '1px solid var(--primary-light)', textAlign: 'center' }}>
+            <p style={{ margin: 0, fontSize: '11px', color: 'var(--primary-dark)', textTransform: 'uppercase', fontWeight: 700 }}>Purity Score</p>
+            <p style={{ margin: '4px 0 0', fontSize: 'var(--text-3xl)', fontWeight: 900, color: 'var(--primary-dark)', fontFamily: 'var(--font-mono)' }}>
+              {purity.score}%
+            </p>
+            <p style={{ margin: '4px 0 0', fontSize: '10px', color: 'var(--primary-dark)' }}>FSSAI Standard Compliant</p>
           </div>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => onOpenCertificate(purity.certificateUrl)}
-            className="text-xs font-bold"
-          >
-            View Document ↗
-          </Button>
+
+          <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', background: 'var(--background)', border: '1px solid var(--border)', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Analysis Result</p>
+            <p style={{ margin: '4px 0 0', fontSize: 'var(--text-lg)', fontWeight: 800, color: 'var(--text-primary)' }}>{purity.result}</p>
+            <p style={{ margin: '4px 0 0', fontSize: '10px', color: 'var(--text-muted)' }}>
+              Tested {purity.testedAt ? new Date(purity.testedAt).toLocaleDateString('en-IN') : '—'}
+            </p>
+          </div>
         </div>
-      )}
+
+        {/* Lab Remarks */}
+        {purity.remarks && (
+          <div style={{ padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', background: 'var(--background)', border: '1px solid var(--border)', fontSize: 'var(--text-xs)' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Laboratory Findings: </span>
+            <span style={{ color: 'var(--text-primary)', lineHeight: 1.5 }}>{purity.remarks}</span>
+          </div>
+        )}
+
+        {/* Certificate Action */}
+        {purity.certificateUrl && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontSize: 'var(--text-xs)' }}>
+              <span style={{ fontSize: '1.25rem' }}>📄</span>
+              <div>
+                <p style={{ margin: 0, fontWeight: 700, color: 'var(--text-primary)' }}>Accredited Laboratory Certificate</p>
+                <p style={{ margin: 0, fontSize: '10px', color: 'var(--text-secondary)' }}>Official purity test documentation</p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => onOpenCertificate(purity.certificateUrl)}
+            >
+              View Document ↗
+            </Button>
+          </div>
+        )}
+      </div>
     </Card>
   )
 }

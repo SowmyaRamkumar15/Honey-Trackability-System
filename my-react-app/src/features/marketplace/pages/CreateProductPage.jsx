@@ -4,6 +4,12 @@ import BeekeeperLayout from '../../../layouts/BeekeeperLayout'
 import productApi from '../api/productApi'
 import { FLOWER_SOURCES, HONEY_REGIONS } from '../constants/marketplaceConstants'
 import Alert from '../../../components/feedback/Alert'
+import Button from '../../../components/ui/Button'
+import Card from '../../../components/ui/Card'
+import Input from '../../../components/ui/Input'
+import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
+import PageHeader from '../../../components/layout/PageHeader'
+import '../styles/marketplace.css'
 
 const CreateProductPage = () => {
   const navigate = useNavigate()
@@ -100,7 +106,7 @@ const CreateProductPage = () => {
         description: formData.description.trim(),
         imageUrl: formData.imageUrl.trim() || null,
       })
-      navigate('/beekeeper/products')
+      navigate('/my-products')
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to create product listing')
     } finally {
@@ -110,91 +116,84 @@ const CreateProductPage = () => {
 
   return (
     <BeekeeperLayout>
-      <div className="create-product-page section w-full">
-        <div className="container w-full">
-          <nav className="breadcrumb mb-4">
-            <Link to="/beekeeper/dashboard">Dashboard</Link> /{' '}
-            <Link to="/beekeeper/products">Listings</Link> /{' '}
-            <span className="text-secondary">New Listing</span>
-          </nav>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', width: '100%' }}>
+        <PageHeader
+          title="Create New Honey Listing"
+          subtitle="List verified PURE honey batches directly on the HoneyChain marketplace."
+        />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Main Form Column */}
-            <div className="lg:col-span-8">
-              <div className="card">
-                <div className="card__header">
-                  <h1 className="card__title">🍯 Create New Honey Listing</h1>
-                  <p className="card__subtitle">
-                    List verified PURE honey batches directly on the HoneyChain marketplace.
+        {error && (
+          <Alert type="danger" title="Error" onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
+
+        <div className="hc-create-prod-layout">
+          {/* Main Form Column */}
+          <div>
+            <Card header={<h3>Product Listing Details</h3>}>
+              {loadingBatches ? (
+                <LoadingSpinner message="Loading eligible honey batches..." />
+              ) : batches.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: 'var(--space-8) 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-3)' }}>
+                  <div style={{ fontSize: '2.5rem' }}>⚠️</div>
+                  <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 'var(--text-base)' }}>No Eligible Batches Available</h3>
+                  <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', maxWidth: '400px' }}>
+                    Only batches certified <strong>PURE</strong> by a laboratory can be listed on the marketplace.
                   </p>
-                </div>
-
-                {error && <Alert type="danger" message={error} className="mb-4" />}
-
-                {loadingBatches ? (
-                  <div className="p-6 text-center">Loading eligible honey batches...</div>
-                ) : batches.length === 0 ? (
-                  <div className="empty-state p-6 text-center">
-                    <p className="text-secondary">
-                      No eligible batches available for listing. Only batches with <strong>PURE</strong>,{' '}
-                      <strong>QR_GENERATED</strong>, or <strong>IN_STOCK</strong> status can be listed.
-                    </p>
-                    <div className="mt-4">
-                      <Link to="/beekeeper/batches/new" className="btn btn--secondary">
-                        Create New Batch
-                      </Link>
-                    </div>
+                  <div style={{ marginTop: 'var(--space-2)' }}>
+                    <Link to="/batches/new" style={{ textDecoration: 'none' }}>
+                      <Button variant="primary" size="sm">
+                        + Log New Batch
+                      </Button>
+                    </Link>
                   </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="form-grid">
-                    {/* Eligible Batch Selector */}
-                    <div className="form-group form-group--full">
-                      <label className="form-label" htmlFor="batchId">
-                        Select Verified Honey Batch <span className="text-danger">*</span>
-                      </label>
-                      <select
-                        id="batchId"
-                        name="batchId"
-                        className="form-select"
-                        value={formData.batchId}
-                        onChange={(e) => handleBatchSelect(e.target.value)}
-                        required
-                      >
-                        {batches.map((b) => (
-                          <option key={b.batchId} value={b.batchId}>
-                            {b.batchId} — {b.quantityKg} kg ({b.status})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                  {/* Eligible Batch Selector */}
+                  <div>
+                    <label className="hc-input__label" htmlFor="batchId">
+                      Select Verified Honey Batch <span style={{ color: 'var(--danger)' }}>*</span>
+                    </label>
+                    <select
+                      id="batchId"
+                      name="batchId"
+                      className="hc-input__field"
+                      value={formData.batchId}
+                      onChange={(e) => handleBatchSelect(e.target.value)}
+                      required
+                    >
+                      {batches.map((b) => (
+                        <option key={b.batchId} value={b.batchId}>
+                          {b.batchId} — {b.quantityKg} kg ({b.status})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                    {/* Product Name */}
-                    <div className="form-group form-group--full">
-                      <label className="form-label" htmlFor="productName">
-                        Product Listing Title <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        id="productName"
-                        name="productName"
-                        type="text"
-                        className="form-input"
-                        placeholder="e.g. Pure Wildflower Honey - Nilgiris"
-                        value={formData.productName}
-                        onChange={handleChange}
-                        maxLength={120}
-                        required
-                      />
-                    </div>
+                  {/* Product Name */}
+                  <Input
+                    label="Product Listing Title"
+                    id="productName"
+                    name="productName"
+                    required
+                    placeholder="e.g. Pure Wildflower Raw Honey - Nilgiris"
+                    value={formData.productName}
+                    onChange={handleChange}
+                    maxLength={120}
+                  />
 
-                    {/* Flower Source */}
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="flowerSource">
-                        Flower / Floral Source
+                  {/* Flower Source & Region */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)' }}>
+                    <div>
+                      <label className="hc-input__label" htmlFor="flowerSource">
+                        Floral / Flower Source
                       </label>
                       <select
                         id="flowerSource"
                         name="flowerSource"
-                        className="form-select"
+                        className="hc-input__field"
                         value={formData.flowerSource}
                         onChange={handleChange}
                       >
@@ -206,15 +205,14 @@ const CreateProductPage = () => {
                       </select>
                     </div>
 
-                    {/* Region */}
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="region">
+                    <div>
+                      <label className="hc-input__label" htmlFor="region">
                         Harvest Region
                       </label>
                       <select
                         id="region"
                         name="region"
-                        className="form-select"
+                        className="hc-input__field"
                         value={formData.region}
                         onChange={handleChange}
                       >
@@ -225,116 +223,104 @@ const CreateProductPage = () => {
                         ))}
                       </select>
                     </div>
+                  </div>
 
-                    {/* Price Per KG */}
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="pricePerKg">
-                        Price per KG (₹) <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        id="pricePerKg"
-                        name="pricePerKg"
-                        type="number"
-                        step="1"
-                        min="1"
-                        className="form-input"
-                        placeholder="e.g. 850"
-                        value={formData.pricePerKg}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
+                  {/* Price Per KG & Quantity */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)' }}>
+                    <Input
+                      label="Price per KG (₹)"
+                      id="pricePerKg"
+                      name="pricePerKg"
+                      type="number"
+                      step="1"
+                      min="1"
+                      placeholder="e.g. 850"
+                      value={formData.pricePerKg}
+                      onChange={handleChange}
+                      required
+                    />
 
-                    {/* Available Quantity */}
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="availableQuantityKg">
-                        Listing Quantity (KG) <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        id="availableQuantityKg"
-                        name="availableQuantityKg"
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        className="form-input"
-                        placeholder="e.g. 8.5"
-                        value={formData.availableQuantityKg}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
+                    <Input
+                      label="Listing Quantity (KG)"
+                      id="availableQuantityKg"
+                      name="availableQuantityKg"
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      placeholder="e.g. 8.5"
+                      value={formData.availableQuantityKg}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
 
-                    {/* Image URL */}
-                    <div className="form-group form-group--full">
-                      <label className="form-label" htmlFor="imageUrl">
-                        Product Image URL (optional)
-                      </label>
-                      <input
-                        id="imageUrl"
-                        name="imageUrl"
-                        type="url"
-                        className="form-input"
-                        placeholder="https://images.unsplash.com/..."
-                        value={formData.imageUrl}
-                        onChange={handleChange}
-                      />
-                    </div>
+                  {/* Image URL */}
+                  <Input
+                    label="Product Image URL (Optional)"
+                    id="imageUrl"
+                    name="imageUrl"
+                    type="url"
+                    placeholder="https://images.unsplash.com/..."
+                    value={formData.imageUrl}
+                    onChange={handleChange}
+                  />
 
-                    {/* Description */}
-                    <div className="form-group form-group--full">
-                      <label className="form-label" htmlFor="description">
-                        Description & Tasting Notes
-                      </label>
-                      <textarea
-                        id="description"
-                        name="description"
-                        rows={4}
-                        className="form-textarea"
-                        placeholder="Describe the aroma, flavor profile, floral notes, and harvest story..."
-                        value={formData.description}
-                        onChange={handleChange}
-                        maxLength={1500}
-                      />
-                    </div>
+                  {/* Description */}
+                  <div>
+                    <label className="hc-input__label" htmlFor="description">
+                      Description & Tasting Notes
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      rows={4}
+                      className="hc-input__field"
+                      placeholder="Describe the aroma, flavor profile, floral notes, and harvest story..."
+                      value={formData.description}
+                      onChange={handleChange}
+                      maxLength={1500}
+                      style={{ resize: 'vertical' }}
+                    />
+                  </div>
 
-                    {/* Actions */}
-                    <div className="form-group form-group--full flex justify-end gap-3 mt-4">
-                      <Link to="/beekeeper/products" className="btn btn--secondary">
+                  {/* Actions */}
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--border)' }}>
+                    <Link to="/my-products" style={{ textDecoration: 'none' }}>
+                      <Button variant="secondary" size="sm">
                         Cancel
-                      </Link>
-                      <button
-                        type="submit"
-                        className="btn btn--primary"
-                        disabled={submitting}
-                      >
-                        {submitting ? 'Creating Listing...' : 'Publish Product to Marketplace'}
-                      </button>
-                    </div>
-                  </form>
-                )}
+                      </Button>
+                    </Link>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="sm"
+                      disabled={submitting}
+                    >
+                      {submitting ? 'Publishing...' : 'Publish to Marketplace →'}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </Card>
+          </div>
+
+          {/* Sidebar Guidelines Column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div className="hc-cust-banner">
+              <div>
+                <div className="hc-cust-banner__title">💰 Direct Beekeeper Pricing</div>
+                <div className="hc-cust-banner__desc">
+                  On HoneyChain, you keep 100% of your listed retail price without intermediary cuts. Fair transparent pricing rewards genuine beekeepers.
+                </div>
               </div>
             </div>
 
-            {/* Sidebar Guidelines Column */}
-            <div className="lg:col-span-4 space-y-6">
-              <div className="card p-5 border border-amber-200 bg-gradient-to-br from-amber-50/60 to-white space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">💰</span>
-                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Fair Beekeeper Pricing</h3>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  On HoneyChain, you keep 100% of your listed retail price minus standard UPI payment processing. Fair floor prices reward verified pure beekeeping.
-                </p>
-              </div>
-
-              <div className="card p-5 border border-blue-200 bg-gradient-to-br from-blue-50/40 to-white space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🛡️</span>
-                  <h3 className="font-bold text-slate-900 font-['Outfit'] text-sm">Consumer Verification Badge</h3>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
+            <div className="hc-cust-banner" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <div>
+                <div className="hc-cust-banner__title" style={{ color: 'var(--text-primary)' }}>🛡️ Blockchain Verification Badge</div>
+                <div className="hc-cust-banner__desc">
                   Your listing automatically displays lab purity certificates and QR scan passports to build instant consumer trust.
-                </p>
+                </div>
               </div>
             </div>
           </div>

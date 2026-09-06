@@ -1,0 +1,26 @@
+/* ── Card Component CSS ─────────────────────────────────────── */
+.hc-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.hc-card--hover:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.hc-card--padding {
+  padding: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .hc-card--padding {
+    padding: var(--space-8);
+  }
+}

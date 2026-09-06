@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import AdminLayout from '../../../layouts/AdminLayout'
-import AdminSidebar from '../components/AdminSidebar'
 import BeekeeperTable from '../components/BeekeeperTable'
+import PageHeader from '../../../components/layout/PageHeader'
 import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
 import Alert from '../../../components/feedback/Alert'
 import adminApi from '../api/adminApi'
 import { useLanguage } from '../../../i18n/LanguageContext'
+import '../styles/admin.css'
 
 export const AdminBeekeepersPage = () => {
   const { t } = useLanguage()
@@ -26,18 +27,16 @@ export const AdminBeekeepersPage = () => {
     setLoading(true)
     setError(null)
     try {
-      const res = await adminApi.getBeekeepers({
-        status: statusFilter || undefined,
-        search: searchQuery || undefined,
-        page: p,
-        size: 20,
-      })
+      const params = { page: p, size: 10 }
+      if (statusFilter) params.status = statusFilter
+      if (searchQuery.trim()) params.query = searchQuery.trim()
+      const res = await adminApi.getBeekeepers(params)
       const data = res.data?.data
-      setBeekeepers(data?.content || [])
-      setTotalPages(data?.totalPages || 0)
+      setBeekeepers(data?.content || data || [])
+      setTotalPages(data?.totalPages || 1)
       setPage(p)
     } catch (err) {
-      setError(err?.response?.data?.message || t('errors.generic', 'Failed to load beekeepers'))
+      setError(err?.response?.data?.message || t('errors.generic', 'Failed to load beekeepers list'))
     } finally {
       setLoading(false)
     }
@@ -53,8 +52,6 @@ export const AdminBeekeepersPage = () => {
   }
 
   const handleStatusUpdate = async (id, newStatus) => {
-    if (!window.confirm(t('dialog.confirmTitle', 'Are you sure?'))) return
-
     setUpdatingId(id)
     try {
       await adminApi.updateBeekeeperStatus(id, newStatus)
@@ -68,68 +65,53 @@ export const AdminBeekeepersPage = () => {
 
   return (
     <AdminLayout>
-      <div className="container section">
-        <div className="dashboard__header mb-6">
-          <div>
-            <h1 className="dashboard__title">🧑‍🌾 {t('admin.beekeeperGovernance', 'Beekeeper Governance')}</h1>
-            <p className="dashboard__subtitle">{t('admin.beekeeperGovernanceSub', 'Review KVIC credentials, approve onboarding, and inspect honey apiaries')}</p>
-          </div>
-        </div>
-
-        <AdminSidebar />
+      <div className="hc-admin-page">
+        <PageHeader
+          title={t('admin.beekeeperGovernance', 'Beekeeper Governance')}
+          subtitle={t('admin.beekeeperGovernanceSub', 'Review KVIC credentials, approve onboarding, and inspect honey apiaries.')}
+        />
 
         {/* Filters */}
-        <div className="card mb-6">
-          <form onSubmit={handleSearch} className="flex flex-wrap gap-4 items-center">
-            <div className="flex-1 min-w-0 sm:min-w-60 w-full sm:w-auto">
+        <div className="hc-admin-filter-bar">
+          <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', width: '100%' }}>
+            <div style={{ flex: 1, minWidth: '240px' }}>
               <input
                 type="text"
-                className="form-input"
+                className="hc-input"
                 placeholder={t('admin.searchBeekeeperPlaceholder', 'Search by Beekeeper Name, KVIC ID, or Village...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ width: '100%', padding: '8px 12px', fontSize: 'var(--text-xs)' }}
               />
             </div>
 
-            <div className="w-full sm:w-48">
+            <div style={{ minWidth: '180px' }}>
               <select
-                className="form-input"
+                className="hc-input"
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value)
                   setSearchParams(e.target.value ? { status: e.target.value } : {})
                 }}
+                style={{ width: '100%', padding: '8px 12px', fontSize: 'var(--text-xs)' }}
               >
-                <option value="">{t('admin.allStatuses', 'All Statuses')}</option>
-                <option value="PENDING">{t('profile.statusPending', 'PENDING')}</option>
+                <option value="">{t('common.allStatuses', 'All Statuses')}</option>
+                <option value="PENDING">{t('profile.statusPending', 'PENDING Review')}</option>
                 <option value="APPROVED">{t('profile.statusApproved', 'APPROVED')}</option>
                 <option value="REJECTED">{t('profile.statusRejected', 'REJECTED')}</option>
               </select>
             </div>
 
-            <button type="submit" className="btn btn--primary btn--sm w-full sm:w-auto">
-              {t('common.submit', 'Search')}
+            <button type="submit" className="hc-btn hc-btn--primary hc-btn--sm">
+              🔍 {t('common.search', 'Filter')}
             </button>
-            {(searchQuery || statusFilter) && (
-              <button
-                type="button"
-                className="btn btn--ghost btn--sm w-full sm:w-auto"
-                onClick={() => {
-                  setSearchQuery('')
-                  setStatusFilter('')
-                  setSearchParams({})
-                }}
-              >
-                {t('common.cancel', 'Reset')}
-              </button>
-            )}
           </form>
         </div>
 
-        {error && <Alert type="danger" message={error} />}
+        {error && <Alert type="danger" message={error} onClose={() => setError(null)} />}
 
         {loading ? (
-          <div className="py-12 text-center">
+          <div style={{ padding: '60px 0', textAlign: 'center' }}>
             <LoadingSpinner text={t('loading.loading', 'Loading beekeepers...')} />
           </div>
         ) : (
@@ -140,25 +122,30 @@ export const AdminBeekeepersPage = () => {
               updatingId={updatingId}
             />
 
+            {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex gap-2 justify-center mt-6">
-                <button
-                  className="btn btn--ghost btn--sm"
-                  disabled={page === 0}
-                  onClick={() => loadBeekeepers(page - 1)}
-                >
-                  ← {t('common.back', 'Prev')}
-                </button>
-                <span className="text-secondary self-center text-sm">
-                  {t('common.page', 'Page')} {page + 1} / {totalPages}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', backgroundColor: 'var(--surface)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border)' }}>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                  Page <strong>{page + 1}</strong> of <strong>{totalPages}</strong>
                 </span>
-                <button
-                  className="btn btn--ghost btn--sm"
-                  disabled={page >= totalPages - 1}
-                  onClick={() => loadBeekeepers(page + 1)}
-                >
-                  {t('common.next', 'Next')} →
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    disabled={page === 0}
+                    onClick={() => loadBeekeepers(page - 1)}
+                    className="hc-btn hc-btn--secondary hc-btn--xs"
+                  >
+                    ← Previous
+                  </button>
+                  <button
+                    type="button"
+                    disabled={page >= totalPages - 1}
+                    onClick={() => loadBeekeepers(page + 1)}
+                    className="hc-btn hc-btn--secondary hc-btn--xs"
+                  >
+                    Next →
+                  </button>
+                </div>
               </div>
             )}
           </>

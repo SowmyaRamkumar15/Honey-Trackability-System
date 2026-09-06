@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import AdminLayout from '../../../layouts/AdminLayout'
-import AdminSidebar from '../components/AdminSidebar'
+import Button from '../../../components/ui/Button'
+import Badge from '../../../components/ui/Badge'
+import PageHeader from '../../../components/layout/PageHeader'
 import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
 import Alert from '../../../components/feedback/Alert'
 import adminApi from '../api/adminApi'
 import { useLanguage } from '../../../i18n/LanguageContext'
+import '../styles/admin.css'
 
 export const AdminLabPage = () => {
   const { t } = useLanguage()
@@ -42,118 +45,205 @@ export const AdminLabPage = () => {
 
   return (
     <AdminLayout>
-      <div className="container section">
-        <div className="dashboard__header mb-6">
-          <div>
-            <h1 className="dashboard__title">🔬 {t('admin.navLabTests', 'Laboratory Testing Records')}</h1>
-            <p className="dashboard__subtitle">{t('admin.labRecordsSub', 'Audited purity evaluations, chemical parameters, and certified honey pass rates')}</p>
-          </div>
-        </div>
+      <div className="hc-admin-page">
+        <PageHeader
+          title={t('admin.navLabTests', 'Laboratory Testing Records')}
+          subtitle={t('admin.labRecordsSub', 'Audited purity evaluations, chemical parameters, and certified honey pass rates')}
+        />
 
-        <AdminSidebar />
-
-        {/* Top Purity Cards */}
+        {/* Top Purity Metrics */}
         {purityStats && (
-          <div className="kpi-grid mb-6">
-            <div className="kpi-card">
-              <div className="kpi-card__icon">🧪</div>
-              <div className="kpi-card__content">
-                <p className="kpi-card__label">{t('admin.totalTests', 'Total Tests')}</p>
-                <h3 className="kpi-card__value">{purityStats.totalTests}</h3>
-                <p className="kpi-card__subtext text-secondary text-xs">{t('admin.certifiedTestsLogged', 'Certified tests logged')}</p>
+          <div className="hc-admin-stats-grid">
+            <div className="hc-admin-metric-card">
+              <div className="hc-admin-metric-header">
+                <span className="hc-admin-metric-label">{t('admin.totalTests', 'Total Tests')}</span>
+                <div className="hc-admin-metric-icon">🧪</div>
               </div>
+              <div className="hc-admin-metric-value">{purityStats.totalTests}</div>
+              <div className="hc-admin-metric-subtext">{t('admin.certifiedTestsLogged', 'Certified lab tests logged')}</div>
             </div>
 
-            <div className="kpi-card">
-              <div className="kpi-card__icon">✅</div>
-              <div className="kpi-card__content">
-                <p className="kpi-card__label">{t('admin.passRate', 'Pass Rate')}</p>
-                <h3 className="kpi-card__value text-success">{purityStats.passRate}%</h3>
-                <p className="kpi-card__subtext text-secondary text-xs">{purityStats.pureCount} {t('lab.pure', 'Pure')} {t('navigation.batches', 'batches')}</p>
+            <div className="hc-admin-metric-card">
+              <div className="hc-admin-metric-header">
+                <span className="hc-admin-metric-label">{t('admin.passRate', 'Pass Rate')}</span>
+                <div className="hc-admin-metric-icon">✅</div>
               </div>
+              <div className="hc-admin-metric-value" style={{ color: 'var(--success)' }}>
+                {purityStats.passRate}%
+              </div>
+              <div className="hc-admin-metric-subtext">{purityStats.pureCount} Pure batches verified</div>
             </div>
 
-            <div className="kpi-card">
-              <div className="kpi-card__icon">⭐</div>
-              <div className="kpi-card__content">
-                <p className="kpi-card__label">{t('admin.avgPurityScore', 'Average Purity Score')}</p>
-                <h3 className="kpi-card__value text-gold">{purityStats.averagePurityScore}%</h3>
-                <p className="kpi-card__subtext text-secondary text-xs">{t('admin.acrossAllBatches', 'Across all lab tested batches')}</p>
+            <div className="hc-admin-metric-card">
+              <div className="hc-admin-metric-header">
+                <span className="hc-admin-metric-label">{t('admin.avgPurityScore', 'Avg Purity')}</span>
+                <div className="hc-admin-metric-icon">⭐</div>
               </div>
+              <div className="hc-admin-metric-value" style={{ color: 'var(--primary)' }}>
+                {purityStats.averagePurityScore}%
+              </div>
+              <div className="hc-admin-metric-subtext">{t('admin.acrossAllBatches', 'Across all certified batches')}</div>
             </div>
 
-            <div className="kpi-card">
-              <div className="kpi-card__icon">⚠️</div>
-              <div className="kpi-card__content">
-                <p className="kpi-card__label">{t('admin.failedUnderReview', 'Failed / Under Review')}</p>
-                <h3 className="kpi-card__value text-danger">{purityStats.failedCount + purityStats.underReviewCount}</h3>
-                <p className="kpi-card__subtext text-secondary text-xs">{purityStats.failedCount} {t('lab.failed', 'Failed')} • {purityStats.underReviewCount} {t('lab.underReview', 'Review')}</p>
+            <div className="hc-admin-metric-card">
+              <div className="hc-admin-metric-header">
+                <span className="hc-admin-metric-label">{t('admin.failedUnderReview', 'Under Review / Flagged')}</span>
+                <div className="hc-admin-metric-icon">⚠️</div>
               </div>
+              <div className="hc-admin-metric-value" style={{ color: purityStats.failedCount > 0 ? 'var(--danger)' : 'var(--warning)' }}>
+                {purityStats.failedCount + purityStats.underReviewCount}
+              </div>
+              <div className="hc-admin-metric-subtext">{purityStats.failedCount} Failed • {purityStats.underReviewCount} Review</div>
             </div>
           </div>
         )}
 
-        {/* Filter */}
-        <div className="card mb-6">
-          <div className="flex gap-4 items-center">
-            <label className="text-sm font-semibold">{t('admin.filterByResult', 'Filter by Result:')}</label>
-            <select
-              className="form-input w-48"
-              value={resultFilter}
-              onChange={(e) => setResultFilter(e.target.value)}
-            >
-              <option value="">{t('admin.allResults', 'All Results')}</option>
-              <option value="PURE">{t('lab.pure', 'PURE')}</option>
-              <option value="UNDER_REVIEW">{t('lab.underReview', 'UNDER_REVIEW')}</option>
-              <option value="FAILED">{t('lab.failed', 'FAILED')}</option>
-            </select>
+        {/* Filter Toolbar */}
+        <div className="hc-admin-filter-bar">
+          <div className="hc-admin-filter-group">
+            <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--text-secondary)' }}>
+              Filter by Lab Status:
+            </span>
+            <div className="hc-admin-filter-pills">
+              {['', 'PURE', 'UNDER_REVIEW', 'FAILED'].map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => setResultFilter(st)}
+                  className={`hc-admin-filter-pill ${resultFilter === st ? 'hc-admin-filter-pill--active' : ''}`}
+                >
+                  {st === '' ? 'All Results' : st}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {error && <Alert type="danger" message={error} />}
+        {error && <Alert type="danger" title="Error">{error}</Alert>}
 
         {loading ? (
-          <div className="py-12 text-center">
-            <LoadingSpinner text={t('loading.loading', 'Loading laboratory tests...')} />
-          </div>
+          <LoadingSpinner message={t('loading.loading', 'Loading laboratory testing records...')} />
         ) : (
-          <div className="overflow-x-auto card p-0">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>{t('batch.batchId', 'Batch ID')}</th>
-                  <th>{t('auth.beekeeperRole', 'Beekeeper')}</th>
-                  <th>{t('lab.testingFacility', 'Testing Facility')}</th>
-                  <th>{t('lab.purityScore', 'Purity Score')}</th>
-                  <th>{t('lab.testResult', 'Test Outcome')}</th>
-                  <th>{t('lab.testedAt', 'Date Tested')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {labTests.map((t) => (
-                  <tr key={t.id || t.batchId}>
-                    <td><code>{t.batchId}</code></td>
-                    <td>{t.beekeeperName || 'N/A'}</td>
-                    <td>{t.labName}</td>
-                    <td>
-                      <strong className={t.purityScore >= 80 ? 'text-success' : 'text-danger'}>
-                        {t.purityScore}%
-                      </strong>
-                    </td>
-                    <td>
-                      <span className={`badge badge--${t.result === 'PURE' ? 'success' : t.result === 'FAILED' ? 'danger' : 'warning'}`}>
-                        {t.result}
-                      </span>
-                    </td>
-                    <td>
-                      <span className="text-secondary text-xs">
-                        {t.testDate ? new Date(t.testDate).toLocaleDateString('en-IN') : 'N/A'}
-                      </span>
-                    </td>
+          <div className="hc-admin-table-container">
+            <div className="hc-admin-table-header">
+              <h3 className="hc-admin-table-title">
+                🔬 Audited Lab Test Certificates
+              </h3>
+              <span className="hc-admin-table-count">
+                {labTests.length} tests displayed
+              </span>
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table className="hc-table" style={{ width: '100%', margin: 0 }}>
+                <thead>
+                  <tr>
+                    <th>Batch ID</th>
+                    <th>Lab Analyst / Facility</th>
+                    <th>Purity Score</th>
+                    <th>Result Status</th>
+                    <th>Certificate</th>
+                    <th>Tested On</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {labTests.map((test) => (
+                    <tr key={test.id || test.batchId}>
+                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--primary-dark)', fontSize: 'var(--text-xs)' }}>
+                        {test.batchId}
+                      </td>
+                      <td>
+                        <strong style={{ display: 'block', color: 'var(--text-primary)', fontWeight: 600 }}>{test.analystName || 'Accredited Lab'}</strong>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{test.labLocation || 'State Honey Testing Lab'}</span>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: 'var(--text-sm)' }}>
+                            {test.purityScore}%
+                          </span>
+                          <div style={{ width: '60px', height: '6px', background: 'var(--bg-muted)', borderRadius: '999px', overflow: 'hidden' }}>
+                            <div
+                              style={{
+                                width: `${Math.min(test.purityScore || 0, 100)}%`,
+                                height: '100%',
+                                background: test.purityScore >= 90 ? 'var(--success)' : test.purityScore >= 75 ? 'var(--warning)' : 'var(--danger)',
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <Badge
+                          variant={test.result === 'PURE' ? 'success' : test.result === 'FAILED' ? 'danger' : 'warning'}
+                          size="sm"
+                        >
+                          {test.result}
+                        </Badge>
+                      </td>
+                      <td>
+                        {test.certificateUrl ? (
+                          <a
+                            href={test.certificateUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              color: 'var(--primary)',
+                              fontWeight: 700,
+                              fontSize: 'var(--text-xs)',
+                              textDecoration: 'none',
+                              padding: '4px 8px',
+                              background: 'var(--primary-soft)',
+                              borderRadius: 'var(--radius-md)',
+                            }}
+                          >
+                            📄 View PDF
+                          </a>
+                        ) : (
+                          <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>—</span>
+                        )}
+                      </td>
+                      <td style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                        {test.testedAt ? new Date(test.testedAt).toLocaleDateString('en-IN') : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                  {labTests.length === 0 && (
+                    <tr>
+                      <td colSpan="6" style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--text-muted)' }}>
+                        No lab testing records match this filter.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="hc-admin-pagination">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={page === 0}
+                  onClick={() => loadData(page - 1)}
+                >
+                  ← Previous
+                </Button>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                  Page {page + 1} of {totalPages}
+                </span>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={page >= totalPages - 1}
+                  onClick={() => loadData(page + 1)}
+                >
+                  Next →
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>

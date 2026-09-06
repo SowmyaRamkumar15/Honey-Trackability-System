@@ -1,11 +1,19 @@
 import React from 'react'
+import './Card.css'
 
-export const Card = ({ children, className = '', hover = true, padding = true, ...props }) => {
+/**
+ * Card — Premium surface container with subtle depth.
+ */
+export const Card = ({ children, className = '', hover = true, padding = false, ...props }) => {
+  const classes = [
+    'hc-card',
+    hover ? 'hc-card--hover' : '',
+    padding ? 'hc-card--padding' : '',
+    className
+  ].filter(Boolean).join(' ')
+
   return (
-    <div
-      className={`card${hover ? ' card--hover' : ''}${padding ? ' card--p' : ''} ${className}`}
-      {...props}
-    >
+    <div className={classes} {...props}>
       {children}
     </div>
   )

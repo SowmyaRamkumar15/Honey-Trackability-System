@@ -1,9 +1,8 @@
 import React from 'react'
-import Card from '../../../components/ui/Card'
-import Button from '../../../components/ui/Button'
 import PredictionConfidence from './PredictionConfidence'
 import PredictionExplanation from './PredictionExplanation'
 import VoiceButton from '../../../components/common/VoiceButton'
+import Button from '../../../components/ui/Button'
 import { useLanguage } from '../../../i18n/LanguageContext'
 
 export const YieldPredictionCard = ({
@@ -16,12 +15,12 @@ export const YieldPredictionCard = ({
 
   if (loading) {
     return (
-      <Card className="p-5">
-        <div className="flex items-center gap-3 text-secondary text-sm">
-          <div className="spinner spinner--sm" />
+      <div style={{ padding: 'var(--space-5)', backgroundColor: 'var(--surface)', borderRadius: 'var(--radius-2xl)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-xs)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', color: 'var(--text-secondary)', fontSize: 'var(--text-sm)' }}>
+          <div style={{ width: '16px', height: '16px', border: '2px solid var(--primary)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
           <span>{t('common.loading', 'Generating AI yield prediction...')}</span>
         </div>
-      </Card>
+      </div>
     )
   }
 
@@ -36,29 +35,35 @@ export const YieldPredictionCard = ({
   }
 
   return (
-    <Card className={`p-5 ${isAlert ? 'card--border-red' : 'card--border-gold'}`}>
-      <div className="flex justify-between items-start mb-4">
+    <div style={{
+      padding: 'var(--space-5)',
+      borderRadius: 'var(--radius-2xl)',
+      backgroundColor: 'var(--surface)',
+      border: `1px solid ${isAlert ? 'var(--danger-border)' : 'var(--primary-light)'}`,
+      boxShadow: 'var(--shadow-xs)',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-4)', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🤖</span>
-            <h3 className="font-brand font-bold text-lg text-primary">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <span style={{ fontSize: '1.25rem' }}>🤖</span>
+            <h3 style={{ fontWeight: 'var(--font-bold)', fontSize: 'var(--text-base)', color: 'var(--text-primary)', margin: 0 }}>
               {t('nav.yieldPrediction', 'AI Yield Prediction')}
             </h3>
           </div>
-          <p className="text-xs text-muted mt-1">
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', marginTop: '4px', margin: '4px 0 0 0' }}>
             Hive {prediction.hiveCode} • Generated {new Date(prediction.generatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
           <VoiceButton text={getVoicePredictionText()} size="xs" />
           {onRefresh && (
             <Button
-              variant="ghost"
-              size="xs"
+              type="button"
+              variant="secondary"
+              size="sm"
               onClick={onRefresh}
               loading={refreshing}
-              className="text-xs"
             >
               🔄 Refresh
             </Button>
@@ -68,19 +73,20 @@ export const YieldPredictionCard = ({
 
       {/* ALERT Banner if hive is in ALERT status */}
       {isAlert && (
-        <div className="alert alert--error mb-4">
-          🔴 <strong>Hive Alert:</strong> Your hive needs attention. Yield prediction is less reliable until hive conditions improve.
+        <div style={{ padding: 'var(--space-3)', marginBottom: 'var(--space-4)', borderRadius: 'var(--radius-xl)', backgroundColor: 'var(--danger-soft)', border: '1px solid var(--danger-border)', color: 'var(--danger)', fontSize: 'var(--text-xs)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <span>🔴</span>
+          <span><strong>Hive Alert:</strong> Your hive needs attention. Yield prediction is less reliable until hive conditions improve.</span>
         </div>
       )}
 
       {/* Core Prediction Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 bg-slate-900/50 p-3.5 rounded-xl border border-amber-500/15">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginBottom: 'var(--space-4)', backgroundColor: 'var(--bg-muted)', padding: 'var(--space-4)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border-light)' }}>
         <div>
-          <p className="text-xs text-muted font-medium">{t('yield.expectedHarvest', 'Expected Harvest')}</p>
-          <p className="font-brand font-bold text-lg text-primary">
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontWeight: 'var(--font-medium)', margin: 0 }}>{t('yield.expectedHarvest', 'Expected Harvest')}</p>
+          <p style={{ fontWeight: 'var(--font-bold)', fontSize: 'var(--text-lg)', color: 'var(--text-primary)', margin: '4px 0 0 0' }}>
             ~{prediction.daysUntilHarvest} days
           </p>
-          <p className="text-xs text-secondary">
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
             {new Date(prediction.predictedHarvestDate).toLocaleDateString('en-IN', {
               day: '2-digit',
               month: 'short',
@@ -90,11 +96,11 @@ export const YieldPredictionCard = ({
         </div>
 
         <div>
-          <p className="text-xs text-muted font-medium">{t('yield.estimatedYield', 'Estimated Yield')}</p>
-          <p className="font-brand font-bold text-lg text-gold">
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontWeight: 'var(--font-medium)', margin: 0 }}>{t('yield.estimatedYield', 'Estimated Yield')}</p>
+          <p style={{ fontWeight: 'var(--font-bold)', fontSize: 'var(--text-lg)', color: 'var(--primary-dark)', fontFamily: 'var(--font-mono)', margin: '4px 0 0 0' }}>
             {prediction.minimumKg} – {prediction.maximumKg} kg
           </p>
-          <p className="text-xs text-secondary">Predicted harvest range</p>
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>Predicted harvest range</p>
         </div>
       </div>
 
@@ -106,7 +112,7 @@ export const YieldPredictionCard = ({
         explanation={prediction.explanation}
         details={prediction.explanationDetails}
       />
-    </Card>
+    </div>
   )
 }
 

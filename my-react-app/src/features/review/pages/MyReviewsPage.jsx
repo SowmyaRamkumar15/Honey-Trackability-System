@@ -3,6 +3,13 @@ import CustomerLayout from '../../../layouts/CustomerLayout'
 import reviewApi from '../api/reviewApi'
 import ReviewCard from '../components/ReviewCard'
 import ReviewForm from '../components/ReviewForm'
+import Card from '../../../components/ui/Card'
+import Button from '../../../components/ui/Button'
+import EmptyState from '../../../components/ui/EmptyState'
+import Alert from '../../../components/feedback/Alert'
+import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
+import PageHeader from '../../../components/layout/PageHeader'
+import '../styles/review.css'
 
 const MyReviewsPage = () => {
   const [reviews, setReviews] = useState([])
@@ -55,59 +62,45 @@ const MyReviewsPage = () => {
 
   return (
     <CustomerLayout>
-      <div className="container section">
-        <div className="dashboard__header mb-6">
-          <div>
-            <h1 className="dashboard__title">⭐ My Reviews</h1>
-            <p className="text-secondary mt-1">All honey products you have reviewed</p>
-          </div>
-        </div>
-
-        {loading && (
-          <div className="flex flex-col gap-3">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="skeleton skeleton--card h-28" />
-            ))}
-          </div>
-        )}
+      <div className="hc-review-page">
+        <PageHeader
+          title="My Reviews"
+          subtitle="All honey products you have reviewed and rated"
+        />
 
         {error && (
-          <div className="alert alert--danger">
-            <span className="alert__icon">⚠️</span>
-            <div className="alert__body"><p className="alert__message">{error}</p></div>
-          </div>
+          <Alert type="danger" title="Error">
+            {error}
+          </Alert>
         )}
 
         {deleteError && (
-          <div className="alert alert--danger mb-4">
-            <span className="alert__icon">⚠️</span>
-            <div className="alert__body"><p className="alert__message">{deleteError}</p></div>
-          </div>
+          <Alert type="danger" title="Delete Error">
+            {deleteError}
+          </Alert>
         )}
 
-        {!loading && reviews.length === 0 && (
-          <div className="card text-center py-10">
-            <div className="text-5xl">⭐</div>
-            <h3 className="mt-3">No reviews yet</h3>
-            <p className="text-secondary mt-2">
-              Purchase honey and leave a review after delivery to help build trust in the marketplace.
-            </p>
-          </div>
-        )}
+        {loading ? (
+          <LoadingSpinner message="Loading your reviews..." />
+        ) : reviews.length === 0 ? (
+          <EmptyState
+            icon="⭐"
+            title="No reviews yet"
+            description="Purchase honey and leave a review after delivery to help build trust in the marketplace."
+          />
+        ) : (
+          <div className="hc-review-list">
+            {editingReview && (
+              <div style={{ marginBottom: 'var(--space-4)' }}>
+                <ReviewForm
+                  existingReview={editingReview}
+                  productName={editingReview.productName}
+                  onSuccess={handleEditSuccess}
+                  onCancel={() => setEditingReview(null)}
+                />
+              </div>
+            )}
 
-        {editingReview && (
-          <div className="card mb-6">
-            <ReviewForm
-              existingReview={editingReview}
-              productName={editingReview.productName}
-              onSuccess={handleEditSuccess}
-              onCancel={() => setEditingReview(null)}
-            />
-          </div>
-        )}
-
-        {!loading && reviews.length > 0 && (
-          <div className="flex flex-col gap-4">
             {reviews.map((review) => (
               <ReviewCard
                 key={review.id}
@@ -121,24 +114,26 @@ const MyReviewsPage = () => {
         )}
 
         {totalPages > 1 && (
-          <div className="flex gap-2 justify-center mt-6">
-            <button
-              className="btn btn--ghost btn--sm"
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)', marginTop: 'var(--space-6)' }}>
+            <Button
+              variant="secondary"
+              size="sm"
               disabled={page === 0}
               onClick={() => loadReviews(page - 1)}
             >
               ← Prev
-            </button>
-            <span className="text-secondary self-center text-sm">
+            </Button>
+            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontWeight: 600 }}>
               Page {page + 1} of {totalPages}
             </span>
-            <button
-              className="btn btn--ghost btn--sm"
+            <Button
+              variant="secondary"
+              size="sm"
               disabled={page >= totalPages - 1}
               onClick={() => loadReviews(page + 1)}
             >
               Next →
-            </button>
+            </Button>
           </div>
         )}
       </div>

@@ -1,14 +1,12 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import Navbar from '../components/common/Navbar'
 import Footer from '../components/common/Footer'
-import AppShell from '../components/layout/AppShell'
 
 const MainLayout = ({ children, transparentNav = false }) => {
   return (
-    <div className="layout min-h-screen flex flex-col bg-slate-50">
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-soft)' }}>
       <Navbar transparent={transparentNav} />
-      <main className="flex-1 w-full">
+      <main style={{ flex: 1, width: '100%' }}>
         {children}
       </main>
       <Footer />

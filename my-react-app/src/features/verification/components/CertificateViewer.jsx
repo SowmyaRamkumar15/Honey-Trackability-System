@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from '../../../components/ui/Button'
+import Modal from '../../../components/ui/Modal'
 
 export const CertificateViewer = ({ url, onClose }) => {
   if (!url) return null
@@ -7,39 +8,27 @@ export const CertificateViewer = ({ url, onClose }) => {
   const isPdf = url.toLowerCase().endsWith('.pdf')
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="max-w-2xl w-full bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">📄</span>
-            <h3 className="text-base font-bold text-slate-900 font-['Outfit']">
-              Official Laboratory Certificate
-            </h3>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-xs text-slate-500 hover:text-slate-900 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200"
-          >
-            ✕ Close
-          </button>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col items-center justify-center min-h-56">
+    <Modal
+      isOpen={!!url}
+      onClose={onClose}
+      title="Official Laboratory Certificate"
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+        <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-2xl)', backgroundColor: 'var(--bg-muted)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '220px' }}>
           {isPdf ? (
-            <div className="text-center space-y-3">
-              <span className="text-5xl block">📑</span>
-              <p className="text-sm font-semibold text-slate-900">Laboratory Certificate PDF Document</p>
-              <p className="text-xs text-slate-600 max-w-xs">
+            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', alignItems: 'center' }}>
+              <span style={{ fontSize: '3rem', display: 'block' }}>📑</span>
+              <p style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)', margin: 0 }}>Laboratory Certificate PDF Document</p>
+              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', maxWidth: '320px', margin: 0 }}>
                 Official accredited purity analysis report. Click below to view or download.
               </p>
               <a
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block pt-2"
+                style={{ display: 'inline-block', paddingTop: 'var(--space-2)', textDecoration: 'none' }}
               >
-                <Button variant="primary" size="sm" className="font-bold">
+                <Button variant="primary" size="sm" style={{ fontWeight: 'var(--font-bold)' }}>
                   Open Full PDF Document ↗
                 </Button>
               </a>
@@ -48,19 +37,19 @@ export const CertificateViewer = ({ url, onClose }) => {
             <img
               src={url}
               alt="Lab Certificate"
-              className="max-h-96 w-auto rounded-xl object-contain border border-slate-200"
+              style={{ maxHeight: '380px', width: 'auto', borderRadius: 'var(--radius-xl)', objectFit: 'contain', border: '1px solid var(--border)' }}
             />
           )}
         </div>
 
-        <div className="flex items-center justify-between text-xs text-slate-500 pt-2">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--text-xs)', color: 'var(--text-muted)', paddingTop: 'var(--space-2)' }}>
           <span>Protected by HoneyChain Blockchain verification</span>
           <Button variant="secondary" size="sm" onClick={onClose}>
             Done
           </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   )
 }
 

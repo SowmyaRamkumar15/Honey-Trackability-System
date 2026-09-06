@@ -4,56 +4,59 @@ import CustomerLayout from '../../../layouts/CustomerLayout'
 import useOrders from '../hooks/useOrders'
 import OrderCard from '../components/OrderCard'
 import Alert from '../../../components/feedback/Alert'
+import Button from '../../../components/ui/Button'
+import EmptyState from '../../../components/ui/EmptyState'
+import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
+import PageHeader from '../../../components/layout/PageHeader'
+import '../styles/order.css'
 
 const OrdersPage = () => {
   const { orders, loading, error, cancellingId, cancelOrder } = useOrders()
 
   return (
     <CustomerLayout>
-      <div className="orders-page section">
-        <div className="container max-w-4xl mx-auto">
-          <div className="page-header mb-6">
-            <div>
-              <h1 className="page-header__title">📦 My Honey Orders</h1>
-              <p className="page-header__subtitle">
-                Track status and view history of your artisan honey purchases.
-              </p>
-            </div>
-            <Link to="/marketplace" className="btn btn--secondary btn--sm">
-              🍯 Browse Marketplace
+      <div className="hc-order-page">
+        <PageHeader
+          title="My Honey Orders"
+          subtitle="Track status and view history of your artisan honey purchases."
+          actions={
+            <Link to="/marketplace" style={{ textDecoration: 'none' }}>
+              <Button variant="primary" size="sm">
+                🍯 Browse Marketplace
+              </Button>
             </Link>
-          </div>
+          }
+        />
 
-          {error && <Alert type="danger" message={error} className="mb-6" />}
+        {error && <Alert type="danger" title="Orders Error">{error}</Alert>}
 
-          {loading ? (
-            <div className="card p-8 text-center">Loading your order history...</div>
-          ) : orders.length === 0 ? (
-            <div className="card empty-state p-10 text-center">
-              <div className="empty-state__icon">📦</div>
-              <h2 className="empty-state__title">No Orders Placed Yet</h2>
-              <p className="empty-state__description">
-                You haven't ordered any verified honey yet. Explore our verified marketplace to place your first order.
-              </p>
-              <div className="mt-6">
-                <Link to="/marketplace" className="btn btn--primary">
+        {loading ? (
+          <LoadingSpinner message="Loading your order history..." />
+        ) : orders.length === 0 ? (
+          <EmptyState
+            icon="📦"
+            title="No Orders Placed Yet"
+            description="You haven't ordered any verified honey yet. Explore our verified marketplace to place your first order."
+            action={
+              <Link to="/marketplace" style={{ textDecoration: 'none' }}>
+                <Button variant="primary" size="md">
                   Explore Verified Honey
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="orders-list">
-              {orders.map((order) => (
-                <OrderCard
-                  key={order.orderNumber}
-                  order={order}
-                  onCancel={cancelOrder}
-                  isCancelling={cancellingId === order.orderNumber}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+                </Button>
+              </Link>
+            }
+          />
+        ) : (
+          <div className="hc-order-list">
+            {orders.map((order) => (
+              <OrderCard
+                key={order.orderNumber}
+                order={order}
+                onCancel={cancelOrder}
+                isCancelling={cancellingId === order.orderNumber}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </CustomerLayout>
   )

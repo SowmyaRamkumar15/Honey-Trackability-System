@@ -4,6 +4,7 @@ import BeekeeperLayout from '../../../layouts/BeekeeperLayout'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
 import Alert from '../../../components/feedback/Alert'
+import Badge from '../../../components/ui/Badge'
 import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
 import HealthStatusBadge from '../components/HealthStatusBadge'
 import SensorSummary from '../components/SensorSummary'
@@ -11,6 +12,7 @@ import SensorHistoryChart from '../components/SensorHistoryChart'
 import YieldPredictionCard from '../../ai/components/YieldPredictionCard'
 import useYieldPrediction from '../../ai/hooks/useYieldPrediction'
 import iotApi from '../api/iotApi'
+import '../styles/iot.css'
 
 export const HiveHealthDetailsPage = () => {
   const { hiveId } = useParams()
@@ -54,60 +56,62 @@ export const HiveHealthDetailsPage = () => {
 
   return (
     <BeekeeperLayout>
-      <div className="w-full space-y-6">
+      <div className="hc-iot-page">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-slate-500">
-          <Link to="/beekeeper/hives" className="hover:text-blue-600 transition-colors font-medium">
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
+          <Link to="/beekeeper/hives" style={{ color: 'var(--primary)', fontWeight: 'var(--font-semibold)', textDecoration: 'none' }}>
             My Hives
           </Link>
           <span>/</span>
-          <span className="text-slate-800 font-mono font-semibold">{health?.hiveCode || `Hive #${hiveId}`}</span>
+          <span style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', fontWeight: 'var(--font-bold)' }}>{health?.hiveCode || `Hive #${hiveId}`}</span>
         </nav>
 
         {error && <Alert type="error" message={error} />}
 
         {loading && !health ? (
-          <div className="py-20 text-center">
+          <div style={{ padding: 'var(--space-12) 0', textAlign: 'center' }}>
             <LoadingSpinner text="Reading IoT sensor stream and calculating health state..." />
           </div>
         ) : !health ? (
-          <Card className="p-12 text-center max-w-xl mx-auto">
-            <p className="text-3xl mb-2">🐝</p>
-            <p className="text-slate-900 font-bold">Hive Telemetry Not Available</p>
-            <Link to="/beekeeper/hives">
-              <Button variant="secondary" size="sm" className="mt-4">
+          <Card style={{ padding: 'var(--space-12)', textAlign: 'center', maxWidth: '520px', marginInline: 'auto' }}>
+            <p style={{ fontSize: '2.5rem', marginBottom: 'var(--space-2)' }}>🐝</p>
+            <p style={{ color: 'var(--text-primary)', fontWeight: 'var(--font-bold)' }}>Hive Telemetry Not Available</p>
+            <Link to="/beekeeper/hives" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" size="sm" style={{ marginTop: 'var(--space-4)' }}>
                 ← Back to Hives
               </Button>
             </Link>
           </Card>
         ) : (
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
             {/* Main Health Status Overview Card */}
             <Card
-              className={`p-6 space-y-4 border ${health.status === 'ALERT'
-                  ? 'border-blue-300 bg-blue-50/40 text-blue-950 shadow-sm'
-                  : health.status === 'WATCH'
-                    ? 'border-amber-300 bg-amber-50/40 text-amber-950 shadow-sm'
-                    : 'border-slate-200 bg-white text-slate-900 shadow-sm'
-                }`}
+              style={{
+                padding: 'var(--space-6)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'var(--space-4)',
+                border: `1px solid ${health.status === 'ALERT' ? 'var(--danger-border)' : health.status === 'WATCH' ? 'var(--warning-border)' : 'var(--border)'}`,
+                backgroundColor: health.status === 'ALERT' ? 'var(--danger-soft)' : health.status === 'WATCH' ? 'var(--warning-soft)' : 'var(--surface)',
+              }}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center text-3xl shadow-sm">
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-4)', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                  <div className="hc-iot-badge-icon">
                     🐝
                   </div>
                   <div>
-                    <h1 className="text-2xl font-black text-slate-900 font-['Outfit'] tracking-tight">
+                    <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-black)', color: 'var(--text-primary)', margin: 0 }}>
                       {health.hiveCode || `Hive #${hiveId}`}
                     </h1>
-                    <p className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: '2px', margin: '2px 0 0 0' }}>
                       <span>{health.clusterName ? `Cluster: ${health.clusterName}` : 'Registered Apiary'}</span>
-                      <span className="badge badge--warning text-[10px] font-mono">Simulated IoT Stream</span>
+                      <Badge variant="warning">Simulated IoT Stream</Badge>
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
                   <HealthStatusBadge status={health.status} size="lg" />
                   <Button
                     variant="secondary"
@@ -121,22 +125,22 @@ export const HiveHealthDetailsPage = () => {
               </div>
 
               {/* Explainable Health Message */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
+              <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-xl)', backgroundColor: 'var(--bg-muted)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontWeight: 'var(--font-bold)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
                   Health Analysis & Diagnostic Insight
                 </p>
-                <p className="text-base font-medium text-slate-900 leading-relaxed">
+                <p style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)', color: 'var(--text-primary)', lineHeight: 1.6, margin: 0 }}>
                   {health.message}
                 </p>
-                <p className="text-[11px] text-slate-500 pt-1">
+                <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', paddingTop: 'var(--space-1)', margin: 0 }}>
                   * Based on deterministic environmental thresholds for temperature, humidity, and acoustic bee activity.
                 </p>
               </div>
             </Card>
 
             {/* Live Sensor Telemetry Readout */}
-            <div className="space-y-3">
-              <h2 className="text-lg font-bold text-slate-900 font-['Outfit'] flex items-center gap-2">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                 <span>📊</span> Live Sensor Telemetry
               </h2>
               <SensorSummary
@@ -148,15 +152,15 @@ export const HiveHealthDetailsPage = () => {
             </div>
 
             {/* Multi-Column Section: Historical Chart & AI Prediction */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)', alignItems: 'start' }}>
               {/* Historical Sensor Chart */}
-              <div className="lg:col-span-7 xl:col-span-8">
-                <Card className="p-6 space-y-4 bg-white border border-slate-200/90 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-slate-900 font-['Outfit'] flex items-center gap-2">
+              <div>
+                <Card style={{ padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <h2 style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                       <span>📈</span> Sensor Trends & Historical Telemetry
                     </h2>
-                    <span className="text-xs text-slate-500 font-mono">
+                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                       {history.length} data points
                     </span>
                   </div>
@@ -164,8 +168,8 @@ export const HiveHealthDetailsPage = () => {
                 </Card>
               </div>
 
-              {/* AI Yield Prediction Section (Phase 11) */}
-              <div className="lg:col-span-5 xl:col-span-4">
+              {/* AI Yield Prediction Section */}
+              <div>
                 <YieldPredictionCard
                   prediction={prediction}
                   loading={predictionLoading}

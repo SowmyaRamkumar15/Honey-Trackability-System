@@ -4,7 +4,9 @@ import { useAuth } from '../hooks/useAuth'
 import Input from '../../../components/ui/Input'
 import Button from '../../../components/ui/Button'
 import Alert from '../../../components/feedback/Alert'
+import LanguageSelector from '../../../components/common/LanguageSelector'
 import { ROLES } from '../../../constants/roles'
+import '../styles/auth.css'
 
 export const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -24,36 +26,47 @@ export const RegisterPage = () => {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-page__orb auth-page__orb--tl" />
+    <div className="hc-auth-page">
+      {/* Language Switcher */}
+      <div className="hc-auth-page__lang">
+        <LanguageSelector />
+      </div>
 
-      <div className="auth-card">
-        <div className="auth-header">
-          <Link to="/" className="inline-flex flex-col items-center gap-2">
-            <div className="auth-logo-icon">🍯</div>
-            <span className="text-gradient font-black text-xl font-brand">HoneyChain</span>
+      <div className="hc-auth-card">
+        <div className="hc-auth-header">
+          <Link to="/" className="hc-auth-brand">
+            <div className="hc-auth-brand-logo">
+              🍯
+            </div>
+            <span className="hc-auth-brand-name">
+              HoneyChain
+            </span>
           </Link>
-          <h1 className="auth-header__title">Create Account</h1>
-          <p className="auth-header__sub">Register as a Beekeeper or Customer</p>
+          <h1 className="hc-auth-title">Create Account</h1>
+          <p className="hc-auth-subtitle">Register as a Beekeeper or Customer</p>
         </div>
 
-        {error && <Alert type="error" message={error} onClose={clearError} className="mb-4" />}
+        {error && <Alert type="error" message={error} onClose={clearError} style={{ marginBottom: '16px' }} />}
 
-        <form id="register-form" onSubmit={handleSubmit} className="flex-col gap-4">
+        <form id="register-form" onSubmit={handleSubmit} className="hc-auth-form">
           <div>
-            <label className="form-label mb-2">I want to register as...</label>
-            <div className="role-grid">
+            <label style={{ display: 'block', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-semibold)', marginBottom: '8px', color: 'var(--text-primary)' }}>
+              I want to register as...
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, role: ROLES.BEEKEEPER })}
-                className={`role-btn${formData.role === ROLES.BEEKEEPER ? ' role-btn--active' : ''}`}
+                className={`hc-btn ${formData.role === ROLES.BEEKEEPER ? 'hc-btn--primary' : 'hc-btn--secondary'}`}
+                style={{ width: '100%', padding: '10px' }}
               >
                 🌿 Beekeeper
               </button>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, role: ROLES.CUSTOMER })}
-                className={`role-btn${formData.role === ROLES.CUSTOMER ? ' role-btn--active' : ''}`}
+                className={`hc-btn ${formData.role === ROLES.CUSTOMER ? 'hc-btn--primary' : 'hc-btn--secondary'}`}
+                style={{ width: '100%', padding: '10px' }}
               >
                 🛒 Customer
               </button>
@@ -78,15 +91,15 @@ export const RegisterPage = () => {
             type="submit"
             variant="primary"
             loading={loading}
-            className="btn--full py-3 mt-2"
+            style={{ width: '100%', marginTop: '8px' }}
           >
             Get OTP & Register →
           </Button>
         </form>
 
-        <p className="text-center text-sm text-secondary mt-6">
+        <p className="hc-auth-footer">
           Already registered?{' '}
-          <Link to="/otp-login" className="text-gold font-medium">
+          <Link to="/otp-login">
             Login here
           </Link>
         </p>

@@ -1,4 +1,20 @@
 import React from 'react'
+import './Button.css'
+
+const VARIANTS = {
+  primary: 'hc-btn--primary',
+  secondary: 'hc-btn--secondary',
+  ghost: 'hc-btn--ghost',
+  danger: 'hc-btn--danger',
+  success: 'hc-btn--success',
+}
+
+const SIZES = {
+  xs: 'hc-btn--xs',
+  sm: 'hc-btn--sm',
+  md: 'hc-btn--md',
+  lg: 'hc-btn--lg',
+}
 
 export const Button = ({
   children,
@@ -11,32 +27,20 @@ export const Button = ({
   onClick,
   ...props
 }) => {
-  const variantClass = {
-    primary: 'btn--primary',
-    secondary: 'btn--secondary',
-    ghost: 'btn--ghost',
-    danger: 'btn--danger',
-    success: 'btn--success',
-  }[variant] || 'btn--primary'
-
-  const sizeClass = {
-    xs: 'btn--xs',
-    sm: 'btn--sm',
-    md: 'btn--md',
-    lg: 'btn--lg',
-  }[size] || 'btn--md'
+  const variantClass = VARIANTS[variant] || VARIANTS.primary
+  const sizeClass = SIZES[size] || SIZES.md
 
   return (
     <button
       type={type}
       disabled={disabled || loading}
       onClick={onClick}
-      className={`btn ${variantClass} ${sizeClass} ${className}`}
+      className={`hc-btn ${variantClass} ${sizeClass} ${className}`}
       {...props}
     >
       {loading ? (
-        <span className="btn-spinner">
-          <span className="btn-spinner__icon" />
+        <span className="hc-btn__spinner">
+          <span className="hc-btn__spinner-icon" />
           {children}
         </span>
       ) : (

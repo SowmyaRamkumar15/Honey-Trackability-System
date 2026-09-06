@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import '../styles/verification.css'
 
 export const VerificationHeader = ({ verification, batchId }) => {
   const [copied, setCopied] = useState(false)
@@ -16,7 +17,7 @@ export const VerificationHeader = ({ verification, batchId }) => {
   const getStatusBadge = () => {
     if (isGenuine) {
       return {
-        bg: 'bg-[#EFF6FF] border-[#2563EB] text-[#2563EB]',
+        variantClass: 'hc-verify-hero--genuine',
         icon: '🔗',
         title: 'GENUINE / VERIFIED HONEY',
         subtitle: 'Cryptographically verified & traceable from hive to consumer',
@@ -24,7 +25,7 @@ export const VerificationHeader = ({ verification, batchId }) => {
     }
     if (isUnderReview) {
       return {
-        bg: 'bg-[#FEF3C7] border-[#F59E0B] text-[#D97706]',
+        variantClass: 'hc-verify-hero--genuine',
         icon: '🍯',
         title: 'UNDER LABORATORY REVIEW',
         subtitle: 'Sample is currently undergoing secondary laboratory testing',
@@ -32,14 +33,14 @@ export const VerificationHeader = ({ verification, batchId }) => {
     }
     if (isFailed) {
       return {
-        bg: 'bg-[#F8FAFC] border-[#1E293B] text-[#1E293B]',
+        variantClass: 'hc-verify-hero--failed',
         icon: '🛡️',
         title: 'VERIFICATION FAILED',
         subtitle: 'This batch did not pass authenticity or blockchain integrity checks',
       }
     }
     return {
-      bg: 'bg-[#FEF3C7] border-[#F59E0B] text-[#D97706]',
+      variantClass: 'hc-verify-hero--genuine',
       icon: '🔍',
       title: 'BATCH NOT FOUND',
       subtitle: 'This batch identifier is not registered on the HoneyChain network',
@@ -49,33 +50,31 @@ export const VerificationHeader = ({ verification, batchId }) => {
   const badge = getStatusBadge()
 
   return (
-    <div className="text-center space-y-4">
+    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-3)' }}>
       {/* Brand Header */}
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FEF3C7] border border-[#F59E0B] text-xs font-bold text-[#D97706]">
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-1)', padding: 'var(--space-1) var(--space-3)', borderRadius: 'var(--radius-full)', background: 'var(--primary-soft)', border: '1px solid var(--primary-light)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--primary-dark)' }}>
         <span>🍯</span> HONEYCHAIN PUBLIC PASSPORT
       </div>
 
       {/* Main Verification Status Card */}
-      <div className={`p-6 sm:p-8 rounded-3xl border ${badge.bg} transition-all`}>
-        <div className="text-5xl sm:text-6xl mb-3">{badge.icon}</div>
-        <h1 className="text-2xl sm:text-3xl font-black font-['Inter'] tracking-tight">
+      <div className={`hc-verify-hero ${badge.variantClass}`} style={{ width: '100%' }}>
+        <div className="hc-verify-hero__icon">{badge.icon}</div>
+        <h1 className="hc-verify-hero__title">
           {badge.title}
         </h1>
-        <p className="text-xs sm:text-sm text-[#64748B] mt-1.5 max-w-md mx-auto leading-relaxed">
+        <p className="hc-verify-hero__subtitle">
           {badge.subtitle}
         </p>
 
         {/* Batch ID Banner */}
-        <div className="mt-5 inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-white border border-[#E2E8F0] shadow-sm">
-          <span className="text-xs text-[#64748B] font-medium">Batch ID:</span>
-          <span className="font-mono font-bold text-[#2563EB] text-sm tracking-wider">
-            {batchId}
-          </span>
+        <div className="hc-verify-batch-pill">
+          <span style={{ color: 'var(--text-secondary)' }}>Batch ID:</span>
+          <span className="hc-verify-batch-val">{batchId}</span>
           <button
             type="button"
             onClick={handleCopy}
             title="Copy Batch ID"
-            className="text-xs text-[#64748B] hover:text-[#2563EB] transition-colors"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}
           >
             {copied ? '✓' : '📋'}
           </button>

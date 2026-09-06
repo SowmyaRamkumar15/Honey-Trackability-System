@@ -4,14 +4,18 @@ import CustomerLayout from '../../../layouts/CustomerLayout'
 import orderApi from '../api/orderApi'
 import OrderTracking from '../components/OrderTracking'
 import Alert from '../../../components/feedback/Alert'
+import Button from '../../../components/ui/Button'
+import Card from '../../../components/ui/Card'
+import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
+import PageHeader from '../../../components/layout/PageHeader'
 import ReviewForm from '../../review/components/ReviewForm'
-import ReviewCard from '../../review/components/ReviewCard'
 import RatingStars from '../../review/components/RatingStars'
 import reviewApi from '../../review/api/reviewApi'
+import '../styles/order.css'
 
 // --- Per-item review panel shown on DELIVERED orders ---
 const OrderItemReviewPanel = ({ item }) => {
-  const [existingReview, setExistingReview] = useState(undefined) // undefined = loading
+  const [existingReview, setExistingReview] = useState(undefined)
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
   const [deleteError, setDeleteError] = useState(null)
@@ -48,24 +52,24 @@ const OrderItemReviewPanel = ({ item }) => {
     }
   }
 
-  if (loading) return <div className="skeleton h-12 mt-3" />
+  if (loading) return <div style={{ height: '32px', background: 'var(--background)', borderRadius: 'var(--radius-sm)', marginTop: 'var(--space-2)' }} />
 
   return (
-    <div className="order-item-review mt-3">
+    <div style={{ marginTop: 'var(--space-2)', paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border)' }}>
       {deleteError && (
-        <div className="alert alert--danger mb-2">
-          <div className="alert__body"><p className="alert__message">{deleteError}</p></div>
-        </div>
+        <Alert type="danger" title="Review Error">
+          {deleteError}
+        </Alert>
       )}
 
       {existingReview ? (
-        <div className="order-item-review__existing">
-          <div className="flex items-center gap-2 mb-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
             <RatingStars value={existingReview.rating} size="sm" />
-            <span className="text-secondary text-xs">Your review</span>
+            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontWeight: 600 }}>Your review</span>
           </div>
           {existingReview.comment && (
-            <p className="text-secondary text-sm mb-2">
+            <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
               "{existingReview.comment}"
             </p>
           )}
@@ -77,21 +81,13 @@ const OrderItemReviewPanel = ({ item }) => {
               onCancel={() => setShowForm(false)}
             />
           ) : (
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className="btn btn--outline btn--xs"
-                onClick={() => setShowForm(true)}
-              >
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="ghost" size="sm" onClick={() => setShowForm(true)}>
                 ✏️ Edit Review
-              </button>
-              <button
-                type="button"
-                className="btn btn--danger-outline btn--xs"
-                onClick={handleDelete}
-              >
+              </Button>
+              <Button variant="danger" size="sm" onClick={handleDelete}>
                 🗑 Delete
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -103,13 +99,9 @@ const OrderItemReviewPanel = ({ item }) => {
           onCancel={() => setShowForm(false)}
         />
       ) : (
-        <button
-          type="button"
-          className="btn btn--outline btn--sm mt-1"
-          onClick={() => setShowForm(true)}
-        >
+        <Button variant="secondary" size="sm" onClick={() => setShowForm(true)}>
           ⭐ Rate This Honey
-        </button>
+        </Button>
       )}
     </div>
   )
@@ -156,7 +148,7 @@ const OrderDetailsPage = () => {
   if (loading) {
     return (
       <CustomerLayout>
-        <div className="container section text-center">Loading order details...</div>
+        <LoadingSpinner message="Loading order details..." />
       </CustomerLayout>
     )
   }
@@ -164,10 +156,14 @@ const OrderDetailsPage = () => {
   if (error || !order) {
     return (
       <CustomerLayout>
-        <div className="container section">
-          <Alert type="danger" message={error || 'Order not found'} />
-          <Link to="/orders" className="btn btn--secondary mt-4">
-            ← Back to My Orders
+        <div style={{ maxWidth: '800px', margin: 'var(--space-8) auto', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <Alert type="danger" title="Error">
+            {error || 'Order not found'}
+          </Alert>
+          <Link to="/orders" style={{ textDecoration: 'none' }}>
+            <Button variant="secondary" size="sm">
+              ← Back to My Orders
+            </Button>
           </Link>
         </div>
       </CustomerLayout>
@@ -190,129 +186,117 @@ const OrderDetailsPage = () => {
 
   return (
     <CustomerLayout>
-      <div className="order-details-page section">
-        <div className="container max-w-4xl mx-auto">
-          <nav className="breadcrumb mb-6">
-            <Link to="/">Home</Link> / <Link to="/orders">My Orders</Link> /{' '}
-            <span className="text-secondary">{orderNumber}</span>
-          </nav>
+      <div className="hc-order-page">
+        {/* Breadcrumbs */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+          <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</Link>
+          <span>/</span>
+          <Link to="/orders" style={{ color: 'inherit', textDecoration: 'none' }}>My Orders</Link>
+          <span>/</span>
+          <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{orderNumber}</span>
+        </nav>
 
-          <div className="page-header mb-6">
-            <div>
-              <h1 className="page-header__title">Order Details</h1>
-              <p className="page-header__subtitle">
-                Reference: <code>{orderNumber}</code> • Placed on {new Date(createdAt).toLocaleString('en-IN')}
-              </p>
-            </div>
-            {isConfirmed && (
-              <button
+        <PageHeader
+          title="Order Details"
+          subtitle={`Reference: ${orderNumber} • Placed on ${new Date(createdAt).toLocaleString('en-IN')}`}
+          actions={
+            isConfirmed && (
+              <Button
                 type="button"
-                className="btn btn--ghost text-danger"
+                variant="danger"
+                size="sm"
                 disabled={cancelling}
                 onClick={handleCancel}
               >
                 {cancelling ? 'Cancelling...' : 'Cancel Order'}
-              </button>
-            )}
-          </div>
+              </Button>
+            )
+          }
+        />
 
-          {/* Tracking Stepper Card */}
-          <div className="card mb-6">
-            <h3 className="card__title mb-4">Fulfillment Status</h3>
-            <OrderTracking currentStatus={orderStatus} />
-          </div>
+        {/* Tracking Stepper Card */}
+        <Card header={<h3>Fulfillment Status</h3>}>
+          <OrderTracking currentStatus={orderStatus} />
+        </Card>
 
-          {/* Order Items Table */}
-          <div className="card mb-6">
-            <h3 className="card__title mb-4">Ordered Honey Items</h3>
-            <div className="overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Item Description</th>
-                    <th>Unit Price</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
+        {/* Order Items Table */}
+        <Card header={<h3>Ordered Honey Items</h3>}>
+          <div style={{ overflowX: 'auto' }}>
+            <table className="hc-table" style={{ width: '100%' }}>
+              <thead>
+                <tr>
+                  <th>Item Description</th>
+                  <th>Unit Price</th>
+                  <th>Quantity</th>
+                  <th style={{ textAlign: 'right' }}>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items?.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <strong style={{ display: 'block', color: 'var(--text-primary)' }}>{item.productName}</strong>
+                      {item.batchId && (
+                        <span style={{ fontSize: '11px', color: 'var(--primary)', fontFamily: 'var(--font-mono)' }}>
+                          Batch: {item.batchId}
+                        </span>
+                      )}
+                      {isDelivered && <OrderItemReviewPanel item={item} />}
+                    </td>
+                    <td style={{ fontFamily: 'var(--font-mono)' }}>
+                      ₹{Number(item.unitPrice).toFixed(2)}
+                    </td>
+                    <td style={{ fontFamily: 'var(--font-mono)' }}>
+                      {Number(item.quantityKg).toFixed(1)} kg
+                    </td>
+                    <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                      ₹{Number(item.subtotal).toFixed(2)}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {items?.map((item) => (
-                    <tr key={item.id}>
-                      <td>
-                        <strong>{item.productName}</strong>
-                        {/* Show review panel for DELIVERED orders */}
-                        {isDelivered && <OrderItemReviewPanel item={item} />}
-                      </td>
-                      <td>₹{Number(item.unitPrice).toFixed(2)} / kg</td>
-                      <td>{Number(item.quantityKg).toFixed(1)} kg</td>
-                      <td>
-                        <strong>₹{Number(item.subtotal).toFixed(2)}</strong>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-            <div className="order-totals-summary mt-4 pt-4 border-t">
-              <div className="flex justify-between py-1">
-                <span className="text-secondary">Subtotal:</span>
-                <span>₹{Number(totalAmount).toFixed(2)}</span>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 'var(--space-4)', borderTop: '1px solid var(--border)', marginTop: 'var(--space-4)' }}>
+            <div style={{ width: '280px', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                <span>Payment Status:</span>
+                <span style={{ fontWeight: 700, color: paymentStatus === 'SUCCESS' ? 'var(--success)' : 'var(--warning)' }}>
+                  {paymentStatus === 'SUCCESS' ? '✅ Paid' : paymentStatus}
+                </span>
               </div>
-              <div className="flex justify-between py-1">
-                <span className="text-secondary">Delivery:</span>
-                <span className="text-success font-semibold">FREE</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                <span>Fulfillment Type:</span>
+                <span style={{ fontWeight: 600 }}>
+                  {fulfillmentType === 'LOCAL_PICKUP' ? 'Local Apiary Pickup' : 'Doorstep Delivery'}
+                </span>
               </div>
-              <div className="flex justify-between py-2 text-lg font-bold border-t mt-2">
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border)', fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 'var(--text-base)' }}>
                 <span>Total Amount:</span>
-                <span className="text-gold">₹{Number(totalAmount).toFixed(2)}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--primary-dark)' }}>
+                  ₹{Number(totalAmount).toFixed(2)}
+                </span>
               </div>
             </div>
           </div>
+        </Card>
 
-          {/* Delivery & Payment Info */}
-          <div className="grid grid-cols-2 gap-6">
-            {/* Delivery Details */}
-            <div className="card">
-              <h3 className="card__title mb-3">
-                {fulfillmentType === 'LOCAL_PICKUP' ? '🏪 Pickup Details' : '🚚 Shipping Address'}
-              </h3>
-              {fulfillmentType === 'LOCAL_PICKUP' ? (
-                <p className="text-secondary text-sm">
-                  Local Apiary Pickup arranged with beekeeper cluster.
-                </p>
-              ) : deliveryAddress ? (
-                <div className="text-secondary text-sm">
-                  <p><strong>{deliveryAddress.name}</strong></p>
-                  <p>{deliveryAddress.line1}</p>
-                  {deliveryAddress.line2 && <p>{deliveryAddress.line2}</p>}
-                  <p>{deliveryAddress.city}, {deliveryAddress.state} - {deliveryAddress.postalCode}</p>
-                </div>
-              ) : (
-                <p className="text-muted text-sm">No address provided</p>
-              )}
-            </div>
-
-            {/* Payment Details */}
-            <div className="card">
-              <h3 className="card__title mb-3">💳 Payment Information</h3>
-              <div className="text-sm">
-                <p className="flex justify-between py-1">
-                  <span className="text-secondary">Status:</span>
-                  <span className="badge badge--success">{paymentStatus}</span>
-                </p>
-                <p className="flex justify-between py-1">
-                  <span className="text-secondary">Payment Ref:</span>
-                  <code>{paymentId || 'N/A'}</code>
-                </p>
-                <p className="flex justify-between py-1">
-                  <span className="text-secondary">Method:</span>
-                  <span>Sandbox UPI Gateway</span>
-                </p>
+        {/* Delivery Address Card */}
+        {deliveryAddress && (
+          <Card header={<h3>Delivery Address</h3>}>
+            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+              <strong style={{ display: 'block', color: 'var(--text-primary)', fontSize: 'var(--text-sm)', marginBottom: '4px' }}>
+                {deliveryAddress.name}
+              </strong>
+              <div>{deliveryAddress.line1}</div>
+              {deliveryAddress.line2 && <div>{deliveryAddress.line2}</div>}
+              <div>
+                {deliveryAddress.city}, {deliveryAddress.state} - {deliveryAddress.postalCode}
               </div>
             </div>
-          </div>
-        </div>
+          </Card>
+        )}
       </div>
     </CustomerLayout>
   )

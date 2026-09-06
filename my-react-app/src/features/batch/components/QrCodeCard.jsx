@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
 import Alert from '../../../components/feedback/Alert'
+import Badge from '../../../components/ui/Badge'
+import Modal from '../../../components/ui/Modal'
 import apiClient from '../../../services/axios'
+import '../styles/batch.css'
 
 export const QrCodeCard = ({ batch, onQrGenerated }) => {
   const [qrData, setQrData] = useState(null)
@@ -53,55 +56,53 @@ export const QrCodeCard = ({ batch, onQrGenerated }) => {
   }
 
   return (
-    <Card className="p-6 space-y-4 border border-amber-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-900 font-['Outfit'] flex items-center gap-2">
+    <Card style={{ padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
           <span>📱</span> Smart QR Code Traceability Passport
         </h2>
         {qrData ? (
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-200 text-blue-700">
-            ● QR Active
-          </span>
+          <Badge variant="success">● QR Active</Badge>
         ) : (
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800">
+          <Badge variant={isEligible ? 'primary' : 'neutral'}>
             {isEligible ? 'Ready to Generate' : 'Locked'}
-          </span>
+          </Badge>
         )}
       </div>
 
       {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
 
       {qrData ? (
-        <div className="flex flex-col sm:flex-row items-center gap-6 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+        <div className="hc-qr-preview-row">
           {/* QR Image */}
-          <div className="p-3 rounded-2xl bg-white flex items-center justify-center shadow-md border border-slate-200">
+          <div className="hc-qr-img-frame">
             <img
               src={qrData.qrImageUrl}
               alt={`QR for ${batch.batchId}`}
-              className="w-40 h-40 object-contain rounded-lg"
+              style={{ width: '160px', height: '160px', objectFit: 'contain', borderRadius: 'var(--radius-lg)' }}
             />
           </div>
 
           {/* Details & Actions */}
-          <div className="space-y-3 text-center sm:text-left flex-1 min-w-0">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', flex: 1, minWidth: 0 }}>
             <div>
-              <p className="text-xs text-blue-700 font-bold flex items-center justify-center sm:justify-start gap-1">
+              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--success)', fontWeight: 'var(--font-bold)', display: 'flex', alignItems: 'center', gap: '4px', margin: 0 }}>
                 <span>✅</span> Ready for Customer Verification
               </p>
-              <p className="text-[11px] text-slate-500 mt-0.5 truncate font-mono">
+              <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-mono)', margin: '2px 0 0 0' }}>
                 {qrData.qrValue}
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
-              <Button size="sm" variant="primary" onClick={handleDownload} className="text-xs font-bold">
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 'var(--space-2)', paddingTop: 'var(--space-1)' }}>
+              <Button size="sm" variant="primary" onClick={handleDownload} style={{ fontWeight: 'var(--font-bold)' }}>
                 📥 Download PNG
               </Button>
-              <Button size="sm" variant="secondary" onClick={() => setShowPrintModal(true)} className="text-xs">
+              <Button size="sm" variant="secondary" onClick={() => setShowPrintModal(true)}>
                 🖨️ Print Label
               </Button>
-              <Link to={`/verify/${batch.batchId}`} target="_blank" rel="noopener noreferrer">
-                <Button size="sm" variant="secondary" className="text-xs text-blue-600 border-blue-200 hover:bg-blue-50">
+              <Link to={`/verify/${batch.batchId}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <Button size="sm" variant="ghost" style={{ color: 'var(--primary)', fontWeight: 'var(--font-semibold)' }}>
                   View Public Page ↗
                 </Button>
               </Link>
@@ -109,82 +110,71 @@ export const QrCodeCard = ({ batch, onQrGenerated }) => {
           </div>
         </div>
       ) : isEligible ? (
-        <div className="p-6 rounded-2xl border border-dashed border-blue-200 bg-blue-50/50 text-center space-y-3">
-          <span className="text-4xl block">✨</span>
-          <h3 className="text-base font-bold text-slate-900 font-['Outfit']">
+        <div style={{ padding: 'var(--space-6)', borderRadius: 'var(--radius-2xl)', border: '2px dashed var(--primary-light)', backgroundColor: 'var(--primary-soft)', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', alignItems: 'center' }}>
+          <span style={{ fontSize: '2.5rem' }}>✨</span>
+          <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-bold)', color: 'var(--text-primary)', margin: 0 }}>
             Purity Verified — Generate QR Passport
           </h3>
-          <p className="text-xs text-slate-600 max-w-md mx-auto">
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', maxWidth: '440px', margin: 0, lineHeight: 1.5 }}>
             This honey batch passed laboratory quality verification. Generate its permanent, cryptographic QR passport for consumers to verify on their smartphones.
           </p>
           <Button
             variant="primary"
             loading={generating}
             onClick={handleGenerateQr}
-            className="mt-2 font-bold"
+            style={{ marginTop: 'var(--space-2)', fontWeight: 'var(--font-bold)' }}
           >
             {generating ? 'Generating QR Code...' : '📱 Generate Smart QR Code'}
           </Button>
         </div>
       ) : (
-        <div className="p-5 rounded-2xl border border-dashed border-slate-200 text-xs text-slate-500 flex items-center justify-between">
+        <div style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-xl)', border: '1px dashed var(--border)', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
           <span>QR code generation unlocks once laboratory testing confirms PURE status.</span>
-          <span className="text-[11px] bg-slate-100 px-3 py-1 rounded-full text-slate-600">
-            Current: {batch?.status}
-          </span>
+          <Badge variant="neutral">Current: {batch?.status}</Badge>
         </div>
       )}
 
       {/* Print Jar Label Modal */}
       {showPrintModal && qrData && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-6 space-y-5 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900 font-['Outfit']">
-                Printable Honey Jar Label
-              </h3>
-              <button
-                type="button"
-                onClick={() => setShowPrintModal(false)}
-                className="text-xs text-slate-500 hover:text-slate-900 px-2 py-1 rounded bg-slate-100"
-              >
-                ✕
-              </button>
-            </div>
-
+        <Modal
+          isOpen={showPrintModal}
+          onClose={() => setShowPrintModal(false)}
+          title="Printable Honey Jar Label"
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             {/* Printable Area */}
-            <div id="honeychain-jar-label" className="p-6 rounded-2xl bg-white text-slate-900 text-center space-y-3 border-2 border-slate-900 shadow-inner">
-              <div className="flex items-center justify-center gap-1.5 font-bold text-sm tracking-wider font-['Outfit']">
+            <div id="honeychain-jar-label" style={{ padding: 'var(--space-6)', borderRadius: 'var(--radius-2xl)', backgroundColor: '#ffffff', color: '#111827', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', border: '2px solid #111827', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontWeight: 'var(--font-bold)', fontSize: 'var(--text-sm)', letterSpacing: '0.05em' }}>
                 <span>🍯</span> HONEYCHAIN VERIFIED
               </div>
-              <p className="text-[11px] font-mono font-bold text-slate-700">
+              <p style={{ fontSize: '0.6875rem', fontFamily: 'var(--font-mono)', fontWeight: 'var(--font-bold)', color: '#374151', margin: 0 }}>
                 Batch: {batch.batchId}
               </p>
-              <div className="flex justify-center my-2">
+              <div style={{ display: 'flex', justifyContent: 'center', marginBlock: 'var(--space-2)' }}>
                 <img
                   src={qrData.qrImageUrl}
                   alt="QR Code"
-                  className="w-36 h-36 object-contain"
+                  style={{ width: '140px', height: '140px', objectFit: 'contain' }}
                 />
               </div>
-              <div className="inline-block px-3 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-[10px] font-bold">
+              <div style={{ display: 'inline-block', padding: '2px 10px', borderRadius: 'var(--radius-full)', backgroundColor: 'var(--success-soft)', border: '1px solid var(--success-border)', color: 'var(--success)', fontSize: '0.625rem', fontWeight: 'var(--font-bold)' }}>
                 ✅ 100% Pure · Blockchain Certified
               </div>
-              <p className="text-[9px] text-slate-500 font-medium">
+              <p style={{ fontSize: '0.5625rem', color: '#6b7280', fontWeight: 'var(--font-medium)', margin: 0 }}>
                 Scan with smartphone camera to verify authenticity & hive origin
               </p>
             </div>
 
-            <div className="flex items-center gap-3 pt-2">
-              <Button variant="primary" className="flex-1 font-bold" onClick={handlePrint}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', paddingTop: 'var(--space-2)' }}>
+              <Button variant="primary" style={{ flex: 1, fontWeight: 'var(--font-bold)' }} onClick={handlePrint}>
                 🖨️ Print Label Now
               </Button>
-              <Button variant="secondary" className="flex-1" onClick={() => setShowPrintModal(false)}>
+              <Button variant="secondary" style={{ flex: 1 }} onClick={() => setShowPrintModal(false)}>
                 Close
               </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </Card>
   )

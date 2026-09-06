@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import BeekeeperLayout from '../../../layouts/BeekeeperLayout'
 import HiveHealthGrid from '../components/HiveHealthGrid'
@@ -8,37 +8,51 @@ import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
 import { useHiveHealth } from '../hooks/useHiveHealth'
 import { useLanguage } from '../../../i18n/LanguageContext'
 import VoiceButton from '../../../components/common/VoiceButton'
+import '../styles/iot.css'
 
 export const HiveHealthOverviewPage = () => {
   const { t } = useLanguage()
   const { data: hivesHealth, loading, error, refresh } = useHiveHealth(null, 45000) // 45s auto-refresh
+  const [statusFilter, setStatusFilter] = useState('ALL')
 
   const healthyCount = hivesHealth?.filter((h) => h.status === 'HEALTHY').length || 0
   const watchCount = hivesHealth?.filter((h) => h.status === 'WATCH').length || 0
   const alertCount = hivesHealth?.filter((h) => h.status === 'ALERT').length || 0
 
+  const filteredHives = hivesHealth?.filter((h) => {
+    if (statusFilter === 'HEALTHY') return h.status === 'HEALTHY'
+    if (statusFilter === 'WATCH') return h.status === 'WATCH'
+    if (statusFilter === 'ALERT') return h.status === 'ALERT'
+    return true
+  })
+
   const voiceInstructions = `${t('iot.dashboardTitle', 'IoT Sensor Telemetry')}. ${t('iot.msgHealthy', 'Hive telemetry is within optimal parameters.')} ${healthyCount} ${t('iot.healthy', 'Healthy')}, ${watchCount} ${t('iot.watch', 'Watch')}, ${alertCount} ${t('iot.alert', 'Alert')}.`
 
   return (
     <BeekeeperLayout>
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="hc-iot-page">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="hc-iot-header">
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-black text-slate-900 font-['Outfit'] tracking-tight flex items-center gap-2.5">
-                <span>📡</span> {t('iot.dashboardTitle', 'IoT Hive Health Monitoring')}
-              </h1>
-              <VoiceButton textToSpeak={voiceInstructions} size="sm" />
-              <span className="badge badge--warning text-[11px] font-mono">
-                📡 Simulated Sensor Telemetry
+            <div className="hc-iot-header__tags">
+              <span className="hc-iot-badge--live">
+                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                Live Telemetry Feed
+              </span>
+              <span className="hc-iot-badge--sim">
+                ⚡ Simulation Engine
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
-              {t('dashboard.iotSub', 'Real-time telemetry and explainable health analysis for all your registered apiary hives.')} (Simulation Engine)
+            <h1 className="hc-iot-title">
+              <span>📡</span> {t('iot.dashboardTitle', 'IoT Hive Health Telemetry')}
+            </h1>
+            <p className="hc-iot-subtitle">
+              {t('dashboard.iotSub', 'Real-time telemetry and explainable acoustic & thermal analysis for all your registered colonies.')}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+
+          <div className="hc-iot-header__actions">
+            <VoiceButton textToSpeak={voiceInstructions} size="sm" />
             <Button variant="secondary" size="sm" onClick={refresh} loading={loading}>
               ↻ {t('common.refresh', 'Refresh')}
             </Button>
@@ -52,49 +66,74 @@ export const HiveHealthOverviewPage = () => {
 
         {error && <Alert type="error" message={error} />}
 
-        {/* Health Summary Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Health Summary Stat Cards / Filter Pills */}
+        <div className="hc-iot-stats-grid">
+          <button
+            type="button"
+            onClick={() => setStatusFilter('ALL')}
+            className={`hc-iot-stat-card ${statusFilter === 'ALL' ? 'hc-iot-stat-card--active' : ''}`}
+          >
+            <span className="hc-iot-stat-card__label">All Connected Nodes</span>
+            <div className="hc-iot-stat-card__value">{hivesHealth?.length || 0}</div>
+          </button>
+
           {/* Healthy Card */}
-          <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-between shadow-sm">
-            <div className="space-y-0.5">
-              <p className="text-xs font-semibold text-blue-700 font-['Outfit'] uppercase tracking-wider">
-                🟢 Healthy Hives
-              </p>
-              <p className="text-2xl font-black text-slate-900 font-mono">{healthyCount}</p>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('HEALTHY')}
+            className={`hc-iot-stat-card ${statusFilter === 'HEALTHY' ? 'hc-iot-stat-card--active' : ''}`}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <p className="hc-iot-stat-card__label" style={{ color: 'var(--success)' }}>
+                  🟢 Healthy Hives
+                </p>
+                <p className="hc-iot-stat-card__value">{healthyCount}</p>
+              </div>
+              <span className="hc-iot-stat-card__icon">🌿</span>
             </div>
-            <span className="text-3xl">🌿</span>
-          </div>
+          </button>
 
           {/* Watch Card */}
-          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between shadow-sm">
-            <div className="space-y-0.5">
-              <p className="text-xs font-semibold text-amber-800 font-['Outfit'] uppercase tracking-wider">
-                🟡 Watch Attention
-              </p>
-              <p className="text-2xl font-black text-slate-900 font-mono">{watchCount}</p>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('WATCH')}
+            className={`hc-iot-stat-card ${statusFilter === 'WATCH' ? 'hc-iot-stat-card--active' : ''}`}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <p className="hc-iot-stat-card__label" style={{ color: 'var(--primary)' }}>
+                  🟡 Watch Attention
+                </p>
+                <p className="hc-iot-stat-card__value">{watchCount}</p>
+              </div>
+              <span className="hc-iot-stat-card__icon">⚠️</span>
             </div>
-            <span className="text-3xl">⚠️</span>
-          </div>
+          </button>
 
           {/* Alert Card */}
-          <div className="p-4 rounded-2xl bg-blue-100/60 border border-blue-300 flex items-center justify-between shadow-sm">
-            <div className="space-y-0.5">
-              <p className="text-xs font-semibold text-blue-900 font-['Outfit'] uppercase tracking-wider">
-                🔵 Alert Required
-              </p>
-              <p className="text-2xl font-black text-slate-900 font-mono">{alertCount}</p>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('ALERT')}
+            className={`hc-iot-stat-card ${statusFilter === 'ALERT' ? 'hc-iot-stat-card--active' : ''}`}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <p className="hc-iot-stat-card__label" style={{ color: 'var(--danger)' }}>
+                  🔴 Alert Required
+                </p>
+                <p className="hc-iot-stat-card__value">{alertCount}</p>
+              </div>
+              <span className="hc-iot-stat-card__icon">🚨</span>
             </div>
-            <span className="text-3xl">📡</span>
-          </div>
+          </button>
         </div>
 
-        {/* Grid of Hives */}
+        {/* Content Body */}
         {loading && !hivesHealth ? (
-          <div className="py-20 text-center">
-            <LoadingSpinner text="Connecting to IoT telemetry streams and evaluating hive health..." />
-          </div>
+          <LoadingSpinner text="Reading real-time IoT node telemetry..." />
         ) : (
-          <HiveHealthGrid hivesHealth={hivesHealth} />
+          <HiveHealthGrid hivesHealth={filteredHives} />
         )}
       </div>
     </BeekeeperLayout>

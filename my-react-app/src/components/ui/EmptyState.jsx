@@ -1,8 +1,8 @@
 import React from 'react'
+import './EmptyState.css'
 
 /**
  * EmptyState — Standardized Empty State Component.
- * Used across tables, dashboards, grids, and list views.
  */
 export const EmptyState = ({
   icon = '🐝',
@@ -12,21 +12,21 @@ export const EmptyState = ({
   className = '',
 }) => {
   return (
-    <div className={`card p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-4 max-w-lg mx-auto ${className}`}>
-      <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-3xl shadow-sm">
+    <div className={`hc-empty-state ${className}`.trim()}>
+      <div className="hc-empty-icon">
         {icon}
       </div>
-      <div className="space-y-1.5">
-        <h3 className="text-lg font-extrabold text-slate-900 tracking-tight font-['Outfit']">
+      <div className="hc-empty-body">
+        <h3 className="hc-empty-title">
           {title}
         </h3>
         {description && (
-          <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
+          <p className="hc-empty-description">
             {description}
           </p>
         )}
       </div>
-      {action && <div className="pt-2">{action}</div>}
+      {action && <div className="hc-empty-action">{action}</div>}
     </div>
   )
 }

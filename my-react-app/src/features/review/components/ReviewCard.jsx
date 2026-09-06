@@ -1,14 +1,10 @@
 import React from 'react'
 import RatingStars from './RatingStars'
+import Button from '../../../components/ui/Button'
+import '../styles/review.css'
 
 /**
  * ReviewCard — displays a single review with rating, display name, date, comment.
- *
- * Props:
- *   review         – ReviewResponse object from backend
- *   isOwn          – boolean, if true show Edit / Delete actions
- *   onEdit         – callback to open edit form
- *   onDelete       – callback to trigger deletion
  */
 const ReviewCard = ({ review, isOwn = false, onEdit, onDelete }) => {
   const formattedDate = review.createdAt
@@ -19,16 +15,20 @@ const ReviewCard = ({ review, isOwn = false, onEdit, onDelete }) => {
       })
     : ''
 
+  const initial = review.displayName?.charAt(0).toUpperCase() || 'V'
+
   return (
-    <article className="review-card card">
-      <div className="review-card__header flex justify-between items-start">
-        <div className="flex items-center gap-3">
-          <div className="review-card__avatar">
-            {review.displayName?.charAt(0).toUpperCase() || 'V'}
+    <article className="hc-review-card">
+      <div className="hc-review-card__header">
+        <div className="hc-review-card__user">
+          <div className="hc-review-card__avatar">
+            {initial}
           </div>
           <div>
-            <p className="review-card__name font-semibold">{review.displayName || 'Verified Buyer'}</p>
-            <p className="review-card__date text-secondary text-xs">
+            <p className="hc-review-card__name" style={{ margin: 0 }}>
+              {review.displayName || 'Verified Buyer'}
+            </p>
+            <p className="hc-review-card__date" style={{ margin: '2px 0 0' }}>
               {formattedDate}
             </p>
           </div>
@@ -37,31 +37,36 @@ const ReviewCard = ({ review, isOwn = false, onEdit, onDelete }) => {
       </div>
 
       {review.comment && (
-        <p className="review-card__comment mt-3">{review.comment}</p>
-      )}
-
-      {review.productName && (
-        <p className="review-card__product mt-2 text-secondary text-xs">
-          Product: {review.productName}
+        <p className="hc-review-card__comment">
+          {review.comment}
         </p>
       )}
 
+      {review.productName && (
+        <div className="hc-review-card__badge">
+          <span>🍯</span>
+          <span>{review.productName}</span>
+        </div>
+      )}
+
       {isOwn && (
-        <div className="review-card__actions mt-3 flex gap-2">
-          <button
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border)', marginTop: 'var(--space-1)' }}>
+          <Button
             type="button"
-            className="btn btn--outline btn--xs"
+            variant="ghost"
+            size="sm"
             onClick={() => onEdit?.(review)}
           >
             ✏️ Edit
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="btn btn--danger-outline btn--xs"
+            variant="danger"
+            size="sm"
             onClick={() => onDelete?.(review)}
           >
             🗑 Delete
-          </button>
+          </Button>
         </div>
       )}
     </article>

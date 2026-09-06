@@ -1,0 +1,47 @@
+/* ── LoadingSpinner Component CSS ─────────────────────────────────────── */
+.hc-spinner-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  gap: var(--space-3);
+}
+
+.hc-spinner {
+  border-radius: var(--radius-full);
+  border-style: solid;
+  border-color: var(--primary-light);
+  border-top-color: var(--primary);
+  animation: hcSpin 0.75s linear infinite;
+}
+
+.hc-spinner--sm {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.hc-spinner--md {
+  width: 36px;
+  height: 36px;
+  border-width: 3px;
+}
+
+.hc-spinner--lg {
+  width: 52px;
+  height: 52px;
+  border-width: 4px;
+}
+
+@keyframes hcSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hc-spinner__text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
+}

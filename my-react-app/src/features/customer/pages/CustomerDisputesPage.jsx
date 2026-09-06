@@ -5,9 +5,13 @@ import PageHeader from '../../../components/layout/PageHeader'
 import disputeApi from '../api/disputeApi'
 import { useLanguage } from '../../../i18n/LanguageContext'
 import Button from '../../../components/ui/Button'
+import Badge from '../../../components/ui/Badge'
 import EmptyState from '../../../components/ui/EmptyState'
 import Modal from '../../../components/ui/Modal'
 import DataTable from '../../../components/ui/DataTable'
+import Alert from '../../../components/feedback/Alert'
+import LoadingSpinner from '../../../components/feedback/LoadingSpinner'
+import '../styles/customer.css'
 
 export const CustomerDisputesPage = () => {
   const { t } = useLanguage()
@@ -36,7 +40,8 @@ export const CustomerDisputesPage = () => {
     setError(null)
     try {
       const res = await disputeApi.getMyDisputes()
-      setDisputes(res.data?.data?.content || [])
+      const data = res.data?.data?.content || res.data?.data || res.data || []
+      setDisputes(Array.isArray(data) ? data : [])
     } catch (err) {
       setError(err.response?.data?.message || t('common.errorLoading', 'Failed to load disputes.'))
     } finally {
@@ -74,60 +79,120 @@ export const CustomerDisputesPage = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'OPEN':
-        return <span className="badge badge--warning">OPEN</span>
+        return <Badge variant="warning">OPEN</Badge>
       case 'INVESTIGATING':
-        return <span className="badge badge--primary">INVESTIGATING</span>
+        return <Badge variant="info">INVESTIGATING</Badge>
       case 'RESOLVED':
-        return <span className="badge badge--success">RESOLVED</span>
+        return <Badge variant="success">RESOLVED</Badge>
       case 'REJECTED':
       default:
-        return <span className="badge badge--secondary">{status}</span>
+        return <Badge variant="danger">{status}</Badge>
     }
   }
 
+  const columns = [
+    {
+      key: 'id',
+      header: 'ID',
+      render: (row) => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>#{row.id}</span>,
+    },
+    {
+      key: 'batchId',
+      header: 'Batch ID',
+      render: (row) => (
+        <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--primary)', fontWeight: 700 }}>
+          {row.batchId}
+        </span>
+      ),
+    },
+    {
+      key: 'orderNumber',
+      header: 'Order #',
+      render: (row) => (
+        <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
+          {row.orderNumber || 'N/A'}
+        </span>
+      ),
+    },
+    {
+      key: 'reason',
+      header: 'Reason',
+      render: (row) => <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{row.reason}</span>,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (row) => getStatusBadge(row.status),
+    },
+    {
+      key: 'date',
+      header: 'Submitted',
+      render: (row) => (
+        <span style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-xs)' }}>
+          {row.createdAt ? new Date(row.createdAt).toLocaleDateString() : '—'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Action',
+      align: 'right',
+      render: (row) => (
+        <Button onClick={() => setSelectedDispute(row)} variant="ghost" size="sm">
+          {t('common.viewDetails', 'View')}
+        </Button>
+      ),
+    },
+  ]
+
   return (
     <CustomerLayout>
-      <div className="space-y-6 max-w-7xl mx-auto">
+      <div className="hc-cust-page">
         <PageHeader
-          title={
-            <span>
-              ⚖️ {t('disputes.title', 'My Authenticity Disputes')}
-            </span>
-          }
+          title={t('disputes.title', 'My Authenticity Disputes')}
           subtitle={t('disputes.subtitle', 'Track and file authenticity or quality concerns for your honey orders.')}
           actions={
-            <Button
-              onClick={() => setShowCreateModal(true)}
-              variant="primary"
-              size="sm"
-            >
+            <Button onClick={() => setShowCreateModal(true)} variant="primary" size="sm">
               + {t('disputes.newDispute', 'File New Dispute')}
             </Button>
           }
         />
 
         {successMsg && (
-          <div className="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg flex items-center justify-between">
-            <span>✅ {successMsg}</span>
-            <button onClick={() => setSuccessMsg('')} className="text-blue-600 hover:text-blue-800 font-bold">✕</button>
-          </div>
+          <Alert type="success" title="Success" onClose={() => setSuccessMsg('')}>
+            {successMsg}
+          </Alert>
         )}
 
         {error && (
-          <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg flex items-center justify-between">
-            <span>⚠️ {error}</span>
-            <button onClick={() => setError(null)} className="text-amber-700 hover:text-amber-900 font-bold">✕</button>
-          </div>
+          <Alert type="danger" title="Error" onClose={() => setError(null)}>
+            {error}
+          </Alert>
         )}
 
         {/* Filter bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-slate-700">{t('disputes.filterStatus', 'Filter Status:')}</span>
+        <div
+          style={{
+            background: 'var(--surface)',
+            padding: 'var(--space-3) var(--space-4)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 'var(--space-3)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              {t('disputes.filterStatus', 'Filter Status:')}
+            </span>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="form-input py-1 px-3 text-sm w-auto"
+              className="hc-input__field"
+              style={{ width: 'auto', padding: 'var(--space-1) var(--space-3)', fontSize: 'var(--text-xs)' }}
             >
               <option value="">{t('disputes.allStatuses', 'All Statuses')}</option>
               <option value="OPEN">OPEN</option>
@@ -136,66 +201,30 @@ export const CustomerDisputesPage = () => {
               <option value="REJECTED">REJECTED</option>
             </select>
           </div>
-          <span className="text-xs text-slate-500 font-mono">
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             {filteredDisputes.length} {t('disputes.recordsFound', 'record(s)')}
           </span>
         </div>
 
         {/* Disputes List / Table */}
-        {loading ? (
-          <Card className="p-12 text-center text-slate-500">
-            <div className="animate-spin inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mb-3" />
-            <p>{t('loading.disputes', 'Loading disputes...')}</p>
-          </Card>
-        ) : filteredDisputes.length === 0 ? (
-          <EmptyState
-            icon="⚖️"
-            title={t('disputes.emptyTitle', 'No disputes found')}
-            description={t('disputes.emptyDesc', 'You have not submitted any disputes. Click "File New Dispute" if you suspect honey tampering or quality issues.')}
-            action={
-              <Button onClick={() => setShowCreateModal(true)} variant="primary" size="sm">
-                + {t('disputes.newDispute', 'File New Dispute')}
-              </Button>
-            }
-          />
-        ) : (
-          <DataTable>
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
-                <th className="p-3">ID</th>
-                <th className="p-3">Batch ID</th>
-                <th className="p-3">Order Number</th>
-                <th className="p-3">Reason</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Submitted</th>
-                <th className="p-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredDisputes.map((dispute) => (
-                <tr key={dispute.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-3 font-mono font-semibold text-slate-900">#{dispute.id}</td>
-                  <td className="p-3 font-mono text-blue-600 font-medium">{dispute.batchId}</td>
-                  <td className="p-3 font-mono text-slate-600">{dispute.orderNumber || 'N/A'}</td>
-                  <td className="p-3 font-medium text-slate-800">{dispute.reason}</td>
-                  <td className="p-3">{getStatusBadge(dispute.status)}</td>
-                  <td className="p-3 text-slate-500 text-xs">
-                    {dispute.createdAt ? new Date(dispute.createdAt).toLocaleDateString() : '—'}
-                  </td>
-                  <td className="p-3 text-right">
-                    <Button
-                      onClick={() => setSelectedDispute(dispute)}
-                      variant="ghost"
-                      size="xs"
-                    >
-                      {t('common.viewDetails', 'View')}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </DataTable>
-        )}
+        <Card>
+          {loading ? (
+            <LoadingSpinner message={t('loading.disputes', 'Loading disputes...')} />
+          ) : filteredDisputes.length === 0 ? (
+            <EmptyState
+              icon="⚖️"
+              title={t('disputes.emptyTitle', 'No disputes found')}
+              description={t('disputes.emptyDesc', 'You have not submitted any disputes. Click "File New Dispute" if you suspect honey tampering or quality issues.')}
+              action={
+                <Button onClick={() => setShowCreateModal(true)} variant="primary" size="sm">
+                  + {t('disputes.newDispute', 'File New Dispute')}
+                </Button>
+              }
+            />
+          ) : (
+            <DataTable columns={columns} data={filteredDisputes} keyField="id" />
+          )}
+        </Card>
 
         {/* Modal: Dispute Details */}
         <Modal
@@ -209,40 +238,56 @@ export const CustomerDisputesPage = () => {
           }
         >
           {selectedDispute && (
-            <div className="space-y-3 text-sm">
-              <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Batch ID</span>
-                <span className="font-mono text-blue-600 font-bold">{selectedDispute.batchId}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+              <div style={{ background: 'var(--background)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                  Batch ID
+                </span>
+                <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--primary)', fontWeight: 700 }}>
+                  {selectedDispute.batchId}
+                </span>
+              </div>
+
+              <div style={{ background: 'var(--background)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                  Order Number
+                </span>
+                <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-primary)', fontWeight: 700 }}>
+                  {selectedDispute.orderNumber || 'N/A'}
+                </span>
               </div>
 
               <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Order Number</span>
-                <span className="font-mono text-slate-800">{selectedDispute.orderNumber || 'N/A'}</span>
-              </div>
-
-              <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Reason</span>
-                <span className="text-slate-800 font-medium">{selectedDispute.reason}</span>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                  Reason
+                </span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{selectedDispute.reason}</span>
               </div>
 
               {selectedDispute.description && (
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Description</span>
-                  <p className="text-slate-700 bg-slate-50 p-2.5 rounded border text-xs leading-relaxed">
+                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                    Description
+                  </span>
+                  <p style={{ margin: 0, background: 'var(--background)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                     {selectedDispute.description}
                   </p>
                 </div>
               )}
 
               <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Status</span>
-                <div className="mt-1">{getStatusBadge(selectedDispute.status)}</div>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                  Status
+                </span>
+                <div style={{ marginTop: '4px' }}>{getStatusBadge(selectedDispute.status)}</div>
               </div>
 
               {selectedDispute.resolutionNotes && (
                 <div>
-                  <span className="text-xs font-semibold text-blue-700 uppercase tracking-wider block">Official Resolution Notes</span>
-                  <p className="text-blue-900 bg-blue-50 p-2.5 rounded border border-blue-200 text-xs leading-relaxed font-medium">
+                  <span style={{ fontSize: 'var(--text-xs)', color: 'var(--primary-dark)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                    Official Resolution Notes
+                  </span>
+                  <p style={{ margin: 0, background: 'var(--primary-soft)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-light)', fontSize: 'var(--text-xs)', color: 'var(--primary-dark)', lineHeight: 1.6, fontWeight: 500 }}>
                     {selectedDispute.resolutionNotes}
                   </p>
                 </div>
@@ -257,10 +302,10 @@ export const CustomerDisputesPage = () => {
           onClose={() => setShowCreateModal(false)}
           title={`⚖️ ${t('disputes.fileTitle', 'File Authenticity Dispute')}`}
         >
-          <form onSubmit={handleCreateSubmit} className="space-y-4 text-sm">
+          <form onSubmit={handleCreateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             <div>
-              <label className="form-label">
-                {t('disputes.batchIdLabel', 'Batch ID')} <span className="text-amber-700">*</span>
+              <label className="hc-input__label">
+                {t('disputes.batchIdLabel', 'Batch ID')} <span style={{ color: 'var(--danger)' }}>*</span>
               </label>
               <input
                 type="text"
@@ -269,34 +314,34 @@ export const CustomerDisputesPage = () => {
                 value={newDispute.batchId}
                 onChange={handleInputChange}
                 placeholder="e.g. HC-2026-AB12CD34"
-                className="form-input font-mono"
+                className="hc-input__field"
+                style={{ fontFamily: 'var(--font-mono)' }}
               />
             </div>
 
             <div>
-              <label className="form-label">
-                {t('disputes.orderNumberLabel', 'Order Number (Optional)')}
-              </label>
+              <label className="hc-input__label">{t('disputes.orderNumberLabel', 'Order Number (Optional)')}</label>
               <input
                 type="text"
                 name="orderNumber"
                 value={newDispute.orderNumber}
                 onChange={handleInputChange}
                 placeholder="e.g. ORD-20260904-XXXX"
-                className="form-input font-mono"
+                className="hc-input__field"
+                style={{ fontFamily: 'var(--font-mono)' }}
               />
             </div>
 
             <div>
-              <label className="form-label">
-                {t('disputes.reasonLabel', 'Reason / Category')} <span className="text-amber-700">*</span>
+              <label className="hc-input__label">
+                {t('disputes.reasonLabel', 'Reason / Category')} <span style={{ color: 'var(--danger)' }}>*</span>
               </label>
               <select
                 name="reason"
                 required
                 value={newDispute.reason}
                 onChange={handleInputChange}
-                className="form-input"
+                className="hc-input__field"
               >
                 <option value="">{t('disputes.selectReason', 'Select a reason...')}</option>
                 <option value="Suspected Sugar Syrup Adulteration">Suspected Sugar Syrup Adulteration</option>
@@ -308,34 +353,23 @@ export const CustomerDisputesPage = () => {
             </div>
 
             <div>
-              <label className="form-label">
-                {t('disputes.descLabel', 'Detailed Description')}
-              </label>
+              <label className="hc-input__label">{t('disputes.descLabel', 'Detailed Description')}</label>
               <textarea
                 name="description"
                 rows={3}
                 value={newDispute.description}
                 onChange={handleInputChange}
                 placeholder="Describe your observations, purchase details, or QR scan result..."
-                className="form-input"
+                className="hc-input__field"
+                style={{ resize: 'vertical' }}
               />
             </div>
 
-            <div className="pt-3 border-t border-slate-100 flex justify-end gap-3">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowCreateModal(false)}
-              >
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--border)' }}>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setShowCreateModal(false)}>
                 {t('common.cancel', 'Cancel')}
               </Button>
-              <Button
-                type="submit"
-                variant="primary"
-                size="sm"
-                loading={submitting}
-              >
+              <Button type="submit" variant="primary" size="sm" loading={submitting}>
                 {t('common.submit', 'Submit Dispute')}
               </Button>
             </div>

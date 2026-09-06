@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Input from '../../../components/ui/Input'
 import Button from '../../../components/ui/Button'
 import HiveLocationPicker from './HiveLocationPicker'
+import '../styles/hive.css'
 
 export const HiveForm = ({ initialValues = {}, onSubmit, loading = false, onCancel, submitLabel = 'Save Hive' }) => {
   const [formData, setFormData] = useState({
@@ -45,7 +46,7 @@ export const HiveForm = ({ initialValues = {}, onSubmit, loading = false, onCanc
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
       <Input
         id="hive-cluster-name"
         label="Cluster Name *"
@@ -57,17 +58,17 @@ export const HiveForm = ({ initialValues = {}, onSubmit, loading = false, onCanc
       />
 
       <div>
-        <label className="block text-sm font-semibold text-slate-800 mb-2">Installation Date *</label>
+        <label htmlFor="hive-installed-date" style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-semibold)', color: 'var(--text-primary)', marginBottom: 'var(--space-2)' }}>Installation Date *</label>
         <input
           id="hive-installed-date"
           type="date"
           value={formData.installedDate}
           max={new Date().toISOString().substring(0, 10)}
           onChange={(e) => setFormData({ ...formData, installedDate: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-sm focus:outline-none focus:border-blue-600 transition-colors shadow-sm"
+          className="hc-input"
           required
         />
-        {errors.installedDate && <p className="text-blue-600 text-xs mt-1 font-semibold">{errors.installedDate}</p>}
+        {errors.installedDate && <p style={{ color: 'var(--danger)', fontSize: 'var(--text-xs)', marginTop: '4px', fontWeight: 'var(--font-semibold)' }}>{errors.installedDate}</p>}
       </div>
 
       <HiveLocationPicker
@@ -76,12 +77,12 @@ export const HiveForm = ({ initialValues = {}, onSubmit, loading = false, onCanc
         onLocationChange={(lat, lng) => setFormData({ ...formData, latitude: lat, longitude: lng })}
       />
 
-      <div className="flex items-center gap-3 pt-2">
-        <Button type="submit" variant="primary" loading={loading} className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 border-blue-600 text-white font-bold">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', paddingTop: 'var(--space-2)' }}>
+        <Button type="submit" variant="primary" loading={loading} style={{ flex: 1, paddingBlock: 'var(--space-3)', fontWeight: 'var(--font-bold)' }}>
           {submitLabel}
         </Button>
         {onCancel && (
-          <Button type="button" variant="secondary" onClick={onCancel} className="py-3 px-6">
+          <Button type="button" variant="secondary" onClick={onCancel} style={{ paddingBlock: 'var(--space-3)', paddingInline: 'var(--space-6)' }}>
             Cancel
           </Button>
         )}

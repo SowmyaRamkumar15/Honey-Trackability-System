@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useLanguage } from '../../i18n/LanguageContext'
+import './VoiceButton.css'
 
 export const VoiceButton = ({
   translationKey,
@@ -82,14 +83,12 @@ export const VoiceButton = ({
     <button
       type="button"
       onClick={handleSpeak}
-      className={`btn ${isSpeaking ? 'btn--primary' : 'btn--ghost'} btn--${size} inline-flex items-center gap-1.5 ${className}`}
-      title={isSpeaking ? t('voice.stop', 'Stop Voice') : t('voice.listen', 'Listen to Voice Instructions 🔊')}
+      className={`hc-voice-btn ${isSpeaking ? 'hc-voice-btn--speaking' : ''} hc-voice-btn--${size} ${className}`.trim()}
+      title={isSpeaking ? t('voice.stop', 'Stop Voice') : t('voice.listen', 'Listen to Voice Instructions')}
       aria-label={t('voice.listen', 'Listen to Voice Instructions')}
     >
-      <span>{isSpeaking ? '🔊' : '🔈'}</span>
-      <span className="text-xs font-semibold">
-        {isSpeaking ? t('voice.speaking', 'Speaking...') : t('voice.listen', 'Listen')}
-      </span>
+      <span className="hc-voice-icon">{isSpeaking ? '🔊' : '🔈'}</span>
+      <span>{isSpeaking ? 'Stop' : 'Listen'}</span>
     </button>
   )
 }
