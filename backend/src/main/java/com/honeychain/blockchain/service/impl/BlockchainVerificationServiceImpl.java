@@ -20,12 +20,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.honeychain.customBlockchain.Block;
+import com.honeychain.customBlockchain.BlockChain;
+
 import java.util.Optional;
 
 @Service
 public class BlockchainVerificationServiceImpl implements BlockchainVerificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(BlockchainVerificationServiceImpl.class);
+
+    private final BlockChain blockChain;
 
     private final BlockchainRecordRepository blockchainRecordRepository;
     private final HoneyBatchRepository honeyBatchRepository;
@@ -35,11 +40,12 @@ public class BlockchainVerificationServiceImpl implements BlockchainVerification
     public BlockchainVerificationServiceImpl(BlockchainRecordRepository blockchainRecordRepository,
             HoneyBatchRepository honeyBatchRepository,
             BeekeeperProfileRepository beekeeperProfileRepository,
-            UserService userService) {
+            UserService userService, BlockChain blockChain) {
         this.blockchainRecordRepository = blockchainRecordRepository;
         this.honeyBatchRepository = honeyBatchRepository;
         this.beekeeperProfileRepository = beekeeperProfileRepository;
         this.userService = userService;
+        this.blockChain = blockChain;
     }
 
     @Override
@@ -58,6 +64,32 @@ public class BlockchainVerificationServiceImpl implements BlockchainVerification
         }
 
         BlockchainRecord record = recordOpt.get();
+
+        // Verify the actual in-memory blockchain
+        Block blockchainBlock = blockChain.findBlockByBatchId(batchId);
+
+        if (blockchainBlock == null) {
+            logger.warn("Batch {} exists in database but not in real blockchain",batchId);
+
+            return BlockchainVerificationResponse.notFound(batchId);
+        }
+
+        // Verify the entire blockchain
+        boolean chainValid = blockChain.isChainValid();
+
+        if (!chainValid) {
+
+            logger.warn("REAL BLOCKCHAIN INVALID for batch {}",batchId);
+
+            return BlockchainVerificationResponse.tampered(
+                batchId,
+                record.getDataHash(),
+                null,
+                record.getTransactionHash(),
+                record.getBlockNumber(),
+                record.getNetwork()
+            );
+        }
 
         // 1. Rebuild canonical string from current state of the batch
         String currentCanonical = BatchCanonicalDataBuilder.buildCanonicalString(currentBatch);
